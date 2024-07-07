@@ -1,0 +1,24 @@
+features
+	development
+		create new mod
+		edit existing mod (create new version)
+		view unit stats
+		modify unit stats
+		add/edit/remove units (stats, graphics, ?)
+	play
+		list mods
+		apply mods
+
+need to create patching, and apply
+need to detect conflicts
+	any patch collision is a conflict
+need to track mod version and game version
+
+
+versioning
+	place SanctuarySSModManager.json in
+		D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo
+	if missing, prompt user to create
+
+issues
+	new drops of game seem to involve just patches, how to determine game build?
