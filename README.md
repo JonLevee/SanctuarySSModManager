@@ -35,9 +35,22 @@ It will allow the user to perform the follow actions:
 
 ## Tasks
 - [ ] Where do we publish/retrieve from?  
-- [ ] figure out if we can support patching (much smaller footprint, but added complexity)
+- [ ] figure out if we can support patching (much smaller footprint, but added complexity).  See investigation below.
 - [ ] Figure out more tasks to add here
 
+## Investigation
+I really want to be able to use patching (specifically the nuget library [DiffMatchPatch](https://www.nuget.org/packages/DiffMatchPatch/)) that is based off of googles [diff-match-patch](https://github.com/google/diff-match-patch) toolkit.  This would make the mods extremely small and lightweight.
+
+However, before committing to this I need to understand how realistic using patch files will be.  So I'm going to create a bunch of unit tests to determine how feasible this aproach is:
+* test creating patches from simple changes
+* test undoing patches
+* test merging two different patches
+* test merging two different patches (reverse order)
+* test undoing two different patches (in different orders)
+* test merging three different patches, and reversing patches in different orders
+* others
+
+Once I have done this I will know if this pattern is feasible.  It's not the end of the world if this doesn't work, most of the existing mods for supcom+ are in the tens of megabyte range.  And it won't reduce sizes for lots of adds (think maps).
 
 ## Discussion
 [Jon] This is a free-form area for anyone who wishes to contribute to have any kind of related discussion needed.  Please put your name in brackets so we can see where the comment is coming from
