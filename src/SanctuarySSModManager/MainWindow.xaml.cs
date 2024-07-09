@@ -52,11 +52,13 @@ namespace SanctuarySSModManager
             var sourcePath = instance.FullModRootFolder;
             var targetPath = Path.Combine(instance.ModManagerFolder, SnapshotName.Text, instance.ModRootFolder);
             var files = Directory.GetFiles(sourcePath, "*", SearchOption.AllDirectories);
-            foreach ( var sourceFile in files )
+            foreach (var sourceFile in files)
             {
                 var targetFile = sourceFile.Replace(sourcePath, targetPath);
                 var targetDir = Path.GetDirectoryName(targetFile);
-                targetDir?.EnsureDirectoryExists();
+                if (null == targetDir)
+                    throw new NullReferenceException();
+                targetDir.EnsureDirectoryExists();
                 File.Copy(sourceFile, targetFile);
             }
             timer.Stop();

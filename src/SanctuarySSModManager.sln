@@ -5,12 +5,14 @@ VisualStudioVersion = 17.9.34616.47
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SanctuarySSModManager", "SanctuarySSModManager\SanctuarySSModManager.csproj", "{5F3970CC-B931-4CA0-BD34-B4B0DC89E4C8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LuaLib", "LuaLib\LuaLib.csproj", "{DCC41496-F945-4CA7-9E24-D00F44B252FC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SanctuarySSLib", "LuaLib\SanctuarySSLib.csproj", "{DCC41496-F945-4CA7-9E24-D00F44B252FC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{998920EF-CD62-4C14-99CF-1DAA00D52DAC}"
 	ProjectSection(SolutionItems) = preProject
 		..\README.md = ..\README.md
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "UnitTests\UnitTests.csproj", "{EAF1B4DA-B357-46E4-94F5-83FF7A21E03F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,6 +28,10 @@ Global
 		{DCC41496-F945-4CA7-9E24-D00F44B252FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DCC41496-F945-4CA7-9E24-D00F44B252FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DCC41496-F945-4CA7-9E24-D00F44B252FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAF1B4DA-B357-46E4-94F5-83FF7A21E03F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAF1B4DA-B357-46E4-94F5-83FF7A21E03F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAF1B4DA-B357-46E4-94F5-83FF7A21E03F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAF1B4DA-B357-46E4-94F5-83FF7A21E03F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

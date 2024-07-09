@@ -37,7 +37,8 @@ namespace SanctuarySSModManager
 
                 var json = JsonSerializer.Serialize(settings, serializerOptions);
                 File.WriteAllText(settingsFile, json);
-            } else
+            }
+            else
             {
                 string json = File.ReadAllText(settingsFile);
                 settings = JsonSerializer.Deserialize<ModManagerMetaData>(json) ?? settings;
@@ -52,7 +53,7 @@ namespace SanctuarySSModManager
             ModManagerFolder = string.Empty;
         }
 
-        public string ShatteredSunDirectoryRoot {  get; set; }
+        public string ShatteredSunDirectoryRoot { get; set; }
         public string ModRootFolder { get; set; }
 
         public string ModManagerFolder { get; set; }

@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 
 namespace SanctuarySSModManager.Extensions
 {
-    internal static class GeneralExtensions
+    public static class GeneralExtensions
     {
-        public static void EnsureDirectoryExists(this string directory)
+        public static void EnsureDirectoryExists(this string? directory)
         {
+            if (null == directory) throw new ArgumentNullException(nameof(directory));
             var info = new DirectoryInfo(directory);
             if (info.Exists)
             {
@@ -20,7 +21,7 @@ namespace SanctuarySSModManager.Extensions
             {
                 throw new DirectoryNotFoundException($"Directory root {info.Root.FullName} does not exist");
             }
-            EnsureDirectoryExists(info.Parent.FullName);
+            EnsureDirectoryExists(info.Parent?.FullName);
             Directory.CreateDirectory(info.FullName);
         }
     }
