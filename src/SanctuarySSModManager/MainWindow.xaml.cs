@@ -1,4 +1,5 @@
 ﻿using DiffMatchPatch;
+using Microsoft.Extensions.DependencyInjection;
 using SanctuarySSModManager.Extensions;
 using System.Collections;
 using System.Configuration;
@@ -30,10 +31,12 @@ namespace SanctuarySSModManager
         {
             InitializeComponent();
 
-            var managerData = ModManagerMetaData.Instance;
+            var managerData = DIContainer.GetService<ModManagerMetaData>();
 
             ApplicationDirectoryRoot.Text = managerData.ShatteredSunDirectoryRoot;
 
+            var sanctuaryUnitData = DIContainer.GetService<SanctuaryUnitData>();
+            sanctuaryUnitData.Load();
 
             //var patch = new diff_match_patch();
 
@@ -48,9 +51,9 @@ namespace SanctuarySSModManager
         private void SnapshotButton_Click(object sender, RoutedEventArgs e)
         {
             var timer = Stopwatch.StartNew();
-            var instance = ModManagerMetaData.Instance;
-            var sourcePath = instance.FullModRootFolder;
-            var targetPath = Path.Combine(instance.ModManagerFolder, SnapshotName.Text, instance.ModRootFolder);
+            var managerData = DIContainer.GetService<ModManagerMetaData>();
+            var sourcePath = managerData.FullModRootFolder;
+            var targetPath = Path.Combine(managerData.ModManagerFolder, SnapshotName.Text, managerData.ModRootFolder);
             var files = Directory.GetFiles(sourcePath, "*", SearchOption.AllDirectories);
             foreach (var sourceFile in files)
             {

@@ -13,10 +13,7 @@ namespace SanctuarySSModManager
             WriteIndented = true,
         };
 
-        private static ModManagerMetaData? instance;
-        public static ModManagerMetaData Instance => instance ??= LoadSettings();
-
-        private static ModManagerMetaData LoadSettings()
+        public static ModManagerMetaData CreateInstance(IServiceProvider serviceProvider)
         {
             ModManagerMetaData settings = new ModManagerMetaData();
             var appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);

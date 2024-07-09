@@ -10,22 +10,21 @@ namespace SanctuarySSModManager
     /// </summary>
     public partial class App : Application
     {
-        private ServiceProvider serviceProvider;
         public App()
         {
-            ServiceCollection services = new ServiceCollection();
-            ConfigureServices(services);
-            serviceProvider = services.BuildServiceProvider();
+            DIContainer.Initialize(ConfigureServices);
         }
         private void ConfigureServices(ServiceCollection services)
         {
-            services.AddSingleton<ModManagerMetaData>();
+            services.AddSingleton(ModManagerMetaData.CreateInstance );
             services.AddSingleton<MainWindow>();
+            services.AddSingleton<SanctuaryUnitData>();
+            services.AddTransient<LuaDataLoader>();
 
         }
         private void OnStartup(object sender, StartupEventArgs e)
         {
-            var mainWindow = serviceProvider.GetService<MainWindow>();
+            var mainWindow = DIContainer.GetService<MainWindow>();
             mainWindow?.Show();
         }
     }
