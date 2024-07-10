@@ -5,22 +5,24 @@ namespace SanctuarySSModManager
     public class DIContainer
     {
         private static ServiceProvider serviceProvider;
+        private static ServiceCollection services;
 
-        DIContainer()
+        static DIContainer()
         {
-            serviceProvider = null;
+            services = new ServiceCollection();
+            serviceProvider = services.BuildServiceProvider();
         }
 
         public static void Initialize(Action<ServiceCollection> configureServices)
         {
-            ServiceCollection services = new ServiceCollection();
+
             configureServices(services);
             serviceProvider = services.BuildServiceProvider();
         }
 
-        public static ServiceProvider GetServiceProvider() 
-        { 
-            return serviceProvider; 
+        public static ServiceProvider GetServiceProvider()
+        {
+            return serviceProvider;
         }
         public static T GetService<T>() where T : class
         {

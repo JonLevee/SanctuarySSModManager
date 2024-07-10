@@ -1,5 +1,9 @@
 ﻿
+using NLua;
+using Sprache;
+using System.Globalization;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace SanctuarySSModManager
 {
@@ -14,40 +18,35 @@ namespace SanctuarySSModManager
 
         internal LuaFile Load(string luaRelativePath)
         {
-            
+
             var luaFile = new LuaFile(Path.Combine(modManagerMetaData.FullModRootFolder, luaRelativePath));
-            int index = 0;
-            if (TrySkipWhitespace(luaFile.StringData, ref index))
+            var options = RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.Singleline;
+            var tableRegex = new Regex(@"^\s*\b(?<table>\w+)\s*=\s*{(?<data>.*)}\s*$", options);
+            var keyValuesRegex = new Regex(@"^\s*(?<key>\w+)\s*[=:]\s*(?<value>\""?[^\n]*\""?)\s*,\s*$", options);
+            /* 
+             * 
+             * table: 
+             * key/values:   ^\s*(?<key>\w+)\s*[=:]\s*(?<value>\"?[^\n]*\"?)\s*,\s*$
+             */
+            var tableMatches = tableRegex.Matches(luaFile.StringData.ToString()).ToList();
+            foreach (var tableMatch in tableMatches)
             {
-                var start = index;
-                while(TryGetNextToken(luaFile.StringData, ref index, out string token))
+                var tableName = tableMatch.Groups["table"].Value;
+                var tableData = tableMatch.Groups["data"].Value;
+                var chunks = Regex.Split(tableData, @"\s*}\s*,\s*{\s*");
+                foreach (var chunk in chunks)
                 {
 
                 }
             }
+
+
             return luaFile;
         }
 
-        private bool TryGetNextToken(StringBuilder sb, ref int index, out string token)
-        {
-            static delims = 
-            while (index < sb.Length && char.IsWhiteSpace(sb[index]))
-            {
-                index++;
-            }
-        }
-
-        private bool TrySkipWhitespace(StringBuilder sb, ref int index)
-        {
-            while(index < sb.Length && char.IsWhiteSpace(sb[index]))
-            {
-                ++index;
-            }
-            return index < sb.Length;
-        }
     }
 
-    public class  LuaFile
+    public class LuaFile
     {
         public LuaFile(string filePath)
         {
@@ -57,4 +56,6 @@ namespace SanctuarySSModManager
         public string FilePath { get; }
         public StringBuilder StringData { get; }
     }
+
+
 }
