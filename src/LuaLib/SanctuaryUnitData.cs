@@ -15,9 +15,12 @@ namespace SanctuarySSModManager
         }
         public void Load()
         {
-            var factions = luaDataLoader.Load("common\\systems\\factions.lua");
+
+            //var data = luaDataLoader.LoadFolder("common\\systems\\factions.lua");
+            //var factions = luaDataLoader.Load("common\\systems\\factions.lua");
         }
         /*
+         * D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua\host\systems\adjacencyBuffs.lua
          * D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\engine\LJ\lua\common\units\availableUnits.lua
          * D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\engine\LJ\lua\common\systems\factions.lua
          * D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\engine\LJ\lua\common\colors.lua
