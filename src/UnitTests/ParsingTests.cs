@@ -34,8 +34,17 @@ namespace UnitTests
                 var parser = new LuaDescentParser(luaFile.StringData);
                 var result = parser.Parse().ToList();
             }
+        }
 
-
+        [Test]
+        public void TestExpression()
+        {
+            // D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua\common\units\availableUnits.lua
+            // D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua\common\systems\factions.lua
+            var rootPath = @"D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua";
+            var parser = new LuaRegexTableParser(rootPath);
+            var factionsData = parser.Parse(@"common\systems\factions.lua")["FactionsData"];
+            var availableUnits = parser.Parse(@"common\units\availableUnits.lua")["AvailableUnits"];
         }
     }
 }
