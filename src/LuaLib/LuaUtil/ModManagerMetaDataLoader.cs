@@ -37,7 +37,6 @@ namespace SanctuarySSLib.LuaUtil
             var settingsFile = Path.Combine(appFolder, "ModManagerMetaData.json");
             if (!File.Exists(settingsFile))
             {
-                var steamInfo = new SteamInfo();
                 data.ShatteredSunDirectoryRoot = steamInfo.GetRoot("Sanctuary Shattered Sun Demo");
                 data.ModRootFolder = @"prototype\RuntimeContent\Lua";
                 data.ModManagerFolder = appFolder;
@@ -48,7 +47,8 @@ namespace SanctuarySSLib.LuaUtil
             else
             {
                 string json = File.ReadAllText(settingsFile);
-                var settings = JsonSerializer.Deserialize<ModManagerMetaData>(json);
+                ModManagerMetaData? settings = JsonSerializer.Deserialize<ModManagerMetaData>(json);
+                Constraint.NotNull(settings, nameof(settings));
                 data.ShatteredSunDirectoryRoot = settings.ShatteredSunDirectoryRoot;
                 data.ModRootFolder = settings.ModRootFolder;
                 data.ModManagerFolder = settings.ModManagerFolder;

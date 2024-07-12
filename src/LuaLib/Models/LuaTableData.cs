@@ -19,12 +19,5 @@ namespace SanctuarySSLib.Models
         public Dictionary<string, Dictionary<string, Dictionary<string, LuaTableKeyValue>>> TablesDepth2 { get; }
         public IEnumerable<string> TableNames => TablesDepth1.Keys.Concat(TablesDepth2.Keys);
 
-        public void Load()
-        {
-            FileData.Append(File.ReadAllText(FilePath));
-            var loader = new LuaTableRegexDataLoader();
-            loader.Load(this);
-
-        }
     }
 }

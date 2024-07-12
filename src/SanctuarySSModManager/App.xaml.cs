@@ -17,11 +17,7 @@ namespace SanctuarySSModManager
         }
         private void ConfigureServices(ServiceCollection services)
         {
-            services.AddSingleton(ModManagerMetaData.CreateInstance );
             services.AddSingleton<MainWindow>();
-            services.AddSingleton<SanctuaryUnitData>();
-            services.AddTransient<LuaDataLoader>();
-
         }
         private void OnStartup(object sender, StartupEventArgs e)
         {

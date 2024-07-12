@@ -1,5 +1,9 @@
 ﻿using DiffMatchPatch;
+using Microsoft.Extensions.DependencyInjection;
+using SanctuarySSLib.LuaUtil;
+using SanctuarySSLib.MiscUtil;
 using SanctuarySSLib.Models;
+using SanctuarySSLib.WorkInProgressNotUsed;
 using SanctuarySSModManager;
 using System.Text;
 
@@ -10,6 +14,14 @@ namespace UnitTests
         [SetUp]
         public void Setup()
         {
+            DIContainer.Initialize(ConfigureServices);
+
+        }
+        private void ConfigureServices(ServiceCollection services)
+        {
+            services
+                .AddSingleton(typeof(ILuaTableDataLoader), typeof(LuaTableDescendParserDataLoader));
+
         }
 
         [Test]
@@ -27,24 +39,22 @@ namespace UnitTests
             //        var rootPath = luaRelativePath == null
             //? Path.Combine(modManagerMetaData.FullModRootFolder, luaRelativePath)
             //: modManagerMetaData.FullModRootFolder;
-            var rootPath = @"D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype";
-            var luaFilePaths = Directory.GetFiles(rootPath, "*.lua", SearchOption.AllDirectories);
-            foreach (var luaFilePath in luaFilePaths)
-            {
-                //var luaFile = new LuaFile(luaFilePath);
-                //var parser = new LuaDescentParser(luaFile.StringData);
-                //var result = parser.Parse().ToList();
-            }
+            //var rootPath = @"D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype";
+            //var luaFilePaths = Directory.GetFiles(rootPath, "*.lua", SearchOption.AllDirectories);
+            //foreach (var luaFilePath in luaFilePaths)
+            //{
+            //    var luaFile = new LuaFile(luaFilePath);
+            //    var parser = new LuaDescentParser(luaFile.StringData);
+            //    var result = parser.Parse().ToList();
+            //}
         }
 
         [Test]
-        public void ParseExpression()
+        public void ParseAllExpression()
         {
-            var steamInfo = new SteamInfo();
-            var rootPath = steamInfo.GetRoot("Sanctuary Shattered Sun Demo");
-            //@"C:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype";
-            var parser = new LuaRegexTableParser(rootPath);
-            parser.LoadTables();
+            var data = new LuaData();
+            var loader = DIContainer.GetService<LuaDataLoader>();
+            loader.Load(data);
         }
 
         [Test]

@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using SanctuarySSLib.LuaUtil;
+using SanctuarySSLib.MiscUtil;
 
 namespace SanctuarySSModManager
 {
@@ -16,8 +18,20 @@ namespace SanctuarySSModManager
         public static void Initialize(Action<ServiceCollection> configureServices)
         {
 
+            ConfigureDefaultServices(services);
             configureServices(services);
             serviceProvider = services.BuildServiceProvider();
+        }
+
+        private static void ConfigureDefaultServices(IServiceCollection services)
+        {
+            services
+                .AddSingleton(ModManagerMetaData.CreateInstance)
+                .AddSingleton(typeof(ISteamInfo), typeof(SteamInfo))
+                .AddTransient<LuaDataLoader>()
+                .AddSingleton(typeof(IGameMetadata), typeof(GameMetadata))
+                .AddSingleton(typeof(ILuaTableDataLoader), typeof(LuaTableRegexDataLoader));
+
         }
 
         public static ServiceProvider GetServiceProvider()
@@ -29,7 +43,7 @@ namespace SanctuarySSModManager
             var instance = serviceProvider.GetService<T>();
             if (instance == null)
             {
-                throw new ArgumentNullException(nameof(instance));
+                throw new ArgumentNullException(typeof(T).Name);
             }
             return instance;
         }

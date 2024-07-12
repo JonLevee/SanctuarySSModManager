@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace SanctuarySSLib.WorkInProgressNotUsed
 {
+#if false
     public class LuaDataLoader
     {
         private readonly ModManagerMetaData modManagerMetaData;
@@ -20,8 +21,8 @@ namespace SanctuarySSLib.WorkInProgressNotUsed
         public void LoadAll(string? luaRelativePath = null)
         {
             var rootPath = luaRelativePath == null
-                ? Path.Combine(modManagerMetaData.FullModRootFolder, luaRelativePath.ToString())
-                : modManagerMetaData.FullModRootFolder;
+                ? modManagerMetaData.FullModRootFolder
+                : Path.Combine(modManagerMetaData.FullModRootFolder, luaRelativePath.ToString());
             var luaFiles = Directory.GetFiles(rootPath, "*.lua", SearchOption.AllDirectories);
             foreach (var luaFile in luaFiles)
             {
@@ -71,5 +72,5 @@ namespace SanctuarySSLib.WorkInProgressNotUsed
         public string FilePath { get; }
         public StringBuilder StringData { get; }
     }
-
+#endif
 }

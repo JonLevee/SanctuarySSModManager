@@ -15,24 +15,17 @@ namespace SanctuarySSLib.WorkInProgressNotUsed
      * to do this, we will use a custom written recursive descent parser that keeps track of the offsets
      * of where the values are stored, so flush() will update only the original values
      */
+#if false
 
     public class LuaScript
     {
         public LuaScript(StringBuilder stringData)
         {
             StringData = stringData;
-            Expressions = new List<LuaExpression>();
         }
 
         public StringBuilder StringData { get; }
-        public List<LuaExpression> Expressions { get; }
     }
-
-    public class LuaExpression
-    {
-
-    }
-
     public abstract class LuaToken
     {
         protected LuaToken(string tokenType)
@@ -203,5 +196,5 @@ namespace SanctuarySSLib.WorkInProgressNotUsed
             return true;
         }
     }
-
+#endif
 }

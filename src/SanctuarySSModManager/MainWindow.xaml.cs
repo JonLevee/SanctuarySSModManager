@@ -35,8 +35,6 @@ namespace SanctuarySSModManager
 
             ApplicationDirectoryRoot.Text = managerData.ShatteredSunDirectoryRoot;
 
-            var sanctuaryUnitData = DIContainer.GetService<SanctuaryUnitData>();
-            sanctuaryUnitData.Load();
 
             //var patch = new diff_match_patch();
 

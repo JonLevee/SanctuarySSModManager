@@ -1,4 +1,6 @@
-﻿using SanctuarySSModManager.Extensions;
+﻿using SanctuarySSLib.LuaUtil;
+using SanctuarySSLib.MiscUtil;
+using SanctuarySSModManager.Extensions;
 using System.IO;
 using System.Reflection;
 using System.Text.Json;
@@ -16,6 +18,7 @@ namespace SanctuarySSModManager
 
         public static ModManagerMetaData CreateInstance(IServiceProvider serviceProvider)
         {
+            IGameMetadata gameMetaData = DIContainer.GetService<IGameMetadata>();
             ModManagerMetaData settings = new ModManagerMetaData();
             var appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             var appName = Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyProductAttribute>()?.Product;
@@ -28,8 +31,7 @@ namespace SanctuarySSModManager
             var settingsFile = Path.Combine(appFolder, "ModManagerMetaData.json");
             if (!File.Exists(settingsFile))
             {
-                var steamInfo = new SteamInfo();
-                settings.ShatteredSunDirectoryRoot = steamInfo.GetRoot("Sanctuary Shattered Sun Demo");
+                settings.ShatteredSunDirectoryRoot = gameMetaData.GetLuaPath(gameMetaData.DefaultLuaFolder);
                 settings.ModRootFolder = @"prototype\RuntimeContent\Lua";
                 settings.ModManagerFolder = appFolder;
 

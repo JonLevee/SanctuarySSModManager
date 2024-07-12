@@ -1,4 +1,5 @@
 ﻿using SanctuarySSLib.Models;
+using SanctuarySSLib.WorkInProgressNotUsed;
 using Sprache;
 using System.Text.RegularExpressions;
 
@@ -7,6 +8,7 @@ namespace SanctuarySSLib.LuaUtil
     public interface ILuaTableDataLoader
     {
         void Load(LuaTableData tableData);
+        IEnumerable<string> GetUnsupportedTableNames();
     }
 
 
@@ -17,11 +19,18 @@ namespace SanctuarySSLib.LuaUtil
         private readonly Regex itemSplitRegex = new Regex(@"}\s*,\s*{", regexOptions);
         private readonly Regex valueRegex = new Regex(@"^\s*(?<key>[a-zA-Z0-9-]+)\s*=\s*(?<quote>\""?)(?<value>[^,]*)\k<quote>\s*,\s*(?:--[^$]*?)?$", regexOptions);
 
+        public IEnumerable<string> GetUnsupportedTableNames()
+        {
+            return ["UILayout"];
+        }
+
         public void Load(LuaTableData tableData)
         {
             foreach (Match tableMatch in tableRegex.Matches(tableData.FileData.ToString()))
             {
                 var tableName = tableMatch.Groups["table"].Value;
+                if (GetUnsupportedTableNames().Contains(tableName))
+                    continue;
                 var data = tableMatch.Groups["data"].Value.Trim();
                 if (data.StartsWith("{"))
                 {
@@ -29,14 +38,20 @@ namespace SanctuarySSLib.LuaUtil
                     var items = itemSplitRegex.Split(trimmedData);
                     foreach (var item in items)
                     {
-                        var keyValues = valueRegex
-                            .Matches(item)
-                            .Select(match => new LuaTableKeyValue(tableData.FileData, match.Groups["key"].Value, match.Groups["value"]))
-                            .ToDictionary(kv => kv.Key);
+                        var keyValues = new Dictionary<string, LuaTableKeyValue>();
+                        foreach (Match match in valueRegex.Matches(item))
+                        {
+                            var kv = new LuaTableKeyValue(tableData.FileData, match.Groups["key"].Value, match.Groups["value"]);
+                            keyValues.Add(kv.Key, kv);
+                        }
 
                         var name = keyValues.ContainsKey("name") ? keyValues["name"].ToString() : null;
                         if (name == null)
                             throw new KeyNotFoundException("could not find column 'name'");
+                        if (!tableData.TablesDepth2.ContainsKey(tableName))
+                        {
+                            tableData.TablesDepth2[tableName] = new Dictionary<string, Dictionary<string, LuaTableKeyValue>>();
+                        }
                         tableData.TablesDepth2[tableName][name] = keyValues;
                     }
                 }

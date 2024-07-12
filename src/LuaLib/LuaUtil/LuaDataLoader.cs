@@ -23,6 +23,7 @@ namespace SanctuarySSLib.LuaUtil
             foreach (var luaFilePath in Directory.GetFiles(luaRootPath, "*.lua", SearchOption.AllDirectories))
             {
                 var tableData = new LuaTableData();
+                tableData.FilePath = luaFilePath.Substring(luaRootPath.Length + 1);
                 tableData.FileData.Append(File.ReadAllText(luaFilePath));
                 luaTableDataLoader.Load(tableData);
 
