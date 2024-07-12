@@ -1,16 +1,28 @@
-﻿using SanctuarySSModManager;
+﻿using SanctuarySSLib.MiscUtil;
+using SanctuarySSModManager;
 using SanctuarySSModManager.Extensions;
 using System.Reflection;
 using System.Text.Json;
 
 namespace SanctuarySSLib.LuaUtil
 {
+    public interface IModManagerMetaDataLoader
+    {
+        void Load(ModManagerMetaData data);
+    }
+
     public class ModManagerMetaDataLoader : IModManagerMetaDataLoader
     {
         private static JsonSerializerOptions serializerOptions = new JsonSerializerOptions
         {
             WriteIndented = true,
         };
+        private readonly ISteamInfo steamInfo;
+
+        public ModManagerMetaDataLoader(ISteamInfo steamInfo)
+        {
+            this.steamInfo = steamInfo;
+        }
 
         public void Load(ModManagerMetaData data)
         {

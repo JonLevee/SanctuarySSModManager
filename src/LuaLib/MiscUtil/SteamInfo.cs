@@ -1,12 +1,17 @@
 ﻿
 using System.IO;
 
-namespace SanctuarySSModManager
+namespace SanctuarySSLib.MiscUtil
 {
-    public class SteamInfo
+    public interface ISteamInfo
+    {
+        string GetRoot(string appName);
+    }
+
+    public class SteamInfo : ISteamInfo
     {
         private readonly List<string> steamFolders = new List<string>();
-        private readonly Dictionary<string,string> folderPaths = new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, string> folderPaths = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         public string GetRoot(string appName = "Sanctuary Shattered Sun Demo")
         {
             if (!steamFolders.Any())
@@ -17,13 +22,13 @@ namespace SanctuarySSModManager
                 var paths = File.ReadAllLines(steamLibraryFolderFile)
                     .Where(s => s.Contains(pathKey))
                     .Select(s => s.Trim().Substring(pathKey.Length).Trim(' ', '\"', '\t'))
-                    .Select(s => s.Replace(@"\\",@"\"))
+                    .Select(s => s.Replace(@"\\", @"\"))
                     .ToList();
                 steamFolders.AddRange(paths);
             }
             if (!folderPaths.ContainsKey(appName))
             {
-                foreach(var steamFolder in steamFolders)
+                foreach (var steamFolder in steamFolders)
                 {
                     var path = Path.Combine(steamFolder, @"steamapps\common", appName);
                     if (Directory.Exists(path))

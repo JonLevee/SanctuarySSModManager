@@ -1,22 +1,28 @@
-﻿using SanctuarySSLib.Models;
+﻿using SanctuarySSLib.MiscUtil;
+using SanctuarySSLib.Models;
 
 namespace SanctuarySSLib.LuaUtil
 {
-    public class LuaDataLoader : ILuaDataLoader
+    public interface ILuaTableDataLoader
     {
-        private readonly IModManagerMetaDataLoader metaDataLoader;
+        void Load(LuaTableData tableData);
+        IEnumerable<string> GetLuaDirs();
+    }
 
-        public LuaDataLoader(IModManagerMetaDataLoader metaDataLoader) 
+    public class LuaDataLoader
+    {
+        private readonly IGameMetadata gameMetadata;
+
+        public LuaDataLoader(IGameMetadata gameMetadata)
         {
-            this.metaDataLoader = metaDataLoader;
+            this.gameMetadata = gameMetadata;
         }
-        public void Load(LuaData data)
+
+        public void Load(LuaData data, string? luaFolderName = null)
         {
-            var rootPath = metaDataLoader
-            var luaFilePaths = Directory
-    .GetFiles(rootPath, "*.lua", SearchOption.AllDirectories)
-    .Where(p => !tableNames.Any() || tableNames.Contains(Path.GetFileName(p)));
-            foreach (var luaFilePath in luaFilePaths)
+            var luaFolderNameToLoad = luaFolderName ?? gameMetadata.DefaultLuaFolder;
+            var luaRootPath = gameMetadata.GetLuaPath(luaFolderNameToLoad);
+            foreach (var luaFilePath in Directory.GetFiles(luaRootPath, "*.lua", SearchOption.AllDirectories))
             {
                 var tableData = new LuaTableData(luaFilePath);
                 tableData.Load();
