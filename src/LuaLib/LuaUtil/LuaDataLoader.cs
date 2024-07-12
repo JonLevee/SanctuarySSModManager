@@ -3,19 +3,17 @@ using SanctuarySSLib.Models;
 
 namespace SanctuarySSLib.LuaUtil
 {
-    public interface ILuaTableDataLoader
-    {
-        void Load(LuaTableData tableData);
-        IEnumerable<string> GetLuaDirs();
-    }
-
     public class LuaDataLoader
     {
         private readonly IGameMetadata gameMetadata;
+        private readonly ILuaTableDataLoader luaTableDataLoader;
 
-        public LuaDataLoader(IGameMetadata gameMetadata)
+        public LuaDataLoader(
+            IGameMetadata gameMetadata,
+            ILuaTableDataLoader luaTableDataLoader)
         {
             this.gameMetadata = gameMetadata;
+            this.luaTableDataLoader = luaTableDataLoader;
         }
 
         public void Load(LuaData data, string? luaFolderName = null)
@@ -24,12 +22,13 @@ namespace SanctuarySSLib.LuaUtil
             var luaRootPath = gameMetadata.GetLuaPath(luaFolderNameToLoad);
             foreach (var luaFilePath in Directory.GetFiles(luaRootPath, "*.lua", SearchOption.AllDirectories))
             {
-                var tableData = new LuaTableData(luaFilePath);
-                tableData.Load();
+                var tableData = new LuaTableData();
+                tableData.FileData.Append(File.ReadAllText(luaFilePath));
+                luaTableDataLoader.Load(tableData);
 
                 foreach (var tableName in tableData.TableNames)
                 {
-                    luaTableData.Add(tableName, tableData);
+                    data.Data.Add(tableName, tableData);
                 }
             }
 

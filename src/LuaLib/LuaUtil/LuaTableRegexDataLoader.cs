@@ -4,6 +4,12 @@ using System.Text.RegularExpressions;
 
 namespace SanctuarySSLib.LuaUtil
 {
+    public interface ILuaTableDataLoader
+    {
+        void Load(LuaTableData tableData);
+    }
+
+
     public class LuaTableRegexDataLoader : ILuaTableDataLoader
     {
         private const RegexOptions regexOptions = RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.Multiline;
