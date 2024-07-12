@@ -1,4 +1,6 @@
 ﻿
+using SanctuarySSLib.WorkInProgressNotUsed;
+
 namespace SanctuarySSModManager
 {
     public class SanctuaryUnitData

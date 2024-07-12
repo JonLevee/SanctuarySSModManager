@@ -1,4 +1,5 @@
 ﻿using DiffMatchPatch;
+using SanctuarySSLib.Models;
 using SanctuarySSModManager;
 using System.Text;
 
@@ -12,7 +13,7 @@ namespace UnitTests
         }
 
         [Test]
-        public void ParseAll()
+        public void DescentParserParseAll()
         {
             //        var modManagerMetaData = new ModManagerMetaData
             //        {
@@ -30,10 +31,20 @@ namespace UnitTests
             var luaFilePaths = Directory.GetFiles(rootPath, "*.lua", SearchOption.AllDirectories);
             foreach (var luaFilePath in luaFilePaths)
             {
-                var luaFile = new LuaFile(luaFilePath);
-                var parser = new LuaDescentParser(luaFile.StringData);
-                var result = parser.Parse().ToList();
+                //var luaFile = new LuaFile(luaFilePath);
+                //var parser = new LuaDescentParser(luaFile.StringData);
+                //var result = parser.Parse().ToList();
             }
+        }
+
+        [Test]
+        public void ParseExpression()
+        {
+            var steamInfo = new SteamInfo();
+            var rootPath = steamInfo.GetRoot("Sanctuary Shattered Sun Demo");
+            //@"C:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype";
+            var parser = new LuaRegexTableParser(rootPath);
+            parser.LoadTables();
         }
 
         [Test]
@@ -41,10 +52,11 @@ namespace UnitTests
         {
             // D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua\common\units\availableUnits.lua
             // D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua\common\systems\factions.lua
-            var rootPath = @"D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua";
-            var parser = new LuaRegexTableParser(rootPath);
-            var factionsData = parser.Parse(@"common\systems\factions.lua")["FactionsData"];
-            var availableUnits = parser.Parse(@"common\units\availableUnits.lua")["AvailableUnits"];
+            //var rootPath = @"D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua";
+            //var parser = new LuaRegexTableParser(rootPath);
+            //var factionsData = parser.Parse(@"common\systems\factions.lua").GetTable("FactionsData");
+            //var availableUnits = parser.Parse(@"common\units\availableUnits.lua").GetTable("AvailableUnits");
+            //var enabledUnits = availableUnits.Where(kv=>(bool)kv.Value == true).ToList();
         }
     }
 }

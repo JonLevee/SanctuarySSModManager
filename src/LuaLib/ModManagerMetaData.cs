@@ -6,6 +6,7 @@ using System.Text.Json.Serialization;
 
 namespace SanctuarySSModManager
 {
+
     public class ModManagerMetaData
     {
         private static JsonSerializerOptions serializerOptions = new JsonSerializerOptions

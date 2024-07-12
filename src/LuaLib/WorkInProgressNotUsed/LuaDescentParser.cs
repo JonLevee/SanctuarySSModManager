@@ -4,8 +4,18 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace SanctuarySSModManager
+namespace SanctuarySSLib.WorkInProgressNotUsed
 {
+    /*
+     * we need to extract tables (which are really variables) and potentially functions from the lua, but we
+     * also need to keep track of values in such as way that we can allow editing of the values and then
+     * be able to update the original source with minimal loss.  For example, given this variable:
+     *  myvar = "foo" -- comment for myvar
+     * we want to be able to replace the value without losing the comment
+     * to do this, we will use a custom written recursive descent parser that keeps track of the offsets
+     * of where the values are stored, so flush() will update only the original values
+     */
+
     public class LuaScript
     {
         public LuaScript(StringBuilder stringData)

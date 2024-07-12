@@ -1,11 +1,12 @@
 ﻿
 using NLua;
+using SanctuarySSModManager;
 using Sprache;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace SanctuarySSModManager
+namespace SanctuarySSLib.WorkInProgressNotUsed
 {
     public class LuaDataLoader
     {
@@ -19,7 +20,7 @@ namespace SanctuarySSModManager
         public void LoadAll(string? luaRelativePath = null)
         {
             var rootPath = luaRelativePath == null
-                ? Path.Combine(modManagerMetaData.FullModRootFolder, luaRelativePath)
+                ? Path.Combine(modManagerMetaData.FullModRootFolder, luaRelativePath.ToString())
                 : modManagerMetaData.FullModRootFolder;
             var luaFiles = Directory.GetFiles(rootPath, "*.lua", SearchOption.AllDirectories);
             foreach (var luaFile in luaFiles)
@@ -32,15 +33,6 @@ namespace SanctuarySSModManager
 
             var luaFile = new LuaFile(luaPath);
 
-            /*
-             * we need to extract tables (which are really variables) and potentially functions from the lua, but we
-             * also need to keep track of values in such as way that we can allow editing of the values and then
-             * be able to update the original source with minimal loss.  For example, given this variable:
-             *  myvar = "foo" -- comment for myvar
-             * we want to be able to replace the value without losing the comment
-             * to do this, we will use a custom written recursive descent parser that keeps track of the offsets
-             * of where the values are stored, so flush() will update only the original values
-             */
             var parser = new LuaDescentParser(luaFile.StringData);
             var result = parser.Parse();
             /* 
