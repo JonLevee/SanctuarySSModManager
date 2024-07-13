@@ -1,5 +1,6 @@
 ﻿using DiffMatchPatch;
 using Microsoft.Extensions.DependencyInjection;
+using SanctuarySSLib.LuaTableParsing;
 using SanctuarySSLib.LuaUtil;
 using SanctuarySSLib.MiscUtil;
 using SanctuarySSLib.Models;
@@ -21,6 +22,7 @@ namespace UnitTests
         {
             services
                 .AddSingleton(typeof(ILuaTableDataLoader), typeof(LuaTableDescendParserDataLoader));
+
 
         }
 
@@ -55,6 +57,11 @@ namespace UnitTests
             var data = new LuaData();
             var loader = DIContainer.GetService<LuaDataLoader>();
             loader.Load(data);
+            Console.WriteLine("table names");
+            foreach (var item in data.TableNames)
+            {
+                Console.WriteLine(item);
+            }
         }
 
         [Test]

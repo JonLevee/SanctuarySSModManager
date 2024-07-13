@@ -3,6 +3,7 @@ using SanctuarySSModManager;
 using SanctuarySSModManager.Extensions;
 using System.Reflection;
 using System.Text.Json;
+using Constraint = SanctuarySSModManager.Extensions.Constraint;
 
 namespace SanctuarySSLib.LuaUtil
 {

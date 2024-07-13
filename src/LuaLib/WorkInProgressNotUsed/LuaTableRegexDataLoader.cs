@@ -1,9 +1,8 @@
 ﻿using SanctuarySSLib.Models;
-using SanctuarySSLib.WorkInProgressNotUsed;
 using Sprache;
 using System.Text.RegularExpressions;
 
-namespace SanctuarySSLib.LuaUtil
+namespace SanctuarySSLib.WorkInProgressNotUsed
 {
     public interface ILuaTableDataLoader
     {

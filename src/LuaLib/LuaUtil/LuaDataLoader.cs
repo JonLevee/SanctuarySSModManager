@@ -1,5 +1,6 @@
 ﻿using SanctuarySSLib.MiscUtil;
 using SanctuarySSLib.Models;
+using SanctuarySSLib.WorkInProgressNotUsed;
 
 namespace SanctuarySSLib.LuaUtil
 {
@@ -7,6 +8,7 @@ namespace SanctuarySSLib.LuaUtil
     {
         private readonly IGameMetadata gameMetadata;
         private readonly ILuaTableDataLoader luaTableDataLoader;
+        public int Count { get; private set; }
 
         public LuaDataLoader(
             IGameMetadata gameMetadata,
@@ -30,6 +32,7 @@ namespace SanctuarySSLib.LuaUtil
                 foreach (var tableName in tableData.TableNames)
                 {
                     data.Data.Add(tableName, tableData);
+                    ++Count;
                 }
             }
 

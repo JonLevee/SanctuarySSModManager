@@ -9,5 +9,7 @@
         {
             Data = new Dictionary<string, LuaTableData>();
         }
+
+        public IEnumerable<string> TableNames => Data.SelectMany(d => d.Value.TableNames).Distinct().Order(StringComparer.OrdinalIgnoreCase);
     }
 }
