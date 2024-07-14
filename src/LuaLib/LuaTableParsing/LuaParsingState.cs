@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.SqlTypes;
 using System.Diagnostics;
+using System.Reflection;
 using System.Text;
 
 namespace SanctuarySSLib.LuaTableParsing
@@ -9,7 +10,7 @@ namespace SanctuarySSLib.LuaTableParsing
     public class LuaParsingState
     {
         public static readonly LuaParsingState Empty = new LuaParsingState(string.Empty, new StringBuilder());
-        private readonly char[] eolChars = ['\r', '\n'];
+        public readonly char[] eolChars = ['\r', '\n'];
         public string FilePath { get; }
 
         public LuaParsingState(string filePath, StringBuilder stringData)
@@ -76,35 +77,11 @@ namespace SanctuarySSLib.LuaTableParsing
                 startIndex = index;
                 if (string.IsNullOrWhiteSpace(name))
                 {
-                    GetCurrentLine(out string line, out int start);
-                    var message = $"Invalid operator at offset {start} in {FilePath} in line: {line}";
-                    throw new InvalidOperationException(message);
+                    throw new LuaParsingException(this, "Invalid operator");
                 }
             }
             return HasMore;
         }
 
-        public void GetCurrentLine(out string line, out int start)
-        {
-            start = index;
-            while (start > 0 && !eolChars.Contains(SB[start]))
-            {
-                --start;
-            }
-            if (start > 0)
-            {
-                ++start;
-            }
-            var end = index;
-            while (end < SB.Length && !eolChars.Contains(SB[end]))
-            {
-                ++end;
-            }
-            if (end < SB.Length)
-            {
-                --end;
-            }
-            line = SB.ToString(start, end - start);
-        }
     }
 }

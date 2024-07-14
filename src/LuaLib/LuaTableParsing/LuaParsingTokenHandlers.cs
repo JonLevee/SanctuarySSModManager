@@ -2,6 +2,8 @@
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Xml.Linq;
+using SanctuarySSLib.LuaTableParsing.Expression;
+using SanctuarySSLib.LuaTableParsing.ParserHandlers;
 using Constraint = SanctuarySSModManager.Extensions.Constraint;
 
 namespace SanctuarySSLib.LuaTableParsing
@@ -33,9 +35,7 @@ namespace SanctuarySSLib.LuaTableParsing
         {
             if (!operatorHandlers.TryGetValue(opName, out var handler))
             {
-                state.GetCurrentLine(out string line, out int start);
-                var message = $"Invalid operator at offset {start} in {state.FilePath} in line: {line}";
-                throw new InvalidOperationException(message);
+                throw new LuaParsingException(state, "invalid operator");
             }
             var handlerState = new LuaParsingOperatorState(this, state, tokenName, opName);
             expression = handler.GetExpression(handlerState);
@@ -48,7 +48,7 @@ namespace SanctuarySSLib.LuaTableParsing
             // advance past any whitespace
             if (!state.TrySkipWhitespace())
             {
-                return false;
+                throw new LuaParsingException(state);
             }
 
             // comment is special case
@@ -58,58 +58,26 @@ namespace SanctuarySSLib.LuaTableParsing
                 var comment = new LuaTokenUnaryExpression("Comment");
                 state.AdvanceToEOL();
                 comment.Value = new LuaTokenValue(state);
-                expression = comment;
-                return true;
+                return comment;
             }
 
             if (!state.TryGetTokenName(out string tokenName))
             {
-                return false;
+                throw new LuaParsingException(state);
             }
 
-            if (!state.TryGetOpName(tokenHandlers, out string opName))
+            if (!state.TryGetOpName(this, out string opName))
             {
-                return false;
+                throw new LuaParsingException(state);
             }
 
-            if (!tokenHandlers.TryHandle(state, tokenName, opName, out expression))
+            if (!TryHandle(state, tokenName, opName, out LuaTokenExpression expression))
             {
-                return false;
+                throw new LuaParsingException(state);
             }
-            return false;
+            return expression;
 
         }
 
-    }
-
-    public class LuaParsingOperatorState
-    {
-        public LuaParsingOperatorState(LuaParsingTokenHandlers parsingHandler, LuaParsingState parsingState, string tokenName, string opName)
-        {
-            ParsingHandler = parsingHandler;
-            ParsingState = parsingState;
-            TokenName = tokenName;
-            OpName = opName;
-        }
-
-        public LuaParsingTokenHandlers ParsingHandler { get; }
-        public LuaParsingState ParsingState { get; }
-        public string TokenName { get; }
-        public string OpName { get; }
-    }
-    public abstract class LuaParsingOperatorHandler
-    {
-        public abstract string Operator { get; }
-        public abstract LuaTokenExpression GetExpression(LuaParsingOperatorState state);
-    }
-    public class LuaParsingOperatorEqualHandler : LuaParsingOperatorHandler
-    {
-        public override string Operator => "=";
-
-        public override LuaTokenExpression GetExpression(LuaParsingOperatorState state)
-        {
-
-            throw new NotImplementedException();
-        }
     }
 }
