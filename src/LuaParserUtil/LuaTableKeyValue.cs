@@ -2,7 +2,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace SanctuarySSLib.Models
+namespace LuaParserUtil
 {
     [DebuggerDisplay("Key: [{Key}] Value: [{Value}]")]
     public class LuaTableKeyValue

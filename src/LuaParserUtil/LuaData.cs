@@ -1,4 +1,4 @@
-﻿namespace SanctuarySSLib.Models
+﻿namespace LuaParserUtil
 {
 
     public class LuaData

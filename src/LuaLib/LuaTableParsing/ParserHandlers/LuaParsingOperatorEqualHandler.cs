@@ -33,9 +33,9 @@ namespace SanctuarySSLib.LuaTableParsing.ParserHandlers
             }
 
             var expression = new LuaTokenBlockExpression(
-                state.OpName,
-                state.TokenName,
-                state.ParsingHandler.GetExpression(state.ParsingState));
+                state.OpName);
+            //state.TokenName,
+            //state.ParsingHandler.GetExpression(state.ParsingState));
 
             return expression;
         }

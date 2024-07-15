@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using LuaParserUtil;
+using Microsoft.Extensions.DependencyInjection;
 using SanctuarySSLib.LuaUtil;
 using SanctuarySSLib.MiscUtil;
 using SanctuarySSLib.WorkInProgressNotUsed;
@@ -31,7 +32,7 @@ namespace SanctuarySSModManager
                 .AddSingleton(typeof(ISteamInfo), typeof(SteamInfo))
                 .AddTransient<LuaDataLoader>()
                 .AddSingleton(typeof(IGameMetadata), typeof(GameMetadata))
-                .AddSingleton(typeof(ILuaTableDataLoader), typeof(LuaTableRegexDataLoader));
+                .AddSingleton(typeof(ILuaTableDataLoader), typeof(LuaTableDataLoader));
 
         }
 

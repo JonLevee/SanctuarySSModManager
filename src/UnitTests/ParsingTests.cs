@@ -1,10 +1,9 @@
 ﻿using DiffMatchPatch;
+using LuaParserUtil;
 using Microsoft.Extensions.DependencyInjection;
 using SanctuarySSLib.LuaTableParsing;
 using SanctuarySSLib.LuaUtil;
 using SanctuarySSLib.MiscUtil;
-using SanctuarySSLib.Models;
-using SanctuarySSLib.WorkInProgressNotUsed;
 using SanctuarySSModManager;
 using System.Text;
 
@@ -12,16 +11,19 @@ namespace UnitTests
 {
     public class ParsingTests
     {
+        private ILuaTableDataLoader luaTableDataLoader;
+
         [SetUp]
         public void Setup()
         {
             DIContainer.Initialize(ConfigureServices);
+            ILuaTableDataLoader luaTableDataLoader = DIContainer.GetService<ILuaTableDataLoader>();
 
         }
         private void ConfigureServices(ServiceCollection services)
         {
             services
-                .AddSingleton(typeof(ILuaTableDataLoader), typeof(LuaTableDescendParserDataLoader));
+                .AddSingleton(typeof(ILuaTableDataLoader), typeof(LuaTableDataLoader));
 
 
         }
@@ -67,8 +69,19 @@ namespace UnitTests
         [Test]
         public void TestExpression()
         {
+            var loader = DIContainer.GetService<ILuaTableDataLoader>();
+            var luaRootPath = @"D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua";
             // D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua\common\units\availableUnits.lua
             // D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua\common\systems\factions.lua
+            // D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua\engineFunctions.lua
+            // D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua\client\breadUIActions.lua
+            // D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua\common\systems\factions.lua
+            var luaFilePath = @"D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua\common\systems\factions.lua";
+            var tableData = new LuaTableData();
+            tableData.FilePath = luaFilePath.Substring(luaRootPath.Length + 1);
+            tableData.FileData.Append(File.ReadAllText(luaFilePath));
+
+            loader.Load(tableData);
             //var rootPath = @"D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua";
             //var parser = new LuaRegexTableParser(rootPath);
             //var factionsData = parser.Parse(@"common\systems\factions.lua").GetTable("FactionsData");

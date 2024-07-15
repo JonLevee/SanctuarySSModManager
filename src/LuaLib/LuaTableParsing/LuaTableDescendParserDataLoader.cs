@@ -1,5 +1,5 @@
-﻿using SanctuarySSLib.LuaTableParsing.Expression;
-using SanctuarySSLib.Models;
+﻿using LuaParserUtil;
+using SanctuarySSLib.LuaTableParsing.Expression;
 using SanctuarySSLib.WorkInProgressNotUsed;
 using SanctuarySSModManager.Extensions;
 using System.Diagnostics;
