@@ -5,7 +5,7 @@ namespace LuaParserUtil
     [DebuggerDisplay("{Name} = {Value}")]
     public class LuaExpressionNumber : LuaExpression
     {
-        public static bool TryGetNumber(LuaTableLoaderState state, LuaString name, ref LuaExpression expression)
+        public static bool TryGet(LuaTableLoaderState state, LuaString name, ref LuaExpression expression)
         {
             if (char.IsNumber(state.C) || (state.C == '-' && char.IsNumber(state.PeekC)))
             {

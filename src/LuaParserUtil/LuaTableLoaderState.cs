@@ -4,19 +4,22 @@ using System.Text.RegularExpressions;
 
 namespace LuaParserUtil
 {
-    [DebuggerDisplay("C='{C.ToString()}' Line={Line}")]
+    [DebuggerDisplay("{FileName}:{LineNumber} C='{C.ToString()}' Line={Line}")]
     public class LuaTableLoaderState
     {
         public StringBuilder SB { get; private set; }
+        public string FileName { get; }
         public int Index { get; set; }
         private Group matchGroup;
         private readonly char[] eolChars = ['\r', '\n'];
 
-        public LuaTableLoaderState(StringBuilder sb)
+        public LuaTableLoaderState(StringBuilder sb, string fileName)
         {
             SB = sb;
+            FileName = fileName;
         }
 
+        public int LineNumber => Enumerable.Range(0, Index).Count(i => SB[i] == '\n') + 1;
         public char C => SB[Index];
         public char PeekC => SB[Index + 1];
         public char PreviousC => SB[Index - 1];
@@ -66,6 +69,19 @@ namespace LuaParserUtil
                 {
                     ++Index;
                 }
+                SkipWhitespace();
+                return true;
+            }
+            return false;
+        }
+
+        public bool TrySkipComma()
+        {
+            SkipWhitespace();
+            if (C == ',')
+            {
+                ++Index;
+                SkipWhitespace();
                 return true;
             }
             return false;
@@ -82,12 +98,13 @@ namespace LuaParserUtil
             return name.Length > 0;
         }
 
-        public void SkipPastAssignmentOperator()
+        public bool TrySkipPastAssignmentOperator()
         {
             SkipWhitespace();
             if (C != '=')
-                throw new InvalidOperationException($"got '{C}' but expected '='");
+                return false;
             ++Index;
+            return true;
         }
     }
 

@@ -1,10 +1,12 @@
 ﻿
+using System.Diagnostics;
 using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
 namespace LuaParserUtil
 {
+    [DebuggerDisplay("{state}")]
     public class LuaTableDataLoader : ILuaTableDataLoader
     {
         private const RegexOptions regexOptions = RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.Multiline;
@@ -41,7 +43,8 @@ namespace LuaParserUtil
             var list = new LuaExpressionList(name);
             while (state.C != '}')
             {
-                list.Items.Add(GetExpression());
+                if (TryGetExpression(out LuaExpression childExpression))
+                    list.Items.Add(childExpression);
                 var hasComma = TryAdvancePastComma();
             }
             ++state.Index;
@@ -49,31 +52,50 @@ namespace LuaParserUtil
             return true;
         }
 
-
-
-        public LuaExpression GetExpression()
+        private bool TryGetConstant(LuaString name, ref LuaExpression expression)
         {
-            var expression = LuaExpression.Empty;
-            state.SkipWhitespace();
-            if (state.TrySkipComment())
-            {
-                return GetExpression();
-            }
-            if (state.TryGetNamedToken(out LuaString name))
-            {
-                state.SkipPastAssignmentOperator();
-                state.SkipWhitespace();
-            }
-
-            if (TryGetList(name, ref expression))
-                return expression;
-
-            if (LuaExpressionNumber.TryGetNumber(state, name, ref expression))
-                return expression;
+            if (LuaExpressionNumber.TryGet(state, name, ref expression))
+                return true;
 
             if (LuaExpressionString.TryGet(state, name, ref expression))
-                return expression;
+                return true;
 
+            if (LuaExpressionBoolean.TryGet(state, name, ref expression))
+                return true;
+
+            return false;
+        }
+
+        public bool TryGetExpression(out LuaExpression expression)
+        {
+            expression = LuaExpression.Empty;
+            state.SkipWhitespace();
+            while (state.TrySkipComment()) ;
+            if (state.TryGetNamedToken(out LuaString name))
+            {
+                if (!state.TrySkipPastAssignmentOperator())
+                {
+                    // reset to get constant
+                    state.Index -= name.Length;
+                    if (!TryGetConstant(LuaString.Empty, ref expression))
+                        throw new InvalidOperationException();
+                    return true;
+                }
+                state.SkipWhitespace();
+            }
+            if (TryGetList(name, ref expression))
+                return true;
+
+            if (TryGetConstant(name, ref expression))
+            {
+                state.TrySkipComma();
+                return true;
+            }
+            // if we are at end block, then this is an empty expression
+            if (state.C == '}' && name.IsEmpty)
+            {
+                return false;
+            }
             var line = state.Line;
             throw new NotImplementedException();
         }
@@ -81,20 +103,20 @@ namespace LuaParserUtil
 
         public void Load(LuaTableData tableData)
         {
-            state = new LuaTableLoaderState(tableData.FileData);
+            state = new LuaTableLoaderState(tableData.FileData, Path.GetFileName(tableData.FilePath));
             foreach (Match m in tableRegex.Matches(state.SB.ToString()))
             {
                 state.SetMatch(m);
-                var expression = GetExpression();
-                if (expression is not LuaExpressionList)
+                if (TryGetExpression(out LuaExpression expression))
                 {
-                    throw new InvalidOperationException();
+                    if (expression is not LuaExpressionList)
+                    {
+                        throw new InvalidOperationException();
+                    }
+                    tableData.TableData.Add((LuaExpressionList)expression);
                 }
-                tableData.TableData.Add((LuaExpressionList)expression);
             }
         }
 
     }
-
-
 }

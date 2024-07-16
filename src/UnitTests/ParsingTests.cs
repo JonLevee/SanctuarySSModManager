@@ -1,7 +1,6 @@
 ﻿using DiffMatchPatch;
 using LuaParserUtil;
 using Microsoft.Extensions.DependencyInjection;
-using SanctuarySSLib.LuaTableParsing;
 using SanctuarySSLib.LuaUtil;
 using SanctuarySSLib.MiscUtil;
 using SanctuarySSModManager;
@@ -23,7 +22,7 @@ namespace UnitTests
         private void ConfigureServices(ServiceCollection services)
         {
             services
-                .AddSingleton(typeof(ILuaTableDataLoader), typeof(LuaTableDataLoader));
+                .AddSingleton(typeof(ILuaTableDataLoader), typeof(LuaTableDataLoader2));
 
 
         }
@@ -71,22 +70,21 @@ namespace UnitTests
         {
             var loader = DIContainer.GetService<ILuaTableDataLoader>();
             var luaRootPath = @"D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua";
-            // D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua\common\units\availableUnits.lua
-            // D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua\common\systems\factions.lua
-            // D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua\engineFunctions.lua
-            // D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua\client\breadUIActions.lua
-            // D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua\common\systems\factions.lua
-            var luaFilePath = @"D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua\common\systems\factions.lua";
-            var tableData = new LuaTableData();
-            tableData.FilePath = luaFilePath.Substring(luaRootPath.Length + 1);
-            tableData.FileData.Append(File.ReadAllText(luaFilePath));
+            var files = new List<string>
+            {
+                @"D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua\common\units\availableUnits.lua",
+                @"D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua\common\systems\factions.lua",
+                @"D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua\engineFunctions.lua",
+                @"D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua\client\breadUIActions.lua",
+            };
+            foreach (var luaFilePath in files)
+            {
+                var tableData = new LuaTableData();
+                tableData.FilePath = luaFilePath.Substring(luaRootPath.Length + 1);
+                tableData.FileData.Append(File.ReadAllText(luaFilePath));
 
-            loader.Load(tableData);
-            //var rootPath = @"D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua";
-            //var parser = new LuaRegexTableParser(rootPath);
-            //var factionsData = parser.Parse(@"common\systems\factions.lua").GetTable("FactionsData");
-            //var availableUnits = parser.Parse(@"common\units\availableUnits.lua").GetTable("AvailableUnits");
-            //var enabledUnits = availableUnits.Where(kv=>(bool)kv.Value == true).ToList();
+                loader.Load(tableData);
+            }
         }
     }
 }

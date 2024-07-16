@@ -16,6 +16,7 @@ namespace LuaParserUtil
             this.end = end;
         }
 
+        public bool IsEmpty => Length == 0;
         public int Length => end - start;
 
         public static implicit operator string(LuaString s) => s.ToString();
