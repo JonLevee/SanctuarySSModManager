@@ -1,13 +1,13 @@
 ﻿using System.Diagnostics;
 
-namespace LuaParserUtil
+namespace LuaParserUtil.ToDelete
 {
     [DebuggerDisplay("{Name} = {Value}")]
     public class LuaExpressionNumber : LuaExpression
     {
         public static bool TryGet(LuaTableLoaderState state, LuaString name, ref LuaExpression expression)
         {
-            if (char.IsNumber(state.C) || (state.C == '-' && char.IsNumber(state.PeekC)))
+            if (char.IsNumber(state.C) || state.C == '-' && char.IsNumber(state.PeekC))
             {
                 var start = state.Index++;
                 while (char.IsNumber(state.C))

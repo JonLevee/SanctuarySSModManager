@@ -1,4 +1,4 @@
-﻿namespace LuaParserUtil
+﻿namespace LuaParserUtil.ToDelete
 {
     public class LuaExpressionList : LuaExpression
     {

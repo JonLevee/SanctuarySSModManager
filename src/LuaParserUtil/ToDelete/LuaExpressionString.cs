@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace LuaParserUtil
+namespace LuaParserUtil.ToDelete
 {
     [DebuggerDisplay("{Name} = {Value}")]
     public class LuaExpressionString : LuaExpression

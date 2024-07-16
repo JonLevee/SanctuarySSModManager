@@ -1,5 +1,5 @@
 ﻿
-using System.Text;
+using LuaParserUtil.LuaParsingToken;
 using System.Text.RegularExpressions;
 
 namespace LuaParserUtil
@@ -16,67 +16,38 @@ namespace LuaParserUtil
 
         public void Load(LuaTableData tableData)
         {
-            var lex = new Dictionary<Type, Func<object>>
-            {
-                { typeof(LuaTokenVariableName), ()=>{} }
-            };
             foreach (Match m in tableRegex.Matches(tableData.FileData.ToString()))
             {
-                var state = new LuaParsingState(tableData.FileData);
+                var state = new LuaParsingState(tableData.FileData, m);
+                // Statement       := KeyValuePair | Comment
+                // 
+                // 
+                // Dictionary      := { (KeyValuePair,{KeyValuePair} }
+                // KeyValuePair    := Key '=' Value
+                // Key             := Letter{Letter | Number} | '['Number']' | [String] 
+                // Comment         := --{any}(\r|\n)
+                // Value           := Name | Constant | String | Dictionary
+                // Name            := Letter{Letter | Number}
+                // Constant        := String | Number
+                // String          := Quote {PrintableSymbol} Quote
+                // PrintableSymbol := Letter | Digit | ' '
+                // Quote           := ' | "
+                // Word            := Letter{Letter}
+                // Number          := Digit{Digit}
+                // Letter          := "a" .. "z" | "A" .. "Z"
+                // Digit           := "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+
+                try
+                {
+                    if (!LuaTokenStatement.TryGet(state, out LuaTokenStatement token))
+                        throw new InvalidOperationException();
+                }
+                catch (Exception e)
+                {
+
+                    throw;
+                }
             }
         }
-    }
-
-    public class LuaParsingState
-    {
-        public LuaParsingState(StringBuilder sb)
-        {
-            SB = sb;
-        }
-
-        public StringBuilder SB { get; }
-        public int Index { get; set; }
-    }
-    public abstract class LuaParsingToken
-    {
-        protected LuaParsingToken(LuaParsingState state, int index, int length)
-        {
-            State = state;
-            Index = index;
-            Length = length;
-        }
-
-        public LuaParsingState State { get; }
-        public int Index { get; }
-        public int Length { get; }
-
-        public static implicit operator string(LuaParsingToken s) => s.ToString();
-        public override string ToString()
-        {
-            return State.SB.ToString(Index, Index + Length);
-        }
-
-    }
-
-    public class LuaTokenVariableName : LuaParsingToken
-    {
-        public static bool
-        public static bool TryParse(LuaParsingState state, out LuaTokenVariableName token)
-        {
-            var start = state.Index;
-            while (char.IsLetterOrDigit(state.SB[start]))
-                ++start;
-            token = new LuaTokenVariableName(state, start, state.Index);
-            return true;
-        }
-
-        public LuaTokenVariableName(LuaParsingState state, int index, int length) : base(state, index, length)
-        {
-        }
-    }
-
-    public class LuaTokenAssignmentOperator : LuaParsingToken
-    {
-        public LuaTokenAssignmentOperator
     }
 }

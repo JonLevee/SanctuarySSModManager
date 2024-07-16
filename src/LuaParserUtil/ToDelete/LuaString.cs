@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace LuaParserUtil
+namespace LuaParserUtil.ToDelete
 {
     public class LuaString
     {
