@@ -1,5 +1,8 @@
-﻿namespace LuaParserUtil.LuaParsingToken
+﻿using System.Diagnostics;
+
+namespace LuaParserUtil.LuaParsingToken
 {
+    [DebuggerDisplay("Name='{Name}'")]
     public class LuaTokenName : LuaToken
     {
         public string Name { get; }

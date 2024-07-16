@@ -1,21 +1,24 @@
-﻿namespace LuaParserUtil.LuaParsingToken
+﻿using System.Diagnostics;
+
+namespace LuaParserUtil.LuaParsingToken
 {
     public class LuaTokenValue : LuaToken
     {
+        [DebuggerDisplay("Value='{Value}'")]
         public LuaToken Value { get; }
 
         // Value           := Name | Constant | String | Dictionary
         public static bool TryGet(LuaParsingState state, out LuaTokenValue value)
         {
             value = null;
-            if (LuaTokenName.TryGet(state, out LuaTokenName name))
-            {
-                value = new LuaTokenValue(name);
-                return true;
-            }
             if (LuaTokenConstant.TryGet(state, out LuaTokenConstant constant))
             {
                 value = new LuaTokenValue(constant);
+                return true;
+            }
+            if (LuaTokenName.TryGet(state, out LuaTokenName name))
+            {
+                value = new LuaTokenValue(name);
                 return true;
             }
             if (LuaTokenString.TryGet(state, out LuaTokenString stringValue))

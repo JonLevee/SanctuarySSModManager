@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections;
+using System.Data.SqlTypes;
+using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
 
 namespace LuaParserUtil
 {
+    [DebuggerDisplay("C='{Current}' Line={Line}")]
     public class LuaParsingState : IEnumerator<char>
     {
         private readonly string[] matchingChars = ["[]", "''", "\"\""];
@@ -21,14 +24,15 @@ namespace LuaParserUtil
         public StringBuilder SB { get; }
         public int Index { get; private set; }
         public char Current => SB[Index];
-        public char Previous => SB[Index-1];
+        public char Previous => SB[Index - 1];
         public char Next => SB[Index + 1];
 
         object IEnumerator.Current => SB[Index];
 
         public bool MoveIf(char c)
         {
-            if (Current == c) { 
+            if (Current == c)
+            {
                 MoveNext();
                 return true;
             }
@@ -55,7 +59,7 @@ namespace LuaParserUtil
 
         public void SkipWhitespace()
         {
-            while(char.IsWhiteSpace(Current) && MoveNext());
+            while (char.IsWhiteSpace(Current) && MoveNext()) ;
         }
 
         public bool CanSkipToMatchingChar => matchingChars.Any(p => p[0] == Current);
@@ -63,7 +67,7 @@ namespace LuaParserUtil
         public void SkipPastMatchingChar()
         {
             var match = matchingChars.Single(P => P[0] == Current)[1];
-            while (MoveNext()) 
+            while (MoveNext())
             {
                 if (Current == match && Previous != '\\')
                 {
@@ -72,6 +76,28 @@ namespace LuaParserUtil
                 }
             }
         }
+
+        private readonly char[] eolChars = ['\r', '\n'];
+        public string Line
+        {
+            get
+            {
+                var start = Index;
+                while (start > 0 && !eolChars.Contains(SB[start - 1]))
+                    --start;
+                var end = Index;
+                while (end < SB.Length && !eolChars.Contains(SB[end]))
+                    ++end;
+                var tempSb = new StringBuilder();
+                tempSb.Append(SB.ToString(start, Index - start));
+                tempSb.Append('[');
+                tempSb.Append(Current);
+                tempSb.Append(']');
+                tempSb.Append(SB.ToString(Index + 1, end - Index - 1));
+                return tempSb.ToString();
+            }
+        }
+
     }
 
 }

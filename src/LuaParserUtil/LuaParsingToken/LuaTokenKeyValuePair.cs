@@ -1,5 +1,8 @@
-﻿namespace LuaParserUtil.LuaParsingToken
+﻿using System.Diagnostics;
+
+namespace LuaParserUtil.LuaParsingToken
 {
+    [DebuggerDisplay("Key='{Key}' Value='{Value}'")]
     public class LuaTokenKeyValuePair : LuaToken
     {
         public LuaToken Key { get; }
@@ -10,28 +13,23 @@
         {
             keyValuePair = null;
             var keep = state.Index;
-            if (!LuaTokenKey.TryGetKey(state, out LuaToken key))
+            if (LuaTokenKey.TryGetKey(state, out LuaToken key))
             {
-                state.Reset(keep);
-                return false;
+                if (state.MoveIf('='))
+                {
+                    state.SkipWhitespace();
+                    if (LuaTokenValue.TryGet(state, out LuaTokenValue value))
+                    {
+                        keyValuePair = new LuaTokenKeyValuePair(key, value);
+                        return true;
+                    }
+                }
             }
-            if (state.Current != '=')
-            {
-                state.Reset(keep);
-                return false;
-            }
-            state.MoveNext();
-            state.SkipWhitespace();
-            if (!LuaTokenValue.TryGet(state, out LuaTokenValue value))
-            {
-                state.Reset(keep);
-                return false;
-            }
-            keyValuePair = new LuaTokenKeyValuePair(key, value);
-            return true;
+            state.Reset(keep);
+            return false;
         }
 
-        public LuaTokenKeyValuePair(LuaToken key, LuaTokenValue value) 
+        public LuaTokenKeyValuePair(LuaToken key, LuaTokenValue value)
         {
             Key = key;
             Value = value;

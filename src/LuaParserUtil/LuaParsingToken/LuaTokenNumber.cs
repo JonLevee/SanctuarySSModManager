@@ -1,8 +1,11 @@
-﻿namespace LuaParserUtil.LuaParsingToken
+﻿using System.Diagnostics;
+
+namespace LuaParserUtil.LuaParsingToken
 {
+    [DebuggerDisplay("Value='{Number}'")]
     public class LuaTokenNumber : LuaToken
     {
-        public string Number { get; }
+        public string Value { get; }
 
         public static bool TryGet(LuaParsingState state, out LuaTokenNumber number)
         {
@@ -17,9 +20,9 @@
             return false;
         }
 
-        public LuaTokenNumber(string number)
+        public LuaTokenNumber(string value)
         {
-            Number = number;
+            Value = value;
         }
     }
 }
