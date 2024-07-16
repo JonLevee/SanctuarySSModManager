@@ -24,7 +24,7 @@ namespace LuaParserUtil
                 // 
                 // Dictionary      := { (KeyValuePair,{KeyValuePair} }
                 // KeyValuePair    := Key '=' Value
-                // Key             := Letter{Letter | Number} | '['Number']' | [String] 
+                // Key             := Name | '['Number']' | [String] 
                 // Comment         := --{any}(\r|\n)
                 // Value           := Name | Constant | String | Dictionary
                 // Name            := Letter{Letter | Number}
