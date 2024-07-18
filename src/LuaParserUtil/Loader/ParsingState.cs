@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections;
-using System.Data.SqlTypes;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace LuaParserUtil
+namespace LuaParserUtil.Loader
 {
-    [DebuggerDisplay("C='{Current}' Line={Line}")]
-    public class LuaParsingState : IEnumerator<char>
+    [DebuggerDisplay("{DebugLine}")]
+    public class ParsingState
     {
         private readonly string[] matchingChars = ["[]", "''", "\"\""];
-        public LuaParsingState(StringBuilder sb, Group group)
+        public ParsingState(StringBuilder sb, Group group, string filePath)
         {
             SB = sb;
+            FilePath = filePath;
             BeginIndex = group.Index;
             EndIndex = group.Index + group.Length;
             Index = BeginIndex;
@@ -21,45 +19,25 @@ namespace LuaParserUtil
 
         public int BeginIndex { get; private set; }
         public int EndIndex { get; private set; }
+        public int Mark { get; set; }
         public StringBuilder SB { get; }
+        public string FilePath { get; }
         public int Index { get; private set; }
         public char Current => SB[Index];
         public char Previous => SB[Index - 1];
         public char Next => SB[Index + 1];
+        public bool MoveIf(Func<char, bool> func) => func(Current) && MoveNext();
 
-        object IEnumerator.Current => SB[Index];
+        public bool HasMore => Index < EndIndex;
+        public bool MoveNext() => ++Index < EndIndex;
 
-        public bool MoveIf(char c)
-        {
-            if (Current == c)
-            {
-                MoveNext();
-                return true;
-            }
-            return false;
-        }
+        public void Reset(int? mark = null) => Index = mark ?? Mark;
 
-        public void Dispose()
-        {
-        }
-
-        public bool MoveNext()
-        {
-            return ++Index < EndIndex;
-        }
-
-        public void Reset()
-        {
-            throw new NotImplementedException();
-        }
-        public void Reset(int index)
-        {
-            Index = index;
-        }
-
+        public string MarkedText => SB.ToString(Mark, Index - Mark);
         public void SkipWhitespace()
         {
             while (char.IsWhiteSpace(Current) && MoveNext()) ;
+            Mark = Index;
         }
 
         public bool CanSkipToMatchingChar => matchingChars.Any(p => p[0] == Current);
@@ -78,26 +56,31 @@ namespace LuaParserUtil
         }
 
         private readonly char[] eolChars = ['\r', '\n'];
-        public string Line
+        public string DebugLine
         {
             get
             {
+                var lineCount = Enumerable.Range(0, Index).Count(i => SB[i] == '\n');
+                var tempSb = new StringBuilder($"{FilePath}:{lineCount} Begin:{BeginIndex} Index:{Index} End:{EndIndex} Line:");
                 var start = Index;
                 while (start > 0 && !eolChars.Contains(SB[start - 1]))
                     --start;
-                var end = Index;
-                while (end < SB.Length && !eolChars.Contains(SB[end]))
-                    ++end;
-                var tempSb = new StringBuilder();
-                tempSb.Append(SB.ToString(start, Index - start));
-                tempSb.Append('[');
-                tempSb.Append(Current);
-                tempSb.Append(']');
-                tempSb.Append(SB.ToString(Index + 1, end - Index - 1));
+                while (start < SB.Length && !eolChars.Contains(SB[start]))
+                {
+                    if (start == Index)
+                    {
+                        tempSb.Append('[');
+                        tempSb.Append(SB[start]);
+                        tempSb.Append(']');
+                    }
+                    else
+                    {
+                        tempSb.Append(SB[start]);
+                    }
+                    ++start;
+                }
                 return tempSb.ToString();
             }
         }
-
     }
-
 }

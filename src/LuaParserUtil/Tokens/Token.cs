@@ -3,26 +3,26 @@ using System;
 using System.Diagnostics;
 using System.Text;
 
-namespace LuaParserUtil.ParseTemp
+namespace LuaParserUtil.Tokens
 {
     [DebuggerDisplay("{Description}")]
-    public class TempToken
+    public class Token
     {
-        public static readonly TempToken Null = new TempToken();
+        public static readonly Token Null = new Token();
         private readonly StringBuilder sb;
         private readonly int startIndex;
         private readonly char[] eolChars = ['\r', '\n'];
         public int Length { get; }
 
-        private TempToken()
+        private Token()
         {
-            TokenType = TempTokenType.Null;
+            TokenType = TokenType.Null;
             sb = new StringBuilder("(null)");
             startIndex = 0;
             Length = sb.Length;
         }
 
-        public TempToken(TempTokenType tokenType, StringBuilder sb, int startIndex, int endIndex)
+        public Token(TokenType tokenType, StringBuilder sb, int startIndex, int endIndex)
         {
             TokenType = tokenType;
             this.sb = sb;
@@ -32,7 +32,7 @@ namespace LuaParserUtil.ParseTemp
 
         public string Text => sb.ToString(startIndex, Length);
 
-        public TempTokenType TokenType { get; }
+        public TokenType TokenType { get; }
 
         public string Description => $"[{TokenType}] '{Text}'";
         public string DebugLine => GetDebugLine(null);

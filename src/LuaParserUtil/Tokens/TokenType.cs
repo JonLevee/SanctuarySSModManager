@@ -1,7 +1,7 @@
-﻿namespace LuaParserUtil.ParseTemp
+﻿namespace LuaParserUtil.Tokens
 {
     [Flags]
-    public enum TempTokenType
+    public enum TokenType
     {
         Null = 0,
         Comment = 1 << 1,

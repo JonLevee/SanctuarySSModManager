@@ -1,9 +1,10 @@
 ﻿using DiffMatchPatch;
 using LuaParserUtil;
-using LuaParserUtil.ParseTemp;
+using LuaParserUtil.Loader;
 using Microsoft.Extensions.DependencyInjection;
 using SanctuarySSLib.LuaUtil;
 using SanctuarySSLib.MiscUtil;
+using SanctuarySSLib.Models;
 using SanctuarySSModManager;
 using System.Text;
 
@@ -12,6 +13,7 @@ namespace UnitTests
     public class ParsingTests
     {
         private ILuaTableDataLoader luaTableDataLoader;
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         [SetUp]
         public void Setup()
@@ -23,7 +25,7 @@ namespace UnitTests
         private void ConfigureServices(ServiceCollection services)
         {
             services
-                .AddSingleton(typeof(ILuaTableDataLoader), typeof(LuaTableDataLoader3));
+                .AddSingleton(typeof(ILuaTableDataLoader), typeof(LuaTableDataLoader));
 
 
         }
@@ -54,40 +56,29 @@ namespace UnitTests
         }
 
         [Test]
-        public void ParseAllExpression()
-        {
-            var data = new LuaData();
-            var loader = DIContainer.GetService<LuaDataLoader>();
-            loader.Load(data);
-            Console.WriteLine("table names");
-            foreach (var item in data.TableNames)
-            {
-                Console.WriteLine(item);
-            }
-        }
-
-        [Test]
         public void TestExpression()
         {
-            var loader = DIContainer.GetService<ILuaTableDataLoader>();
-            var steamInfo = new SteamInfo();
-            var appRootPath = steamInfo.GetRoot();
-            var luaRootPath = Path.Combine(appRootPath,  @"prototype\RuntimeContent\Lua");
-            var files = new List<string>
-            {
-                @"common\units\availableUnits.lua",
-                @"common\systems\factions.lua",
-                @"engineFunctions.lua",
-                @"client\breadUIActions.lua",
-            };
-            foreach (var luaFilePath in files)
-            {
-                var tableData = new LuaTableData();
-                tableData.FilePath = luaFilePath;
-                tableData.FileData.Append(File.ReadAllText(Path.Combine(luaRootPath, luaFilePath)));
+            var factions = DIContainer.GetService<FactionCollectionModel>();
+            factions.Load();
+            //var loader = DIContainer.GetService<ILuaTableDataLoader>();
+            //var steamInfo = new SteamInfo();
+            //var appRootPath = steamInfo.GetRoot();
+            //var luaRootPath = Path.Combine(appRootPath,  @"prototype\RuntimeContent\Lua");
+            //var files = new List<string>
+            //{
+            //    @"common\units\availableUnits.lua",
+            //    @"common\systems\factions.lua",
+            //};
+            //foreach (var luaFilePath in files)
+            //{
+            //    var tableData = new LuaTableData();
+            //    tableData.FilePath = luaFilePath;
+            //    tableData.FileData.Append(File.ReadAllText(Path.Combine(luaRootPath, luaFilePath)));
 
-                loader.Load(tableData);
-            }
+            //    loader.Load(tableData);
+            //    logger.Debug("Finished loading {tableData}", tableData);
+            //}
         }
     }
+
 }

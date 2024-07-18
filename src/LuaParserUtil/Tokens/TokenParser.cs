@@ -2,11 +2,11 @@
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace LuaParserUtil.ParseTemp
+namespace LuaParserUtil.Tokens
 {
 
     [DebuggerDisplay("{DebugLine}")]
-    public class TempTokenParser
+    public class TokenParser
     {
         private readonly StringBuilder sb;
         private int index;
@@ -16,29 +16,29 @@ namespace LuaParserUtil.ParseTemp
         private readonly char[] quoteChars = ['"', '\''];
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         Dictionary<char, SingeCharTempTokenType> singleCharTokens = ((SingeCharTempTokenType[])[
-            new SingeCharTempTokenType('=', TempTokenType.Assignment),
-            new SingeCharTempTokenType('{', TempTokenType.OpenBrace),
-            new SingeCharTempTokenType('}', TempTokenType.CloseBrace),
-            new SingeCharTempTokenType(',', TempTokenType.Separator),
-            new SingeCharTempTokenType('.', TempTokenType.Property)
+            new SingeCharTempTokenType('=', TokenType.Assignment),
+            new SingeCharTempTokenType('{', TokenType.OpenBrace),
+            new SingeCharTempTokenType('}', TokenType.CloseBrace),
+            new SingeCharTempTokenType(',', TokenType.Separator),
+            new SingeCharTempTokenType('.', TokenType.Property)
             {
-                MustFollow = [TempTokenType.Name, TempTokenType.CloseParam, TempTokenType.Variable]
+                MustFollow = [TokenType.Name, TokenType.CloseParam, TokenType.Variable]
             },
-            new SingeCharTempTokenType('(', TempTokenType.OpenParam),
-            new SingeCharTempTokenType(')', TempTokenType.CloseParam),
+            new SingeCharTempTokenType('(', TokenType.OpenParam),
+            new SingeCharTempTokenType(')', TokenType.CloseParam),
             ]).ToDictionary(c => c.C);
 
-        public TempTokenParser(StringBuilder sb, string filePath)
+        public TokenParser(StringBuilder sb, string filePath)
         {
             this.sb = sb;
             FilePath = filePath;
-            this.Tokens = new Queue<TempToken>();
+            Tokens = new Queue<Token>();
             index = 0;
             startIndex = 0;
             endIndex = 0;
         }
         public string FilePath { get; }
-        public Queue<TempToken> Tokens { get; }
+        public Queue<Token> Tokens { get; }
 
 
         public void Parse(Match m = null)
@@ -54,13 +54,13 @@ namespace LuaParserUtil.ParseTemp
                     if (Is("--"))
                     {
                         AdvanceUntil(eolChars.Contains);
-                        EnqueueToken(TempTokenType.Comment);
+                        EnqueueToken(TokenType.Comment);
                         continue;
                     }
                     if (Is(".."))
                     {
                         AdvanceUntil(eolChars.Contains);
-                        EnqueueToken(TempTokenType.Concat);
+                        EnqueueToken(TokenType.Concat);
                         continue;
                     }
                     if (TestChar(quoteChars.Contains))
@@ -69,7 +69,7 @@ namespace LuaParserUtil.ParseTemp
                         ++index;
                         AdvanceUntil(c => c == quote && Previous != '\\');
                         ++index;
-                        EnqueueToken(TempTokenType.String);
+                        EnqueueToken(TokenType.String);
                         continue;
                     }
                     // don't need to handle function definitions ...
@@ -77,27 +77,27 @@ namespace LuaParserUtil.ParseTemp
                     {
                         // still need to eat it up untile we find ^end$
                         AdvanceUntil(c => TestChar(eolChars.Contains) && sb.ToString(index - 3, 3) == "end" && TestChar(eolChars.Contains, 4));
-                        EnqueueToken(TempTokenType.FunctionDefinition);
+                        EnqueueToken(TokenType.FunctionDefinition);
                         continue;
 
                     }
-                    if (char.IsDigit(Current) || ((Current == '-' || Current == '.') && char.IsDigit(Next)))
+                    if (char.IsDigit(Current) || (Current == '-' || Current == '.') && char.IsDigit(Next))
                     {
                         ++index;
-                        AdvanceWhile(c=>char.IsDigit(c) || c == '.');
+                        AdvanceWhile(c => char.IsDigit(c) || c == '.');
                         if (CurrentToken.Contains('.'))
-                            EnqueueToken(TempTokenType.Double);
+                            EnqueueToken(TokenType.Double);
                         else
-                            EnqueueToken(TempTokenType.Number);
+                            EnqueueToken(TokenType.Number);
                         continue;
                     }
                     if (TestChar(IsValidVarNameChar))
                     {
                         AdvanceWhile(IsValidVarNameChar);
                         if (CurrentToken.All(char.IsLetter))
-                            EnqueueToken(TempTokenType.Name);
+                            EnqueueToken(TokenType.Name);
                         else
-                            EnqueueToken(TempTokenType.Variable);
+                            EnqueueToken(TokenType.Variable);
                         continue;
                     }
                     if (singleCharTokens.TryGetValue(Current, out SingeCharTempTokenType item))
@@ -159,10 +159,10 @@ namespace LuaParserUtil.ParseTemp
         private bool EOF => index >= endIndex;
 
 
-        private TempToken LastQueuedToken;
-        private void EnqueueToken(TempTokenType tokenType)
+        private Token LastQueuedToken;
+        private void EnqueueToken(TokenType tokenType)
         {
-            LastQueuedToken = new TempToken(tokenType, sb, startIndex, index);
+            LastQueuedToken = new Token(tokenType, sb, startIndex, index);
             logger.Debug("got {TokenType} {Text}", LastQueuedToken.TokenType, LastQueuedToken.Text);
             Tokens.Enqueue(LastQueuedToken);
         }
@@ -196,7 +196,7 @@ namespace LuaParserUtil.ParseTemp
 
         private class SingeCharTempTokenType
         {
-            public SingeCharTempTokenType(char c, TempTokenType tokenType)
+            public SingeCharTempTokenType(char c, TokenType tokenType)
             {
                 C = c;
                 TokenType = tokenType;
@@ -205,11 +205,11 @@ namespace LuaParserUtil.ParseTemp
             }
 
             public char C { get; }
-            public TempTokenType TokenType { get; }
-            public TempTokenType[] MustFollow { get; set; }
-            public Action<TempToken> Validate { get; set; }
+            public TokenType TokenType { get; }
+            public TokenType[] MustFollow { get; set; }
+            public Action<Token> Validate { get; set; }
 
-            private void DefaultValidation(TempToken previous)
+            private void DefaultValidation(Token previous)
             {
                 if (MustFollow.Any() && !MustFollow.Contains(previous.TokenType))
                 {
