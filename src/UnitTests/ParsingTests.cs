@@ -1,5 +1,6 @@
 ﻿using DiffMatchPatch;
 using LuaParserUtil;
+using LuaParserUtil.ParseTemp;
 using Microsoft.Extensions.DependencyInjection;
 using SanctuarySSLib.LuaUtil;
 using SanctuarySSLib.MiscUtil;
@@ -22,7 +23,7 @@ namespace UnitTests
         private void ConfigureServices(ServiceCollection services)
         {
             services
-                .AddSingleton(typeof(ILuaTableDataLoader), typeof(LuaTableDataLoader2));
+                .AddSingleton(typeof(ILuaTableDataLoader), typeof(LuaTableDataLoader3));
 
 
         }

@@ -9,11 +9,6 @@ namespace LuaParserUtil
         private const RegexOptions regexOptions = RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.Multiline;
         private readonly Regex tableRegex = new Regex(@"^(?<table>[a-zA-Z0-9-]+)\s*=\s*(?<data>{\s*.+^})", regexOptions);
 
-        public IEnumerable<string> GetUnsupportedTableNames()
-        {
-            yield break;
-        }
-
         public void Load(LuaTableData tableData)
         {
             foreach (Match m in tableRegex.Matches(tableData.FileData.ToString()))

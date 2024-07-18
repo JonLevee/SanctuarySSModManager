@@ -13,11 +13,6 @@ namespace LuaParserUtil
 
         public LuaTableLoaderState state { get; private set; }
 
-        public IEnumerable<string> GetUnsupportedTableNames()
-        {
-            yield break;
-        }
-
         public LuaTableDataLoader()
         {
         }
