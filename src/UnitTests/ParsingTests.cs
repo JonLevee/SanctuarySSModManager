@@ -70,19 +70,21 @@ namespace UnitTests
         public void TestExpression()
         {
             var loader = DIContainer.GetService<ILuaTableDataLoader>();
-            var luaRootPath = @"D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua";
+            var steamInfo = new SteamInfo();
+            var appRootPath = steamInfo.GetRoot();
+            var luaRootPath = Path.Combine(appRootPath,  @"prototype\RuntimeContent\Lua");
             var files = new List<string>
             {
-                @"D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua\common\units\availableUnits.lua",
-                @"D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua\common\systems\factions.lua",
-                @"D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua\engineFunctions.lua",
-                @"D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua\client\breadUIActions.lua",
+                @"common\units\availableUnits.lua",
+                @"common\systems\factions.lua",
+                @"engineFunctions.lua",
+                @"client\breadUIActions.lua",
             };
             foreach (var luaFilePath in files)
             {
                 var tableData = new LuaTableData();
-                tableData.FilePath = luaFilePath.Substring(luaRootPath.Length + 1);
-                tableData.FileData.Append(File.ReadAllText(luaFilePath));
+                tableData.FilePath = luaFilePath;
+                tableData.FileData.Append(File.ReadAllText(Path.Combine(luaRootPath, luaFilePath)));
 
                 loader.Load(tableData);
             }

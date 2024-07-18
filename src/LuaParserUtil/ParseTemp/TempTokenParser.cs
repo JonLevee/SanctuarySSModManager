@@ -51,7 +51,6 @@ namespace LuaParserUtil.ParseTemp
             {
                 while (TrySkipWhitespace())
                 {
-                    startIndex = index;
                     if (Is("--"))
                     {
                         AdvanceUntil(eolChars.Contains);
@@ -82,12 +81,20 @@ namespace LuaParserUtil.ParseTemp
                         continue;
 
                     }
+                    if (char.IsDigit(Current) || ((Current == '-' || Current == '.') && char.IsDigit(Next)))
+                    {
+                        ++index;
+                        AdvanceWhile(c=>char.IsDigit(c) || c == '.');
+                        if (CurrentToken.Contains('.'))
+                            EnqueueToken(TempTokenType.Double);
+                        else
+                            EnqueueToken(TempTokenType.Number);
+                        continue;
+                    }
                     if (TestChar(IsValidVarNameChar))
                     {
                         AdvanceWhile(IsValidVarNameChar);
-                        if (CurrentToken.All(char.IsDigit))
-                            EnqueueToken(TempTokenType.Number);
-                        else if (CurrentToken.All(char.IsLetter))
+                        if (CurrentToken.All(char.IsLetter))
                             EnqueueToken(TempTokenType.Name);
                         else
                             EnqueueToken(TempTokenType.Variable);
@@ -116,11 +123,13 @@ namespace LuaParserUtil.ParseTemp
         {
             while (!EOF && char.IsWhiteSpace(Current))
                 ++index;
+            startIndex = index;
             return !EOF;
         }
 
         private char Current => sb[index];
         private char Previous => sb[index - 1];
+        private char Next => sb[index + 1];
         private string CurrentToken => sb.ToString(startIndex, index - startIndex);
 
         private void AdvanceWhile(Func<char, bool> condition)

@@ -1,20 +1,32 @@
 ﻿using LuaParserUtil.LuaParsingToken;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
+using System.Diagnostics;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LuaParserUtil.ParseTemp
 {
+    [DebuggerDisplay("{DebugLine}")]
     public class LuaTableDataLoader3 : ILuaTableDataLoader
     {
         private const RegexOptions regexOptions = RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.Multiline;
         private readonly Regex tableRegex = new Regex(@"^(?<table>[a-zA-Z0-9-]+)\s*=\s*(?<data>{\s*.+^})", regexOptions);
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private Stack<TempToken> tokens = new Stack<TempToken>();
+        private TempToken currentToken = TempToken.Null;
+        private TempToken previousToken = TempToken.Null;
+        private string filePath;
         public void Load(LuaTableData tableData)
         {
+            filePath = tableData.FilePath;
             var parser = new TempTokenParser(tableData.FileData, tableData.FilePath);
             foreach (Match m in tableRegex.Matches(tableData.FileData.ToString()))
             {
@@ -42,10 +54,10 @@ namespace LuaParserUtil.ParseTemp
                 {
                     parser.Parse(m);
 
-                    var tokens = new Stack<TempToken>(parser.Tokens.Reverse());
+                    tokens = new Stack<TempToken>(parser.Tokens.Reverse());
                     // first tokens should always be represent keyValue
-                    if (!TryGetKeyValue(out LuaKeyValue o))
-                        throw new InvalidOperationException();
+                    if (!TryGetKeyValue(out LuaKeyValue keyValue))
+                        throw new LuaParsingException("Could not get top level keyValue");
                 }
                 catch (Exception e)
                 {
@@ -55,17 +67,15 @@ namespace LuaParserUtil.ParseTemp
             }
         }
 
-        private Stack<TempToken> tokens = new Stack<TempToken>();
         private bool TryGetKeyValue(out LuaKeyValue keyValue)
         {
             keyValue = LuaKeyValue.Null;
 
-            var token = tokens.Pop();
             if (TryGetToken(out TempToken name, TempTokenType.Name, TempTokenType.Variable))
             {
                 if (TryGetToken(out TempToken assignment, TempTokenType.Assignment))
                 {
-                    if (TryGetValue(out LuaValue value))
+                    if (TryGetValue(out LuaValueObject value))
                     {
                         keyValue = new LuaKeyValue(name, value);
                         return true;
@@ -77,94 +87,188 @@ namespace LuaParserUtil.ParseTemp
             return false;
         }
 
-        private bool TryGetValue(out LuaValue value)
+        private readonly TempTokenType[] validValueTypes = [
+            TempTokenType.Name, 
+            TempTokenType.String, 
+            TempTokenType.Number,
+            TempTokenType.Double,
+            TempTokenType.Variable
+            ];
+        private bool TryGetValue(out LuaValueObject value)
         {
-            var token = tokens.Pop();
-            switch (token.TokenType)
+            value = LuaValueObject.Null;
+            if (TryGetDictionary(out LuaDictionary dictionary))
             {
-                case TempTokenType.OpenBrace:
-                    if (!TryGetDictionary(out LuaDictionary dictionary))
-                        throw new LuaParsingException("Unable to get dictionary");
-                    value = new LuaValue(dictionary);
-                    return true;
-                default:
-                        throw new LuaParsingException($"Don't know how to handle tokentype {token.TokenType}");
+                value = dictionary;
+                return true;
             }
+
+            if (TryGetToken(out TempToken token, validValueTypes))
+            {
+                value = new LuaValue(token);
+                return true;
+            }
+            throw new LuaParsingException($"Don't know how to handle tokentype {PeekTokenType}");
         }
 
         private bool TryGetDictionary(out LuaDictionary dictionary)
         {
-            var token = tokens.Pop();
+            dictionary = LuaDictionary.Null;
+            if (!TryGetToken(out _, TempTokenType.OpenBrace))
+                return false;
             dictionary = new LuaDictionary();
-            while (token.TokenType != TempTokenType.CloseBrace)
+            while (PeekTokenType != TempTokenType.CloseBrace)
             {
+                if (TryGetComment(out _))
+                    continue;
 
+                if (TryGetSeparator(out _))
+                    continue;
+
+                if (TryGetKeyValue(out LuaKeyValue keyValue))
+                {
+                    dictionary.Add(keyValue);
+                    continue;
+                }
+                if (TryGetValue(out LuaValueObject value))
+                {
+                    dictionary.Add(value);
+                    continue;
+                }
+                throw new LuaParsingException($"Don't know how to handle tokentype {PeekTokenType}");
             }
+            EatToken(TempTokenType.CloseBrace);
             return true;
+        }
+
+        private bool TryGetSeparator(out LuaObject value)
+        {
+            value = LuaObject.Null;
+            if (TryGetToken(out TempToken token, TempTokenType.Separator))
+            {
+                // eat it
+                return true;
+            }
+            return false;
+        }
+
+        private bool TryGetComment(out LuaObject value)
+        {
+            value = LuaObject.Null;
+            if (TryGetToken(out TempToken token, TempTokenType.Comment))
+            {
+                // eat it
+                return true;
+            }
+            return false;
         }
 
         private bool TryGetToken(out TempToken token, params TempTokenType[] tokenTypes)
         {
             token = TempToken.Null;
-            if (!tokenTypes.Contains(tokens.Peek().TokenType))
+            if (!tokenTypes.Contains(PeekTokenType))
                 return false;
-            token = tokens.Pop();
+            token = GetToken();
             return true;
         }
+
+        private void EatToken(TempTokenType tokenType)
+        {
+            if (!TryGetToken(out TempToken token, tokenType))
+            {
+                throw new LuaParsingException($"Expected tokentype {PeekTokenType}");
+            }
+        }
+        private TempToken GetToken()
+        {
+            previousToken = currentToken;
+            var token = currentToken = tokens.Pop();
+            logger.Debug($"Popped {token.Description}");
+            return token;
+        }
+
+        private TempTokenType PeekTokenType => tokens.Peek().TokenType;
+
+        public string DebugLine
+        {
+            get => $"Prev:{previousToken.TokenType} Curr:{currentToken.TokenType} Next: {PeekTokenType} {tokens.Peek().GetDebugLine(filePath)}";
+        }
+
     }
 
-    public class LuaDictionary : LuaObject
-    {
-        private Dictionary<object, LuaObject> dictionary = new Dictionary<object, LuaObject>();
-        public LuaDictionary()
-        {
-        }
-        public int ArrayLength { get; set; }
-        public void Add(LuaObject value)
-        {
-            dictionary.Add(++ArrayLength, value);
-        }
-    }
     public class LuaObject
     {
+        public static readonly LuaObject Null = new LuaObject();
         public LuaObject()
         {
         }
     }
 
-    /// <summary>
-    /// this class is used to hold any type of lua value
-    /// </summary>
-    public class LuaValue
+    public class LuaValueObject : LuaObject
     {
-        public LuaValue(LuaDictionary dictionary)
+        public static readonly LuaValueObject Null = new LuaValueObject();
+        protected LuaValueObject() { }
+        public bool IsDictionary => this is LuaDictionary;
+        public bool IsValue => this is LuaValue;
+    }
+
+    [DebuggerDisplay("Count:{dictionary.Count}")]
+    public class LuaDictionary : LuaValueObject
+    {
+        public static readonly LuaDictionary Null = new LuaDictionary();
+        private Dictionary<object, LuaValueObject> dictionary = new Dictionary<object, LuaValueObject>();
+        public LuaDictionary()
         {
-            Dictionary = dictionary;
+        }
+        public int ArrayLength { get; set; }
+        public void Add(LuaValueObject value)
+        {
+            dictionary.Add(++ArrayLength, value);
+        }
+        public void Add(LuaKeyValue keyValue)
+        {
+            dictionary.Add(keyValue.Key, keyValue.Value);
+        }
+    }
+
+    [DebuggerDisplay("{Token}")]
+    public class LuaValue : LuaValueObject
+    {
+        public static readonly LuaValue Null = new LuaValue();
+        private LuaValue() { }
+
+
+        public LuaValue(TempToken token)
+        {
+            Token = token;
         }
 
-        public LuaDictionary Dictionary { get; }
+        public TempToken Token { get; }
     }
 
     public class LuaKeyValue : LuaObject
     {
-        public static readonly LuaKeyValue Null = new LuaKeyValue(null, null);
-        private readonly TempToken name;
+        public static readonly LuaKeyValue Null = new LuaKeyValue(TempToken.Null, LuaValue.Null);
 
-        public LuaKeyValue(TempToken name, LuaValue value)
+        public LuaKeyValue(TempToken key, LuaValueObject value)
         {
-            this.name = name;
+            KeyToken = key;
             Value = value;
         }
 
-        public string Key => name.Text;
-
-        public LuaValue Value { get; }
+        public TempToken KeyToken { get; }
+        public string Key => KeyToken.Text;
+        public LuaValueObject Value { get; }
     }
 
     public class LuaParsingException : Exception
     { 
-        public LuaParsingException(string message) : base(message) 
+        public LuaParsingException(
+            string message,
+            [CallerMemberName]
+            string caller = null) : base($"{caller}: {message}") 
         { 
+            
         }
     }
 }

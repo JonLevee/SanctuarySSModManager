@@ -5,6 +5,7 @@ using SanctuarySSLib.LuaUtil;
 using SanctuarySSLib.MiscUtil;
 using SanctuarySSLib.WorkInProgressNotUsed;
 using System.Reflection;
+using System.Xml.Linq;
 
 namespace SanctuarySSModManager
 {
@@ -25,7 +26,9 @@ namespace SanctuarySSModManager
             ConfigureDefaultServices(services);
             configureServices(services);
             serviceProvider = services.BuildServiceProvider();
-            var detailLog = Path.Combine(Assembly.GetExecutingAssembly().Location, "detailLog.txt");
+            var detailLog = Path.Combine(
+                Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName, 
+                "detailLog.txt");
             if (File.Exists(detailLog))
             {
                 File.Delete(detailLog);
@@ -33,7 +36,7 @@ namespace SanctuarySSModManager
             LogManager.Setup().LoadConfiguration(builder =>
             {
                 builder.ForLogger().FilterMinLevel(LogLevel.Info).WriteToConsole();
-                builder.ForLogger().FilterMinLevel(LogLevel.Debug).WriteToFile(fileName: Path.GetFileName(detailLog));
+                builder.ForLogger().FilterMinLevel(LogLevel.Debug).WriteToFile(fileName: detailLog);
             });
 
         }

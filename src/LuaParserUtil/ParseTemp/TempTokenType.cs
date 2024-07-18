@@ -17,6 +17,7 @@
         CloseParam = 1 << 11,
         Concat = 1 << 12,
         Number = 1 << 13,
-        Variable = Name | 1 << 14,
+        Double = 1 << 14,
+        Variable = Name | 1 << 15,
     }
 }
