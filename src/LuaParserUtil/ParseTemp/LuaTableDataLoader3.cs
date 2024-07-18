@@ -65,9 +65,9 @@ namespace LuaParserUtil.ParseTemp
             {
                 if (TryGetToken(out TempToken assignment, TempTokenType.Assignment))
                 {
-                    if (TryGetObject(out LuaObject obj))
+                    if (TryGetValue(out LuaValue value))
                     {
-                        keyValue = new LuaKeyValue(name, obj);
+                        keyValue = new LuaKeyValue(name, value);
                         return true;
                     }
                     tokens.Push(assignment);
@@ -77,14 +77,30 @@ namespace LuaParserUtil.ParseTemp
             return false;
         }
 
-        private bool TryGetObject(out LuaObject obj)
+        private bool TryGetValue(out LuaValue value)
         {
             var token = tokens.Pop();
             switch (token.TokenType)
             {
                 case TempTokenType.OpenBrace:
-                    break;
+                    if (!TryGetDictionary(out LuaDictionary dictionary))
+                        throw new LuaParsingException("Unable to get dictionary");
+                    value = new LuaValue(dictionary);
+                    return true;
+                default:
+                        throw new LuaParsingException($"Don't know how to handle tokentype {token.TokenType}");
             }
+        }
+
+        private bool TryGetDictionary(out LuaDictionary dictionary)
+        {
+            var token = tokens.Pop();
+            dictionary = new LuaDictionary();
+            while (token.TokenType != TempTokenType.CloseBrace)
+            {
+
+            }
+            return true;
         }
 
         private bool TryGetToken(out TempToken token, params TempTokenType[] tokenTypes)
@@ -116,12 +132,25 @@ namespace LuaParserUtil.ParseTemp
         }
     }
 
+    /// <summary>
+    /// this class is used to hold any type of lua value
+    /// </summary>
+    public class LuaValue
+    {
+        public LuaValue(LuaDictionary dictionary)
+        {
+            Dictionary = dictionary;
+        }
+
+        public LuaDictionary Dictionary { get; }
+    }
+
     public class LuaKeyValue : LuaObject
     {
         public static readonly LuaKeyValue Null = new LuaKeyValue(null, null);
         private readonly TempToken name;
 
-        public LuaKeyValue(TempToken name, LuaObject value)
+        public LuaKeyValue(TempToken name, LuaValue value)
         {
             this.name = name;
             Value = value;
@@ -129,6 +158,13 @@ namespace LuaParserUtil.ParseTemp
 
         public string Key => name.Text;
 
-        public LuaObject Value { get; }
+        public LuaValue Value { get; }
+    }
+
+    public class LuaParsingException : Exception
+    { 
+        public LuaParsingException(string message) : base(message) 
+        { 
+        }
     }
 }

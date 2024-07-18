@@ -22,10 +22,10 @@ namespace LuaParserUtil.ParseTemp
             new SingeCharTempTokenType(',', TempTokenType.Separator),
             new SingeCharTempTokenType('.', TempTokenType.Property)
             {
-                MustFollow = [TempTokenType.Name, TempTokenType.ParamsEnd, TempTokenType.Variable]
+                MustFollow = [TempTokenType.Name, TempTokenType.CloseParam, TempTokenType.Variable]
             },
-            new SingeCharTempTokenType('(', TempTokenType.ParamsStart),
-            new SingeCharTempTokenType(')', TempTokenType.ParamsEnd),
+            new SingeCharTempTokenType('(', TempTokenType.OpenParam),
+            new SingeCharTempTokenType(')', TempTokenType.CloseParam),
             ]).ToDictionary(c => c.C);
 
         public TempTokenParser(StringBuilder sb, string filePath)
