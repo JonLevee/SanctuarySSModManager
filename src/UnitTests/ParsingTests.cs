@@ -58,8 +58,9 @@ namespace UnitTests
         [Test]
         public void TestExpression()
         {
-            var factions = DIContainer.GetService<FactionCollectionModel>();
+            var factions = new FactionCollectionModel();
             factions.Load();
+            Dump(factions);
             //var loader = DIContainer.GetService<ILuaTableDataLoader>();
             //var steamInfo = new SteamInfo();
             //var appRootPath = steamInfo.GetRoot();
@@ -78,6 +79,18 @@ namespace UnitTests
             //    loader.Load(tableData);
             //    logger.Debug("Finished loading {tableData}", tableData);
             //}
+        }
+
+        private void Dump(FactionCollectionModel model)
+        {
+            foreach (var faction in model)
+            {
+                logger.Debug($"faction '{faction.Key}'");
+                foreach(var field in faction.Value)
+                {
+                    logger.Debug($"  '{field.Key}' = {field.Value.Text}");
+                }
+            }
         }
     }
 

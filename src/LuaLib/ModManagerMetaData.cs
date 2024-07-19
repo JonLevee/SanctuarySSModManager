@@ -31,7 +31,8 @@ namespace SanctuarySSModManager
             var settingsFile = Path.Combine(appFolder, "ModManagerMetaData.json");
             if (!File.Exists(settingsFile))
             {
-                settings.ShatteredSunDirectoryRoot = gameMetaData.GetLuaPath(gameMetaData.DefaultLuaFolder);
+                throw new NotImplementedException();
+                //settings.ShatteredSunDirectoryRoot = gameMetaData.GetLuaPath(gameMetaData.DefaultLuaFolder);
                 settings.ModRootFolder = @"prototype\RuntimeContent\Lua";
                 settings.ModManagerFolder = appFolder;
 

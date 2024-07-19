@@ -10,9 +10,10 @@ namespace LuaParserUtil
         {
             FilePath = string.Empty;
             FileData = new StringBuilder();
+            Tables = new LuaDictionary();
         }
         public StringBuilder FileData { get; }
         public string FilePath { get; set; }
-        public LuaDictionary Tables => new LuaDictionary();
+        public LuaDictionary Tables { get; }
     }
 }
