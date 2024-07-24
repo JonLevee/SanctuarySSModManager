@@ -1,13 +1,16 @@
 ﻿
+using SanctuarySSLib.Attributes;
 using System.IO;
 
 namespace SanctuarySSLib.MiscUtil
 {
+    [SingletonService]
     public interface ISteamInfo
     {
         string GetRoot(string appName);
     }
 
+    [DefaultService<ISteamInfo>]
     public class SteamInfo : ISteamInfo
     {
         private readonly List<string> steamFolders = new List<string>();

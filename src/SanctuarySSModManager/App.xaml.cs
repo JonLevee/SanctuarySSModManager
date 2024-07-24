@@ -16,11 +16,13 @@ namespace SanctuarySSModManager
         }
         private void ConfigureServices(ServiceCollection services)
         {
-            services.AddSingleton<MainWindow>();
+            services
+                .AddSingleton<MainWindow>()
+                .AddSingleton(SSSUserSettings.CreateInstance);
         }
         private void OnStartup(object sender, StartupEventArgs e)
         {
-            var mainWindow = DIContainer.GetService<MainWindow>();
+            var mainWindow = DIContainer.Services.GetService<MainWindow>();
             mainWindow?.Show();
         }
     }

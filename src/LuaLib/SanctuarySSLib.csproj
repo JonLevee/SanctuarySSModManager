@@ -15,11 +15,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\LuaParserUtil\LuaParserUtil.csproj" />
+		<ProjectReference Include="..\LuaParserUtil\LuaParserUtil.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Models\" />
+		<Folder Include="WorkInProgressNotUsed\" />
 	</ItemGroup>
 
 </Project>

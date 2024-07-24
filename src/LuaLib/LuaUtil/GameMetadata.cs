@@ -1,61 +1,59 @@
-﻿using SanctuarySSLib.MiscUtil;
+﻿using SanctuarySSLib.Attributes;
+using SanctuarySSLib.MiscUtil;
 
 namespace SanctuarySSLib.LuaUtil
 {
+    [SingletonService]
     public interface IGameMetadata
     {
         string GameAppName { get; }
-        string DefaultLuaFolder { get; set; }
+        string LuaFolder { get; set; }
         IEnumerable<string> LuaFolders { get; }
-        string GetLuaPath(string luaFolder);
+        string LuaPath { get; }
+        string GetFullPath(string relativePath);
     }
 
+    [DefaultService<IGameMetadata>]
     public class GameMetadata : IGameMetadata
     {
         private readonly ISteamInfo steamInfo;
         private readonly Dictionary<string, string> luaFolders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        private readonly string[] expectedLuaSubdirectories = ["client", "common", "host", "maps"];
+        //private readonly string defaultLuaFolder = "prototype";
+        private readonly string defaultLuaFolder = "engine";
 
-        public GameMetadata(ISteamInfo steamInfo, string defaultLuaFolder = "prototype")
+        public GameMetadata(ISteamInfo steamInfo)
         {
             this.steamInfo = steamInfo;
-            DefaultLuaFolder = defaultLuaFolder;
-        }
-
-        public string GameAppName => "Sanctuary Shattered Sun Demo";
-        public string DefaultLuaFolder { get; set; }
-
-        public IEnumerable<string> LuaFolders
-        {
-            get
+            LuaFolder = defaultLuaFolder;
+            var gameRoot = steamInfo.GetRoot(GameAppName);
+            foreach (var folder in Directory.GetDirectories(gameRoot, "lua", SearchOption.AllDirectories))
             {
-                EnsureLuaFoldersPopulated();
-                return luaFolders.Keys;
-            }
-        }
-
-
-        public string GetLuaPath(string luaFolder)
-        {
-            EnsureLuaFoldersPopulated();
-            return luaFolders[luaFolder];
-        }
-
-        private void EnsureLuaFoldersPopulated()
-        {
-            if (!luaFolders.Any())
-            {
-                var gameRoot = steamInfo.GetRoot(GameAppName);
-                foreach (var folder in Directory.GetDirectories(gameRoot, "lua", SearchOption.AllDirectories))
+                var subDirs = Directory.GetDirectories(folder).Select(d => d.Substring(folder.Length + 1)).ToArray();
+                if (expectedLuaSubdirectories.All(subDirs.Contains))
                 {
                     var name = folder.Substring(gameRoot.Length + 1).Split('\\')[0];
                     luaFolders[name] = folder;
                 }
-
-                if (string.IsNullOrWhiteSpace(DefaultLuaFolder) || !luaFolders.ContainsKey(DefaultLuaFolder))
-                {
-                    DefaultLuaFolder = luaFolders.Keys.FirstOrDefault() ?? string.Empty;
-                }
             }
+
+            if (string.IsNullOrWhiteSpace(LuaFolder) || !luaFolders.ContainsKey(LuaFolder))
+            {
+                LuaFolder = luaFolders.Keys.FirstOrDefault() ?? string.Empty;
+            }
+        }
+
+        public string GameAppName => "Sanctuary Shattered Sun Demo";
+        public string LuaFolder { get; set; }
+        public string LuaPath => luaFolders[LuaFolder];
+
+        public IEnumerable<string> LuaFolders => luaFolders.Keys;
+
+        public string GetFullPath(string relativePath)
+        {
+            var path = Path.Combine(LuaPath, relativePath);
+            path = path.Replace('/', '\\');
+            return path;
         }
     }
 

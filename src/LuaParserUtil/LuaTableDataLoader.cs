@@ -1,96 +1,41 @@
-﻿
-using System.Reflection.Metadata.Ecma335;
-using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
-using LuaParserUtil.ToDelete;
+﻿using NLua;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace LuaParserUtil
 {
-    public class LuaTableDataLoader : ILuaTableDataLoader
+    public class LuaTableDataLoader
     {
-        private const RegexOptions regexOptions = RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.Multiline;
-        private readonly Regex tableRegex = new Regex(@"^(?<table>[a-zA-Z0-9-]+)\s*=\s*(?<data>{\s*.+^})", regexOptions);
-
-        public LuaTableLoaderState state { get; private set; }
-
-        public LuaTableDataLoader()
-        {
-        }
-
-        private bool TryAdvancePastComma()
-        {
-            state.SkipWhitespace();
-            if (state.C == ',')
-            {
-                ++state.Index;
-                state.SkipWhitespace();
-                return true;
-            }
-            return false;
-        }
-
-        private bool TryGetList(LuaString name, ref LuaExpression expression)
-        {
-            if (state.C != '{')
-                return false;
-            ++state.Index;
-            var list = new LuaExpressionList(name);
-            while (state.C != '}')
-            {
-                list.Items.Add(GetExpression());
-                var hasComma = TryAdvancePastComma();
-            }
-            ++state.Index;
-            expression = list;
-            return true;
-        }
-
-
-
-        public LuaExpression GetExpression()
-        {
-            var expression = LuaExpression.Empty;
-            state.SkipWhitespace();
-            if (state.TrySkipComment())
-            {
-                return GetExpression();
-            }
-            if (state.TryGetNamedToken(out LuaString name))
-            {
-                state.SkipPastAssignmentOperator();
-                state.SkipWhitespace();
-            }
-
-            if (TryGetList(name, ref expression))
-                return expression;
-
-            if (LuaExpressionNumber.TryGet(state, name, ref expression))
-                return expression;
-
-            if (LuaExpressionString.TryGet(state, name, ref expression))
-                return expression;
-
-            var line = state.Line;
-            throw new NotImplementedException();
-        }
-
-
         public void Load(LuaTableData tableData)
         {
-            state = new LuaTableLoaderState(tableData.FileData);
-            foreach (Match m in tableRegex.Matches(state.SB.ToString()))
+            var luaFile = @"D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua\common\units\unitsTemplates\uea3011\uea3011.santp";
+            var luaString = File.ReadAllText(luaFile);
+            using (Lua lua = new Lua())
             {
-                state.SetMatch(m);
-                var expression = GetExpression();
-                if (expression is not LuaExpressionList)
-                {
-                    throw new InvalidOperationException();
-                }
-                tableData.TableData.Add((LuaExpressionList)expression);
+                lua.State.Encoding = Encoding.UTF8;
+                lua.DoString(luaString);
+                var table = (LuaTable)lua["UnitTemplate"];
+                var turrets = table["turrets"];
+
+                string res = (string)lua["UnitTemplate"];
+
             }
+            throw new NotImplementedException();
         }
+    }
+
+    public class LuaData
+    {
 
     }
 
-
+    public class LuaTableData
+    {
+        public string FilePath { get; set; }
+        public StringBuilder FileData { get; set; }
+        public List<LuaTableData> TableNames { get; }
+    }
 }

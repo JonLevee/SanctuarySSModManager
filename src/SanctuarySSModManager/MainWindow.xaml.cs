@@ -27,13 +27,15 @@ namespace SanctuarySSModManager
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        SSSUserSettings userSettings;
+
+        public MainWindow(SSSUserSettings userSettings)
         {
+            this.userSettings = userSettings;
             InitializeComponent();
 
-            var managerData = DIContainer.GetService<ModManagerMetaData>();
 
-            ApplicationDirectoryRoot.Text = managerData.ShatteredSunDirectoryRoot;
+            ApplicationDirectoryRoot.Text = userSettings.ShatteredSunDirectoryRoot;
 
 
             //var patch = new diff_match_patch();
@@ -49,9 +51,8 @@ namespace SanctuarySSModManager
         private void SnapshotButton_Click(object sender, RoutedEventArgs e)
         {
             var timer = Stopwatch.StartNew();
-            var managerData = DIContainer.GetService<ModManagerMetaData>();
-            var sourcePath = managerData.FullModRootFolder;
-            var targetPath = Path.Combine(managerData.ModManagerFolder, SnapshotName.Text, managerData.ModRootFolder);
+            var sourcePath = userSettings.FullModRootFolder;
+            var targetPath = Path.Combine(userSettings.AppDataFolder, SnapshotName.Text, userSettings.ModRootFolder);
             var files = Directory.GetFiles(sourcePath, "*", SearchOption.AllDirectories);
             foreach (var sourceFile in files)
             {

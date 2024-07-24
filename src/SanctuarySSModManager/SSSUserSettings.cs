@@ -1,25 +1,36 @@
-﻿using SanctuarySSLib.LuaUtil;
-using SanctuarySSLib.MiscUtil;
+﻿
+using Microsoft.Extensions.DependencyInjection;
+using SanctuarySSLib.LuaUtil;
 using SanctuarySSModManager.Extensions;
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 
 namespace SanctuarySSModManager
 {
-
-    public class ModManagerMetaData
+    public class SSSUserSettings
     {
         private static JsonSerializerOptions serializerOptions = new JsonSerializerOptions
         {
             WriteIndented = true,
         };
-
-        public static ModManagerMetaData CreateInstance(IServiceProvider serviceProvider)
+        public string FileName { get; }
+        private SSSUserSettings()
         {
-            IGameMetadata gameMetaData = DIContainer.GetService<IGameMetadata>();
-            ModManagerMetaData settings = new ModManagerMetaData();
+            ShatteredSunDirectoryRoot = string.Empty;
+            ModRootFolder = string.Empty;
+            AppDataFolder = string.Empty;
+        }
+
+        public static SSSUserSettings CreateInstance(IServiceProvider serviceProvider)
+        {
+            IGameMetadata gameMetaData = serviceProvider.GetService<IGameMetadata>();
+            SSSUserSettings settings = new SSSUserSettings();
             var appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             var appName = Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyProductAttribute>()?.Product;
             if (string.IsNullOrWhiteSpace(appName))
@@ -28,12 +39,12 @@ namespace SanctuarySSModManager
             }
             var appFolder = Path.Combine(appDataFolder, appName);
             appFolder.EnsureDirectoryExists();
-            var settingsFile = Path.Combine(appFolder, "ModManagerMetaData.json");
+            var settingsFile = Path.Combine(appFolder, $"{typeof(SSSUserSettings).Name}.json");
             if (!File.Exists(settingsFile))
             {
-                settings.ShatteredSunDirectoryRoot = gameMetaData.GetLuaPath(gameMetaData.DefaultLuaFolder);
+                settings.ShatteredSunDirectoryRoot = gameMetaData.LuaPath;
                 settings.ModRootFolder = @"prototype\RuntimeContent\Lua";
-                settings.ModManagerFolder = appFolder;
+                settings.AppDataFolder = appFolder;
 
                 var json = JsonSerializer.Serialize(settings, serializerOptions);
                 File.WriteAllText(settingsFile, json);
@@ -41,22 +52,16 @@ namespace SanctuarySSModManager
             else
             {
                 string json = File.ReadAllText(settingsFile);
-                settings = JsonSerializer.Deserialize<ModManagerMetaData>(json) ?? settings;
+                settings = JsonSerializer.Deserialize<SSSUserSettings>(json) ?? settings;
             }
             return settings;
-        }
 
-        public ModManagerMetaData()
-        {
-            ShatteredSunDirectoryRoot = string.Empty;
-            ModRootFolder = string.Empty;
-            ModManagerFolder = string.Empty;
         }
 
         public string ShatteredSunDirectoryRoot { get; set; }
         public string ModRootFolder { get; set; }
 
-        public string ModManagerFolder { get; set; }
+        public string AppDataFolder { get; set; }
 
         public string FullModRootFolder => Path.Combine(ShatteredSunDirectoryRoot, ModRootFolder);
     }

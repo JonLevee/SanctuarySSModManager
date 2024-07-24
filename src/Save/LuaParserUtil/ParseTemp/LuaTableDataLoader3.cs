@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -15,9 +16,11 @@ namespace LuaParserUtil.ParseTemp
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         public void Load(LuaTableData tableData)
         {
+
             var parser = new TempTokenParser(tableData.FileData, tableData.FilePath);
             foreach (Match m in tableRegex.Matches(tableData.FileData.ToString()))
             {
+
                 var state = new ParsingState(tableData.FileData, m, tableData.FilePath);
                 logger.Debug(" parsing {table}", m.Groups["table"].Value);
                 // Statement       := KeyValuePair | Comment

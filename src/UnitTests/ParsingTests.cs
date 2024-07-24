@@ -1,9 +1,10 @@
 ﻿using DiffMatchPatch;
 using LuaParserUtil;
-using LuaParserUtil.ParseTemp;
 using Microsoft.Extensions.DependencyInjection;
 using SanctuarySSLib.LuaUtil;
 using SanctuarySSLib.MiscUtil;
+using SanctuarySSLib.Models;
+using SanctuarySSLib.ViewModel;
 using SanctuarySSModManager;
 using System.Text;
 
@@ -11,33 +12,26 @@ namespace UnitTests
 {
     public class ParsingTests
     {
-        private ILuaTableDataLoader luaTableDataLoader;
+        private LuaTableDataLoader luaTableDataLoader;
 
         [SetUp]
         public void Setup()
         {
             DIContainer.Initialize(ConfigureServices);
-            ILuaTableDataLoader luaTableDataLoader = DIContainer.GetService<ILuaTableDataLoader>();
+            LuaTableDataLoader luaTableDataLoader = DIContainer.Services.GetService<LuaTableDataLoader>();
 
         }
         private void ConfigureServices(ServiceCollection services)
         {
-            services
-                .AddSingleton(typeof(ILuaTableDataLoader), typeof(LuaTableDataLoader3));
-
-
         }
 
         [Test]
-        public void DescentParserParseAll()
+        public void ModManager()
         {
-            //        var modManagerMetaData = new ModManagerMetaData
-            //        {
-            //            ShatteredSunDirectoryRoot = @"D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype",
-            //            ModRootFolder = "prototype",
-            //            ModManagerFolder = string.Empty
-            //        };
-            //        var luaDataLoader = new LuaDataLoader(modManagerMetaData);
+            //var manager = DIContainer.Services.GetService<modm>();
+            var m = DIContainer.Services.GetService<ShatteredSunModel>();
+            m.Load();
+            var vm = DIContainer.Services.GetService<ShatteredSunViewModel>();
 
 
             //        var rootPath = luaRelativePath == null
@@ -54,22 +48,9 @@ namespace UnitTests
         }
 
         [Test]
-        public void ParseAllExpression()
-        {
-            var data = new LuaData();
-            var loader = DIContainer.GetService<LuaDataLoader>();
-            loader.Load(data);
-            Console.WriteLine("table names");
-            foreach (var item in data.TableNames)
-            {
-                Console.WriteLine(item);
-            }
-        }
-
-        [Test]
         public void TestExpression()
         {
-            var loader = DIContainer.GetService<ILuaTableDataLoader>();
+            var loader = DIContainer.Services.GetService<LuaTableDataLoader>();
             var luaRootPath = @"D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua";
             var files = new List<string>
             {
