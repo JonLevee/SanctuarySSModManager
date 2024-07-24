@@ -47,10 +47,11 @@ namespace SanctuarySSModManager.Extensions
 
         public static ModelObject ToModelObject(this LuaTable luaTable)
         {
+            throw new NotImplementedException();
             var instance = new ModelObject();
             foreach (var kv in luaTable)
             {
-                instance.
+
             }
 
             return instance;

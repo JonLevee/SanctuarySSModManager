@@ -28,7 +28,7 @@ namespace SanctuarySSModManager
 
             ConfigureDefaultServices(services);
             configureServices(services);
-            serviceProvider = services.BuildServiceProvider();
+            Services = services.BuildServiceProvider();
             var detailLog = Path.Combine(Assembly.GetExecutingAssembly().Location, "detailLog.txt");
             if (File.Exists(detailLog))
             {
@@ -44,16 +44,13 @@ namespace SanctuarySSModManager
 
         private static void ConfigureDefaultServices(IServiceCollection services)
         {
-            services
-                .AddSingleton(ModManagerMetaData.CreateInstance)
-                .AddSingleton(typeof(ISteamInfo), typeof(SteamInfo))
-                .AddTransient<LuaDataLoader>()
-                .AddSingleton(typeof(IGameMetadata), typeof(GameMetadata))
-                .AddSingleton(typeof(ILuaTableDataLoader), typeof(LuaTableDataLoader));
-
-        }
-
-                typeAttr.attr.Register(services, typeAttr.type);
+            foreach (var type in Assembly.GetEntryAssembly().GetTypes().Where(t => !t.IsAbstract))
+            {
+                var attr = type.GetCustomAttributes().Where(a => a is ServiceAttribute).SingleOrDefault() as ServiceAttribute;
+                if (attr != null)
+                {
+                    attr.Register(services, type);
+                }
             }
         }
     }
