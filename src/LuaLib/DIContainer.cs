@@ -1,4 +1,5 @@
 ﻿using LuaParserUtil;
+using LuaParserUtil.Loader;
 using Microsoft.Extensions.DependencyInjection;
 using NLog;
 using SanctuarySSLib.Attributes;
@@ -7,6 +8,7 @@ using SanctuarySSLib.MiscUtil;
 using SanctuarySSLib.Models;
 using SanctuarySSModManager.Extensions;
 using System.Reflection;
+using System.Xml.Linq;
 
 namespace SanctuarySSModManager
 {
@@ -26,7 +28,7 @@ namespace SanctuarySSModManager
 
             ConfigureDefaultServices(services);
             configureServices(services);
-            Services = services.BuildServiceProvider();
+            serviceProvider = services.BuildServiceProvider();
             var detailLog = Path.Combine(Assembly.GetExecutingAssembly().Location, "detailLog.txt");
             if (File.Exists(detailLog))
             {
@@ -35,24 +37,21 @@ namespace SanctuarySSModManager
             LogManager.Setup().LoadConfiguration(builder =>
             {
                 builder.ForLogger().FilterMinLevel(LogLevel.Info).WriteToConsole();
-                builder.ForLogger().FilterMinLevel(LogLevel.Debug).WriteToFile(fileName: Path.GetFileName(detailLog));
+                builder.ForLogger().FilterMinLevel(LogLevel.Debug).WriteToFile(fileName: detailLog);
             });
 
         }
 
         private static void ConfigureDefaultServices(IServiceCollection services)
         {
-            var typeAttrs = Assembly
-                .GetExecutingAssembly()
-                .GetTypes()
-                .Where(t => !t.IsAbstract && null != t.GetCustomAttributes().SingleOrDefault(a => a is ServiceAttribute))
-                .Select(type => new { type, attr = type.GetCustomAttributes().SingleOrDefault(a => a is ServiceAttribute) as ServiceAttribute })
-                .ToList();
-            var defaultServiceAttributeName = typeof(DefaultServiceAttribute<>).Name;
-            foreach (var typeAttr in typeAttrs)
-            {
-                if (null == typeAttr || null == typeAttr.type || null == typeAttr.attr)
-                    continue;
+            services
+                .AddSingleton(ModManagerMetaData.CreateInstance)
+                .AddSingleton(typeof(ISteamInfo), typeof(SteamInfo))
+                .AddTransient<LuaDataLoader>()
+                .AddSingleton(typeof(IGameMetadata), typeof(GameMetadata))
+                .AddSingleton(typeof(ILuaTableDataLoader), typeof(LuaTableDataLoader));
+
+        }
 
                 typeAttr.attr.Register(services, typeAttr.type);
             }
