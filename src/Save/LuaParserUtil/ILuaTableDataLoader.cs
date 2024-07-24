@@ -1,4 +1,6 @@
 ﻿
+using LuaParserUtil.LuaObjects;
+
 namespace LuaParserUtil
 {
     public interface ILuaTableDataLoader
