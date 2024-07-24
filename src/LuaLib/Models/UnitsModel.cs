@@ -2,13 +2,14 @@
 using SanctuarySSLib.Attributes;
 using SanctuarySSLib.LuaUtil;
 using SanctuarySSLib.MiscUtil;
+using SanctuarySSModManager.Extensions;
 using System;
 using System.Text;
 
 namespace SanctuarySSLib.Models
 {
     [SingletonService]
-    public class UnitsModel : Dictionary<string, LuaTable>
+    public class UnitsModel : Dictionary<string, ModelObject>
     {
         public void Load(IGameMetadata gameMetadata, LuaValueLoader luaValueLoader)
         {
@@ -26,7 +27,8 @@ namespace SanctuarySSLib.Models
                     lua.State.Encoding = Encoding.UTF8;
                     lua.DoFile(luaFile);
                     var table = (LuaTable)lua[TableName];
-                    Add(luaFileName, table);
+                    var mo = table.ToModelObject();
+                    Add(luaFileName, mo);
                 }
 
             }

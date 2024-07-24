@@ -1,17 +1,18 @@
 ﻿using NLua;
 using SanctuarySSLib.Attributes;
+using SanctuarySSLib.LuaUtil;
 using System.Collections.Specialized;
 
 namespace SanctuarySSLib.ViewModel
 {
     [TransientService]
-    public class FactionViewModel : OrderedDictionary
+    public class FactionViewModel : Dictionary<string,string>
     {
-        public FactionViewModel(LuaTable model)
+        public FactionViewModel(ModelObject model)
         {
-            foreach (var key in model.Keys)
+            foreach (var kv in model)
             {
-                Add(key, model[key]);
+                Add((string)kv.Key, kv.Value.Text);
             }
         }
     }

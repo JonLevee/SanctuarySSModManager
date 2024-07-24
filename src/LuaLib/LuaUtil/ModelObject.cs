@@ -1,29 +1,35 @@
-﻿using System.Collections;
+﻿using SanctuarySSModManager.Extensions;
+using System.Collections;
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 
 namespace SanctuarySSLib.LuaUtil
 {
-    public class ModelObject : IDictionary<string, ModelObject>
+    public class ModelObject : IDictionary<object, ModelObject>
     {
         public static ModelObject Null => new ModelObject();
         private readonly OrderedDictionary dictionary;
         public object Value { get; set; }
 
-        public ICollection<string> Keys => (ICollection<string>)dictionary.Keys;
+        public string Text => (string)Value;
 
-        public ICollection<ModelObject> Values => (ICollection<ModelObject>)dictionary.Values;
+        public long Long => (long)Value;
+
+        public ICollection<object> Keys => dictionary.Keys.ToCollection<object>();
+
+        public ICollection<ModelObject> Values => dictionary.Values.ToCollection< ModelObject>();
 
         public int Count => dictionary.Count;
 
         public bool IsReadOnly => dictionary.IsReadOnly;
 
-        public ModelObject this[string key]
+        public ModelObject this[object key]
         {
             get => (ModelObject)dictionary[key];
             set => dictionary[key] = value;
         }
+
 
         public ModelObject()
         {
@@ -31,30 +37,30 @@ namespace SanctuarySSLib.LuaUtil
             Value = null;
         }
 
-        public void Add(string key, ModelObject value)
+        public void Add(object key, ModelObject value)
         {
             dictionary.Add(key, value);
         }
 
-        public bool ContainsKey(string key)
+        public bool ContainsKey(object key)
         {
             return dictionary[key] != null;
         }
 
-        public bool Remove(string key)
+        public bool Remove(object key)
         {
             var success = ContainsKey(key);
             dictionary.Remove(key);
             return success;
         }
 
-        public bool TryGetValue(string key, [MaybeNullWhen(false)] out ModelObject value)
+        public bool TryGetValue(object key, [MaybeNullWhen(false)] out ModelObject value)
         {
             value = this[key];
             return value != null;
         }
 
-        public void Add(KeyValuePair<string, ModelObject> item)
+        public void Add(KeyValuePair<object, ModelObject> item)
         {
             dictionary.Add(item.Key, item.Value);
         }
@@ -64,26 +70,31 @@ namespace SanctuarySSLib.LuaUtil
             dictionary.Clear();
         }
 
-        public bool Contains(KeyValuePair<string, ModelObject> item)
+        public bool Contains(KeyValuePair<object, ModelObject> item)
         {
             return ContainsKey(item.Key) && item.Value == this[item.Key];
         }
 
-        public void CopyTo(KeyValuePair<string, ModelObject>[] array, int arrayIndex)
+        public void CopyTo(KeyValuePair<object, ModelObject>[] array, int arrayIndex)
         {
-            throw new NotImplementedException();
-            ((ICollection<KeyValuePair<string, ModelObject>>)dictionary).CopyTo(array, arrayIndex);
+            foreach(DictionaryEntry kv in dictionary)
+            {
+                var newKv = new KeyValuePair<object, ModelObject>(kv.Key, (ModelObject)kv.Value);
+                array.SetValue(newKv, arrayIndex);
+                ++arrayIndex;
+            }
         }
 
-        public bool Remove(KeyValuePair<string, ModelObject> item)
+        public bool Remove(KeyValuePair<object, ModelObject> item)
         {
-            throw new NotImplementedException();
-            return ((ICollection<KeyValuePair<string, ModelObject>>)dictionary).Remove(item);
+            var success = ContainsKey((object)item.Key);
+            dictionary.Remove(item.Key);
+            return success;
         }
 
-        public IEnumerator<KeyValuePair<string, ModelObject>> GetEnumerator()
+        public IEnumerator<KeyValuePair<object, ModelObject>> GetEnumerator()
         {
-            return Keys.Select(k => new KeyValuePair<string, ModelObject>(k, this[k])).GetEnumerator();
+            return Keys.Select(k => new KeyValuePair<object, ModelObject>(k, this[k])).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

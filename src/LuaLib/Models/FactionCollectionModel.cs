@@ -19,7 +19,7 @@ namespace SanctuarySSLib.Models
         public void Load()
         {
             var loader = DIContainer.Services.GetService<LuaValueLoader>();
-            var factionData = loader.GetTableFromFile(RelativePath, TableName);
+            var factionData = loader.GetModelFromFile(RelativePath, TableName);
             throw new NotImplementedException();
             //foreach (LuaDictionary table in factionData.ArrayItems)
             //{

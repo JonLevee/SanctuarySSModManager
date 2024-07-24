@@ -9,28 +9,15 @@ using System.Text;
 namespace SanctuarySSLib.Models
 {
     [SingletonService]
-    public class FactionsModel : OrderedDictionary
+    public class FactionsModel : ModelObject
     {
         public void Load(IGameMetadata gameMetadata, LuaValueLoader luaValueLoader)
         {
-            var table1 = luaValueLoader.GetTableFromFile(RelativePath, TableName);
-            var model = table1.ToModelObject();
-
-
-
-            var luaFile = Path.Combine(gameMetadata.LuaPath, RelativePath);
-
-            using (Lua lua = new Lua())
+            var table = luaValueLoader.GetModelFromFile(RelativePath, TableName);
+            foreach (KeyValuePair<object, ModelObject> kv in table)
             {
-                lua.State.Encoding = Encoding.UTF8;
-                lua.DoFile(luaFile);
-                var table = (LuaTable)lua[TableName];
-                foreach (LuaTable value in table.Values)
-                {
-                    var name = (string)value["name"];
-                    Names.Add(name);
-                    Add(name, value);
-                }
+                Add(kv);
+                Names.Add(kv.Value["name"].Text);
             }
         }
 

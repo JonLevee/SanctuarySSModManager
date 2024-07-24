@@ -44,13 +44,17 @@ namespace SanctuarySSModManager
 
         private static void ConfigureDefaultServices(IServiceCollection services)
         {
-            foreach (var type in Assembly.GetEntryAssembly().GetTypes().Where(t => !t.IsAbstract))
+            var serviceTypes = AppDomain
+                .CurrentDomain
+                .GetAssemblies()
+                .SelectMany(a => a.GetTypes())
+                .Where(t => !t.IsAbstract)
+                .ToList();
+            foreach (var type in serviceTypes)
             {
-                var attr = type.GetCustomAttributes().Where(a => a is ServiceAttribute).SingleOrDefault() as ServiceAttribute;
+                var attr = type.GetCustomAttribute<ServiceAttribute>();
                 if (attr != null)
-                {
                     attr.Register(services, type);
-                }
             }
         }
     }

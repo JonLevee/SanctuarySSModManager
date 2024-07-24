@@ -2,6 +2,7 @@
 using NLua;
 using SanctuarySSLib.LuaUtil;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -45,16 +46,38 @@ namespace SanctuarySSModManager.Extensions
             return text;
         }
 
-        public static ModelObject ToModelObject(this LuaTable luaTable)
+        public static ModelObject ToModelObject(this object value)
         {
-            throw new NotImplementedException();
             var instance = new ModelObject();
-            foreach (var kv in luaTable)
+            switch(value)
             {
-
+                case LuaTable table:
+                    foreach (KeyValuePair<object, object> kv in table)
+                    {
+                        instance.Add(kv.Key, kv.Value.ToModelObject());
+                    }
+                    break;
+                case string:
+                case long:
+                case bool:
+                case double:
+                    instance.Value = value;
+                    break;
+                default:
+                    throw new NotImplementedException();
             }
 
             return instance;
+        }
+
+        public static ICollection<T> ToCollection<T>(this ICollection values)
+        {
+            var collection = new List<T>();
+            foreach (var item in values)
+            {
+                collection.Add((T)item);
+            }
+            return collection;
         }
     }
 }

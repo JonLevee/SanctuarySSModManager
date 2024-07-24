@@ -16,16 +16,16 @@ namespace SanctuarySSLib.MiscUtil
         {
             this.gameMetadata = gameMetadata;
         }
-        public LuaTable GetTableFromFile(string relativePath, string tableName)
+        public ModelObject GetModelFromFile(string relativePath, string tableName)
         {
-            var luaFile = Path.Combine(gameMetadata.LuaPath, relativePath);
+            var luaFile = gameMetadata.GetFullPath(relativePath);
             using (Lua lua = new Lua())
             {
                 lua.State.Encoding = Encoding.UTF8;
                 lua.DoFile(luaFile);
                 var table = (LuaTable)lua[tableName];
                 var mo = table.ToModelObject();
-                return table;
+                return mo;
             }
 
         }
