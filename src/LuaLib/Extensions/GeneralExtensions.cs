@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -78,6 +79,14 @@ namespace SanctuarySSModManager.Extensions
                 collection.Add((T)item);
             }
             return collection;
+        }
+
+        public static T GetCustomAttributeOrThrow<T>(this Type type) where T : Attribute
+        {
+            var attr = type.GetCustomAttribute<T>();
+            if (attr != null)
+                return attr;
+            throw new InvalidOperationException($"type {type.Name} must have an attribute of type {typeof(T).Name}");
         }
     }
 }

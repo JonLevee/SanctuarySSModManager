@@ -16,5 +16,6 @@ namespace SanctuarySSModManager.Extensions
         {
             return source.Where(x => x != null);
         }
+
     }
 }
