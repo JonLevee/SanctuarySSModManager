@@ -1,6 +1,8 @@
 ﻿using KeraLua;
+using Microsoft.Extensions.DependencyInjection;
 using NLua;
 using SanctuarySSLib.LuaUtil;
+using SanctuarySSLib.Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -50,7 +52,7 @@ namespace SanctuarySSModManager.Extensions
         public static ModelObject ToModelObject(this object value)
         {
             var instance = new ModelObject();
-            switch(value)
+            switch (value)
             {
                 case LuaTable table:
                     foreach (KeyValuePair<object, object> kv in table)
@@ -81,12 +83,24 @@ namespace SanctuarySSModManager.Extensions
             return collection;
         }
 
-        public static T GetCustomAttributeOrThrow<T>(this Type type) where T : Attribute
+        public static bool TryGetCustomAttribute<T>(this Type type, out T attr) where T : Attribute
         {
-            var attr = type.GetCustomAttribute<T>();
-            if (attr != null)
-                return attr;
-            throw new InvalidOperationException($"type {type.Name} must have an attribute of type {typeof(T).Name}");
+            attr = type.GetCustomAttribute<T>();
+            return attr != null;
+        }
+
+        private static ShatteredSunModel shatteredSunModel;
+        public static UnitEnabledEnum GetEnabled(this UnitModel unitModel)
+        {
+            if (null == shatteredSunModel)
+            {
+                shatteredSunModel = DIContainer.Services.GetService<ShatteredSunModel>();
+            }
+            if (shatteredSunModel.AvailableUnits.TryGetValue(unitModel.General.TpId, out bool enabled))
+            {
+                return enabled ? UnitEnabledEnum.Enabled : UnitEnabledEnum.Disabled;
+            }
+            return UnitEnabledEnum.MissingAvail;
         }
     }
 }

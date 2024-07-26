@@ -6,15 +6,11 @@ using System.Collections.Specialized;
 
 namespace SanctuarySSLib.ViewModel
 {
-    [TransientService]
-    public class FactionsViewModel : List<FactionViewModel>
+    public class FactionsViewModel : List<FactionModel>
     {
         public FactionsViewModel(FactionsModel model)
         {
-            foreach (var kv in model)
-            {
-                Add(new FactionViewModel(kv.Value));
-            }
+            AddRange(model);
         }
     }
 }

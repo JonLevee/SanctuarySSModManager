@@ -1,29 +1,25 @@
-﻿using NLua;
-using SanctuarySSLib.Attributes;
-using SanctuarySSLib.LuaUtil;
-using SanctuarySSLib.MiscUtil;
-using SanctuarySSModManager.Extensions;
-using System.Collections.Specialized;
-using System.Text;
+﻿using SanctuarySSLib.Attributes;
+using System.Diagnostics;
 
 namespace SanctuarySSLib.Models
 {
-    [SingletonService]
-    public class FactionsModel : ModelObject
+    [LuaObject(File = "factions.lua", Table = "FactionsData")]
+    public class FactionsModel : List<FactionModel>
     {
-        public void Load(IGameMetadata gameMetadata, LuaValueLoader luaValueLoader)
+
+    }
+
+    [DebuggerDisplay("{ToString()}")]
+    public class FactionModel
+    {
+        public string Name { get; set; }
+        public string TPLetter { get; set; }
+        public string Tag { get; set; }
+        public string InitialUnit { get; set; }
+
+        public override string ToString()
         {
-            var table = luaValueLoader.GetModelFromFile(RelativePath, TableName);
-            foreach (KeyValuePair<object, ModelObject> kv in table)
-            {
-                Add(kv);
-                Names.Add(kv.Value["name"].Text);
-            }
+            return string.Concat(GetType().GetProperties().Select(p => $"{p.Name}={p.GetValue(this) ?? "(null)"} "));
         }
-
-        public List<string> Names { get; } = new List<string>();
-        public string RelativePath => "common/systems/factions.lua";
-        public string TableName => "FactionsData";
-
     }
 }

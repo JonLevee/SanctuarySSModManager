@@ -49,4 +49,5 @@ namespace SanctuarySSLib.MiscUtil
             return instance;
         }
     }
+
 }

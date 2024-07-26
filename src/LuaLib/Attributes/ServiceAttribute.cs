@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics;
 using System.Reflection;
 
 namespace SanctuarySSLib.Attributes
@@ -6,6 +7,7 @@ namespace SanctuarySSLib.Attributes
 
     public abstract class ServiceAttribute : Attribute
     {
+        public static SingletonServiceAttribute Singleton = new SingletonServiceAttribute();
         public abstract ServiceLifetime Lifetime { get; }
         public virtual Type ServiceType(Type implementationType) => implementationType;
         public void Register(IServiceCollection services, Type implementationType)
@@ -47,4 +49,5 @@ namespace SanctuarySSLib.Attributes
             .Cast<ServiceAttribute>()
             .Single().Lifetime;
     }
+
 }

@@ -6,8 +6,25 @@
         xmlns:local="clr-namespace:SanctuarySSModManager"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+    <Window.Resources>
+        <Style TargetType="Label">
+            <Setter Property="FontFamily" Value="{StaticResource Oswald}" />
+            <Setter Property="FontWeight" Value="Regular" />
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="FontFamily" Value="{StaticResource Oswald}" />
+            <Setter Property="FontWeight" Value="Medium" />
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="FontFamily" Value="{StaticResource Oswald}" />
+            <Setter Property="FontWeight" Value="ExtraLight" />
+        </Style>
+
+    </Window.Resources>
+
     <Grid>
-        <Label Content="Shattered_Sun_Root_Folder" HorizontalAlignment="Left" Margin="34,20,0,0" VerticalAlignment="Top" Width="149"/>
+        <Label Content="Shattered Sun Root Folder" HorizontalAlignment="Left" Margin="34,20,0,0" VerticalAlignment="Top" Width="149"
+               />
         <TextBox x:Name="ApplicationDirectoryRoot" HorizontalAlignment="Left" Margin="202,24,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="514"/>
         <Button x:Name="SnapshotButton" Content="Snapshot" HorizontalAlignment="Left" Height="24" Margin="50,68,0,0" VerticalAlignment="Top" Width="120" Click="SnapshotButton_Click"/>
         <TextBox x:Name="SnapshotName" HorizontalAlignment="Left" Margin="202,71,0,0" TextWrapping="Wrap" Text="Vanilla" VerticalAlignment="Top" Width="514"/>

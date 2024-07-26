@@ -4,39 +4,46 @@ using SanctuarySSLib.LuaUtil;
 using SanctuarySSLib.MiscUtil;
 using SanctuarySSModManager.Extensions;
 using System;
+using System.Diagnostics;
 using System.Text;
 
 namespace SanctuarySSLib.Models
 {
-    [SingletonService]
-    public class UnitsModel : Dictionary<string, ModelObject>
+    [LuaObject(File = "units/unitsTemplates", Table = "UnitTemplate", Key = "general/tpId")]
+    public class UnitsModel : Dictionary<string, UnitModel>
     {
-        public void Load(IGameMetadata gameMetadata, LuaValueLoader luaValueLoader)
+        public UnitsModel() : base(StringComparer.OrdinalIgnoreCase)
         {
-            var luaUnitRoot = gameMetadata.GetFullPath(RelativePath);
-            foreach (var luaFile in Directory.GetFiles(luaUnitRoot, "*.santp", SearchOption.AllDirectories))
-            {
-                var luaFileName = Path.GetFileNameWithoutExtension(luaFile);
-                var luaParentName = Path.GetFileName(Path.GetDirectoryName(luaFile));
-                if (string.Compare(luaFileName, luaParentName) != 0)
-                {
-                    throw new InvalidOperationException($"lua file {luaFileName} != parent {luaParentName}");
-                }
-                using (Lua lua = new Lua())
-                {
-                    lua.State.Encoding = Encoding.UTF8;
-                    lua.DoFile(luaFile);
-                    var table = (LuaTable)lua[TableName];
-                    var mo = table.ToModelObject();
-                    Add(luaFileName, mo);
-                }
-
-            }
         }
+    }
 
-        public string RelativePath => "common/units/unitsTemplates";
-
-        public string TableName => "UnitTemplate";
-
+    public enum UnitEnabledEnum
+    {
+        MissingAvail,
+        Enabled,
+        Disabled
+    }
+    [DebuggerDisplay("{DebugString}")]
+    public class UnitModel
+    {
+        public UnitEnabledEnum Enabled { get; set; }
+        public UnitDefenceModel Defence { get; set; }
+        public UnitGeneralModel General { get; set; }
+        public string DebugString => $"[{General.TpId}] {General.Name} ({General.DisplayName})";
+    }
+    public class UnitDefenceModel
+    {
+        public UnitHealthModel Health { get; set; }
+    }
+    public class UnitHealthModel
+    {
+        public int Max { get; set; }
+        public int Value { get; set; }
+    }
+    public class UnitGeneralModel
+    {
+        public string DisplayName { get; set; }
+        public string Name { get; set; }
+        public string TpId { get; set; }
     }
 }

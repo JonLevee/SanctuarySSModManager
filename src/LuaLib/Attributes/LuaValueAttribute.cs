@@ -9,4 +9,5 @@
 
         public string? Key { get; }
     }
+
 }

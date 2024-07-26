@@ -16,23 +16,26 @@ namespace SanctuarySSLib.Models
 
         public ShatteredSunModel()
         {
-
+            Factions = new FactionsModel();
+            AvailableUnits = new AvailableUnitsModel();
         }
 
         public void Load()
         {
-            var gameMetadata = DIContainer.Services.GetService<IGameMetadata>();
-            var luaValueLoader = DIContainer.Services.GetService<LuaValueLoader>();
-
-            Factions = DIContainer.Services.GetService<FactionsModel>();
-            Factions.Load(gameMetadata, luaValueLoader);
-
-            AvailableUnits = DIContainer.Services.GetService<AvailableUnitsModel>();
-            AvailableUnits.Load(gameMetadata, luaValueLoader);
-
-            Units = DIContainer.Services.GetService<UnitsModel>();
-            Units.Load(gameMetadata, luaValueLoader);
-
+            var loader = DIContainer.Services.GetService<LuaObjectLoader>();
+            Factions = loader.Load<FactionsModel>();
+            AvailableUnits = loader.Load<AvailableUnitsModel>();
+            Units = loader.Load<UnitsModel>();
+            //var missingAvailKeys = Units.Keys.Where(k => !AvailableUnits.ContainsKey(k)).ToList();
+            //var missingUnitKeys = AvailableUnits.Keys.Where(k => !Units.ContainsKey(k)).ToList();
+            //foreach (var kv in Units)
+            //{
+            //    kv.Value.Enabled = AvailableUnits.ContainsKey(kv.Key)
+            //        ? AvailableUnits[kv.Key] ? UnitEnabledEnum.Enabled : UnitEnabledEnum.Disabled
+            //        : UnitEnabledEnum.MissingAvail;
+            //}
+            //var results = Units.GroupBy(u => u.Value.Enabled).ToDictionary(g => g.Key, g => g.OrderBy(u => u.Key).ToList());
         }
+
     }
 }

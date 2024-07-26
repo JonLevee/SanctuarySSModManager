@@ -31,9 +31,16 @@ namespace SanctuarySSModManager
 
         public MainWindow(SSSUserSettings userSettings)
         {
+            var label = new Label();
+            //var fontFam = new FontFamily(new Uri("pack://application:,,,/"), "./resources/#Oswald_Bold");
+            //foreach (FontFamily fontFamily in Fonts.GetFontFamilies(new Uri("pack://application:,,,/"), "./resources/"))
+            //{
+            //    // Perform action.
+            //}
+
             this.userSettings = userSettings;
             InitializeComponent();
-
+            Style = (Style)FindResource(typeof(Window));
 
             ApplicationDirectoryRoot.Text = userSettings.ShatteredSunDirectoryRoot;
 

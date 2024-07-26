@@ -6,30 +6,12 @@ using System.Text;
 
 namespace SanctuarySSLib.Models
 {
-    [SingletonService]
+    [LuaObject(File = "availableUnits.lua", Table = "AvailableUnits")]
     public class AvailableUnitsModel : Dictionary<string, bool>
     {
-        public void Load(
-        IGameMetadata gameMetadata,
-        LuaValueLoader luaValueLoader
-        )
+        public AvailableUnitsModel() : base(StringComparer.OrdinalIgnoreCase)
         {
-            var luaFile = gameMetadata.GetFullPath(RelativePath);
-            using (Lua lua = new Lua())
-            {
-                lua.State.Encoding = Encoding.UTF8;
-                lua.DoFile(luaFile);
-                var table = (LuaTable)lua[TableName];
-                foreach (var key in table.Keys)
-                {
-                    Add((string)key, (bool)table[key]);
-                }
-            }
         }
-
-        public string RelativePath => "common/units/availableUnits.lua";
-        public string TableName => "AvailableUnits";
-
     }
 
 }

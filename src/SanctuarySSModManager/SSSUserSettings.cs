@@ -20,7 +20,7 @@ namespace SanctuarySSModManager
             WriteIndented = true,
         };
         public string FileName { get; }
-        private SSSUserSettings()
+        public SSSUserSettings()
         {
             ShatteredSunDirectoryRoot = string.Empty;
             ModRootFolder = string.Empty;
