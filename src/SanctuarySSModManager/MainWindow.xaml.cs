@@ -41,7 +41,6 @@ namespace SanctuarySSModManager
             //}
 
             this.userSettings = userSettings;
-            userSettings.Load();
             InitializeComponent();
             Style = (Style)FindResource(typeof(Window));
 

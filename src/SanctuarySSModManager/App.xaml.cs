@@ -21,6 +21,8 @@ namespace SanctuarySSModManager
         }
         private void OnStartup(object sender, StartupEventArgs e)
         {
+            var settings = DIContainer.Get<SSSUserSettings>();
+            settings.Load();
             var mainWindow = DIContainer.Get<MainWindow>();
             mainWindow?.Show();
         }
