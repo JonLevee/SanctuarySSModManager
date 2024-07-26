@@ -1,5 +1,6 @@
 ﻿using NLua;
 using SanctuarySSLib.Attributes;
+using SanctuarySSLib.Enums;
 using SanctuarySSLib.LuaUtil;
 using SanctuarySSLib.MiscUtil;
 using SanctuarySSModManager.Extensions;
@@ -17,16 +18,11 @@ namespace SanctuarySSLib.Models
         }
     }
 
-    public enum UnitEnabledEnum
-    {
-        MissingAvail,
-        Enabled,
-        Disabled
-    }
     [DebuggerDisplay("{DebugString}")]
     public class UnitModel
     {
         public UnitEnabledEnum Enabled { get; set; }
+        public bool IsEnabled => Enabled == UnitEnabledEnum.Enabled;
         public UnitDefenceModel Defence { get; set; }
         public UnitGeneralModel General { get; set; }
         public string DebugString => $"[{General.TpId}] {General.Name} ({General.DisplayName})";

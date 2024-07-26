@@ -1,5 +1,7 @@
 ﻿using DiffMatchPatch;
 using Microsoft.Extensions.DependencyInjection;
+using SanctuarySSLib.Models;
+using SanctuarySSLib.ViewModel;
 using SanctuarySSModManager.Extensions;
 using System.Collections;
 using System.Configuration;
@@ -44,6 +46,9 @@ namespace SanctuarySSModManager
 
             ApplicationDirectoryRoot.Text = userSettings.ShatteredSunDirectoryRoot;
 
+            var model = DIContainer.Services.GetService<ShatteredSunModel>();
+            model.Load();
+            var viewModel = DIContainer.Services.GetService<ShatteredSunViewModel>();
 
             //var patch = new diff_match_patch();
 

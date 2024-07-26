@@ -35,6 +35,7 @@ namespace SanctuarySSLib.Models
             //        : UnitEnabledEnum.MissingAvail;
             //}
             //var results = Units.GroupBy(u => u.Value.Enabled).ToDictionary(g => g.Key, g => g.OrderBy(u => u.Key).ToList());
+            //var allDisabled = Units.Where(u => (u.Value.Enabled & UnitEnabledEnum.Disabled) != 0).Count();
         }
 
     }
