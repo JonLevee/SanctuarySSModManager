@@ -28,6 +28,7 @@
         <TextBox x:Name="ApplicationDirectoryRoot" HorizontalAlignment="Left" Margin="202,24,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="514"/>
         <Button x:Name="SnapshotButton" Content="Snapshot" HorizontalAlignment="Left" Height="24" Margin="50,68,0,0" VerticalAlignment="Top" Width="120" Click="SnapshotButton_Click"/>
         <TextBox x:Name="SnapshotName" HorizontalAlignment="Left" Margin="202,71,0,0" TextWrapping="Wrap" Text="Vanilla" VerticalAlignment="Top" Width="514"/>
+        <WebBrowser x:Name="Browser" Margin="0,127,0,0"/>
 
     </Grid>
 </Window>

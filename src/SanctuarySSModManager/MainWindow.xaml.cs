@@ -31,7 +31,7 @@ namespace SanctuarySSModManager
 
         public MainWindow(SSSUserSettings userSettings)
         {
-            var label = new Label();
+            // https://stackoverflow.com/questions/48545971/how-can-i-pass-data-to-from-a-webbrowser-control
             //var fontFam = new FontFamily(new Uri("pack://application:,,,/"), "./resources/#Oswald_Bold");
             //foreach (FontFamily fontFamily in Fonts.GetFontFamilies(new Uri("pack://application:,,,/"), "./resources/"))
             //{
