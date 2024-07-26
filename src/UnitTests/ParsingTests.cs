@@ -21,7 +21,7 @@ namespace UnitTests
         public void ModManager()
         {
             //var manager = DIContainer.Services.GetService<modm>();
-            var m = DIContainer.Services.GetService<ShatteredSunModel>();
+            var m = DIContainer.Get<ShatteredSunModel>();
             m.Load();
             var Units = m.Units.Values.GroupBy(u => u.Enabled).ToDictionary(g => g.Key, g => g.ToList());
             //var vm = DIContainer.Services.GetService<ShatteredSunViewModel>();

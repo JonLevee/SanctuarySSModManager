@@ -41,14 +41,15 @@ namespace SanctuarySSModManager
             //}
 
             this.userSettings = userSettings;
+            userSettings.Load();
             InitializeComponent();
             Style = (Style)FindResource(typeof(Window));
 
             ApplicationDirectoryRoot.Text = userSettings.ShatteredSunDirectoryRoot;
 
-            var model = DIContainer.Services.GetService<ShatteredSunModel>();
+            var model = DIContainer.Get<ShatteredSunModel>();
             model.Load();
-            var viewModel = DIContainer.Services.GetService<ShatteredSunViewModel>();
+            var viewModel = DIContainer.Get<ShatteredSunViewModel>();
 
             //var patch = new diff_match_patch();
 
@@ -72,7 +73,7 @@ namespace SanctuarySSModManager
                 var targetDir = Path.GetDirectoryName(targetFile);
                 if (null == targetDir)
                     throw new NullReferenceException();
-                targetDir.EnsureDirectoryExists();
+                targetFile.EnsureFileDirectoryExists();
                 File.Copy(sourceFile, targetFile);
             }
             timer.Stop();

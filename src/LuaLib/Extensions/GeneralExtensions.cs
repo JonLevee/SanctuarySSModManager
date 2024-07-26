@@ -8,6 +8,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -18,20 +19,27 @@ namespace SanctuarySSModManager.Extensions
 {
     public static class GeneralExtensions
     {
-        public static void EnsureDirectoryExists(this string? directory)
+        public static void EnsureFileDirectoryExists(this string file)
         {
-            if (null == directory) throw new ArgumentNullException(nameof(directory));
-            var info = new DirectoryInfo(directory);
-            if (info.Exists)
+            if (null == file) throw new ArgumentNullException(nameof(file));
+            var directoryName = Path.GetDirectoryName(file);
+            Debug.Assert(directoryName != null);
+            var stack = new Stack<DirectoryInfo>();
+            stack.Push(new DirectoryInfo(directoryName));
+            while(stack.Any())
             {
-                return;
+                var directory = stack.Peek();
+                Debug.Assert(directory.Parent != null);
+                if (!directory.Parent.Exists)
+                {
+                    stack.Push(directory.Parent);
+                    continue;
+                }
+                if (!directory.Exists)
+                {
+                    Directory.CreateDirectory(directory.FullName);
+                }
             }
-            if (info.FullName.Equals(info.Root.FullName, StringComparison.OrdinalIgnoreCase))
-            {
-                throw new DirectoryNotFoundException($"Directory root {info.Root.FullName} does not exist");
-            }
-            EnsureDirectoryExists(info.Parent?.FullName);
-            Directory.CreateDirectory(info.FullName);
         }
 
         public static void ForEach<T>(this IEnumerable<T> enumerable, Action<T> action)
@@ -91,18 +99,25 @@ namespace SanctuarySSModManager.Extensions
             return attr != null;
         }
 
-        private static ShatteredSunModel shatteredSunModel;
-        public static UnitEnabledEnum GetEnabled(this UnitModel unitModel)
+        public static bool Mirror(this IDictionary target, IDictionary source)
         {
-            if (null == shatteredSunModel)
+            var keysToAdd = source.Keys.Cast<object>().Where(k => !target.Contains(k)).ToList();
+            var keysToRemove = target.Keys.Cast<object>().Where(k => !source.Contains(k)).ToList();
+            var intersectedValuesDifferent = source
+                .Keys
+                .Cast<object>()
+                .Where(target.Contains)
+                .Where(k => target[k] != source[k])
+                .ToList();
+            foreach (var key in keysToAdd.Union(intersectedValuesDifferent))
             {
-                shatteredSunModel = DIContainer.Services.GetService<ShatteredSunModel>();
+                target[key] = source[key];
             }
-            if (shatteredSunModel.AvailableUnits.TryGetValue(unitModel.General.TpId, out bool enabled))
+            foreach (var key in keysToRemove)
             {
-                return enabled ? UnitEnabledEnum.Enabled : UnitEnabledEnum.Disabled;
+                target.Remove(key);
             }
-            return UnitEnabledEnum.MissingAvail;
+            return keysToAdd.Any() || keysToRemove.Any() || intersectedValuesDifferent.Any();
         }
     }
 }

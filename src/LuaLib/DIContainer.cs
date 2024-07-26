@@ -7,6 +7,7 @@ using SanctuarySSLib.LuaUtil;
 using SanctuarySSLib.MiscUtil;
 using SanctuarySSLib.Models;
 using SanctuarySSModManager.Extensions;
+using System.Diagnostics;
 using System.Reflection;
 using System.Xml.Linq;
 
@@ -14,13 +15,13 @@ namespace SanctuarySSModManager
 {
     public class DIContainer
     {
-        public static IServiceProvider Services { get; private set; }
+        private static IServiceProvider serviceProvider;
         private static ServiceCollection services;
 
         static DIContainer()
         {
             services = new ServiceCollection();
-            Services = services.BuildServiceProvider();
+            serviceProvider = services.BuildServiceProvider();
         }
 
         public static void Initialize(Action<ServiceCollection> configureServices)
@@ -28,7 +29,7 @@ namespace SanctuarySSModManager
 
             ConfigureDefaultServices(services);
             configureServices(services);
-            Services = services.BuildServiceProvider();
+            serviceProvider = services.BuildServiceProvider();
             var detailLog = Path.Combine(Assembly.GetExecutingAssembly().Location, "detailLog.txt");
             if (File.Exists(detailLog))
             {
@@ -56,6 +57,13 @@ namespace SanctuarySSModManager
                 if (attr != null)
                     attr.Register(services, type);
             }
+        }
+
+        public static T Get<T>() where T : class
+        {
+            var instance = serviceProvider.GetService<T>();
+            Debug.Assert(instance != null);
+            return instance;
         }
     }
 }
