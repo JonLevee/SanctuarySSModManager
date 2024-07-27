@@ -22,3 +22,37 @@ versioning
 
 issues
 	new drops of game seem to involve just patches, how to determine game build?
+
+About
+	see game version
+see mods available
+see mods active
+create mod
+
+modding
+back up game directory to vanilla
+create new mod
+activate mod
+deactivate mod
+delete mod
+package mod
+unpackage mod
+
+see grid of units
+filters
+	faction
+	tier
+	type
+	
+compare units
+	pick units
+	view by slice
+		row - filter
+		col - filter
+		page - filter
+		
+mod options
+	see location of sss root
+	see picked lua folder
+	see available lua folders
+	see mod folder root
