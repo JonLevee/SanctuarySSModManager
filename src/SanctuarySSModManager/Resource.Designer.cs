@@ -63,6 +63,16 @@ namespace SanctuarySSModManager {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] Oswald {
+            get {
+                object obj = ResourceManager.GetObject("Oswald", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] Oswald_Bold {
             get {
                 object obj = ResourceManager.GetObject("Oswald_Bold", resourceCulture);
@@ -117,6 +127,21 @@ namespace SanctuarySSModManager {
             get {
                 object obj = ResourceManager.GetObject("Oswald_SemiBold", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {\rtf1\ansi\deff0\nouicompat{\fonttbl{\f0\fnil\fcharset0 Roboto Black;}{\f1\fnil\fcharset0 Courier New;}}
+        ///{\*\generator Riched20 10.0.22621}\viewkind4\uc1 
+        ///\pard\b\f0\fs32\lang1033 Sanctuary: Shattered Sun Mod Manager and Viewer\par
+        ///\b0\f1\fs22\par
+        ///\par
+        ///}
+        ///.
+        /// </summary>
+        internal static string TitleBar {
+            get {
+                return ResourceManager.GetString("TitleBar", resourceCulture);
             }
         }
     }

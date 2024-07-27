@@ -26,12 +26,13 @@ namespace SanctuarySSModManager.Extensions
             Debug.Assert(directoryName != null);
             var stack = new Stack<DirectoryInfo>();
             stack.Push(new DirectoryInfo(directoryName));
-            while(stack.Any())
+            while (stack.Any())
             {
-                var directory = stack.Peek();
+                var directory = stack.Pop();
                 Debug.Assert(directory.Parent != null);
                 if (!directory.Parent.Exists)
                 {
+                    stack.Push(directory);
                     stack.Push(directory.Parent);
                     continue;
                 }
@@ -39,6 +40,7 @@ namespace SanctuarySSModManager.Extensions
                 {
                     Directory.CreateDirectory(directory.FullName);
                 }
+
             }
         }
 
@@ -99,7 +101,7 @@ namespace SanctuarySSModManager.Extensions
             return attr != null;
         }
 
-        public static bool Mirror(this IDictionary target, IDictionary source)
+        public static bool MirrorFrom(this IDictionary target, IDictionary source)
         {
             var keysToAdd = source.Keys.Cast<object>().Where(k => !target.Contains(k)).ToList();
             var keysToRemove = target.Keys.Cast<object>().Where(k => !source.Contains(k)).ToList();

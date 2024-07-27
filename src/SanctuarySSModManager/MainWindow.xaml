@@ -4,37 +4,24 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SanctuarySSModManager"
+        xmlns:toolkit="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"        
+        Title="MainWindow" Height="450" Width="800" Closing="OnClosing"    
         >
     <Window.Resources>
-        <Style TargetType="Label">
-            <Setter Property="FontFamily" Value="{StaticResource Oswald}" />
-            <Setter Property="FontWeight" Value="Regular" />
-        </Style>
-        <Style TargetType="Button">
-            <Setter Property="FontFamily" Value="{StaticResource Oswald}" />
-            <Setter Property="FontWeight" Value="Medium" />
-        </Style>
-        <Style TargetType="TextBox">
-            <Setter Property="FontFamily" Value="{StaticResource Oswald}" />
-            <Setter Property="FontWeight" Value="ExtraLight" />
-        </Style>
 
     </Window.Resources>
 
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="89*"/>
-            <ColumnDefinition Width="171*"/>
-            <ColumnDefinition Width="540*"/>
-        </Grid.ColumnDefinitions>
-        <Label Content="Shattered Sun Root Folder" HorizontalAlignment="Left" Margin="34,20,0,0" VerticalAlignment="Top" Width="149" Grid.ColumnSpan="2"/>
+    <StackPanel Orientation="Vertical">
+        <StackPanel Orientation="Horizontal">
+            <Button x:Name="ViewButton" Content="View"></Button>
+        </StackPanel>
+
+        <Label Content="Shattered Sun Root Folder" HorizontalAlignment="Left" Margin="34,20,0,0" VerticalAlignment="Top" Width="149" Grid.ColumnSpan="2" FontFamily="./resources/#Oswald"/>
         <TextBox x:Name="ApplicationDirectoryRoot" HorizontalAlignment="Left" Margin="113,24,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="514" Grid.ColumnSpan="2" Grid.Column="1"/>
         <Button x:Name="SnapshotButton" Content="Snapshot" HorizontalAlignment="Left" Height="24" Margin="50,68,0,0" VerticalAlignment="Top" Width="120" Click="SnapshotButton_Click" Grid.ColumnSpan="2"/>
         <TextBox x:Name="SnapshotName" HorizontalAlignment="Left" Margin="113,71,0,0" TextWrapping="Wrap" Text="Vanilla" VerticalAlignment="Top" Width="164" Grid.ColumnSpan="2" Grid.Column="1"/>
         <Label Content="Game Build" HorizontalAlignment="Left" Margin="127,67,0,0" VerticalAlignment="Top" Width="72" Grid.Column="2"/>
         <TextBox x:Name="GameBuild" HorizontalAlignment="Left" Margin="204,72,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="95" IsReadOnly="True" Grid.Column="2"/>
-
-    </Grid>
+    </StackPanel>
 </Window>

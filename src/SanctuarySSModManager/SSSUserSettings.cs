@@ -21,11 +21,11 @@ namespace SanctuarySSModManager
         {
             WriteIndented = true,
         };
-        private readonly IGameMetadata gameMetaData;
         private string settingsFilePath;
 
-        public SSSUserSettings(IGameMetadata gameMetaData)
+        public SSSUserSettings()
         {
+            var gameMetaData = DIContainer.Get<IGameMetadata>();
             var appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             var appName = Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyProductAttribute>()?.Product;
             if (string.IsNullOrWhiteSpace(appName))
@@ -38,7 +38,6 @@ namespace SanctuarySSModManager
             ShatteredSunDirectoryRoot = string.Empty;
             ModRootFolder = string.Empty;
             AppDataFolder = string.Empty;
-            this.gameMetaData = gameMetaData;
         }
 
         public void Load()
@@ -51,9 +50,12 @@ namespace SanctuarySSModManager
             var settings = JsonSerializer.Deserialize<SSSUserSettings>(json);
             if (settings != null)
             {
-                foreach(var property in GetType().GetProperties())
+                foreach (var property in GetType().GetProperties())
                 {
-                    property.SetValue(this, property.GetValue(settings));
+                    if (property.CanWrite)
+                    {
+                        property.SetValue(this, property.GetValue(settings));
+                    }
                 }
             }
         }

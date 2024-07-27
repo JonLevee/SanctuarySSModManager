@@ -57,7 +57,7 @@ namespace SanctuarySSLib.LuaUtil
                 }
             }
 
-            var updated = currentFolders.Mirror(luaFolders);
+            var updated = luaFolders.MirrorFrom(currentFolders);
 
             if (string.IsNullOrWhiteSpace(SelectedLuaFolder) || !luaFolders.ContainsKey(SelectedLuaFolder))
             {
