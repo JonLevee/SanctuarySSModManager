@@ -56,3 +56,24 @@ mod options
 	see picked lua folder
 	see available lua folders
 	see mod folder root
+
+
+UI
+first row buttons
+View Units panel
+left column filters
+(each filter has sort order option and level indicator with up, down, and none)
+(each filter has group by option and level)
+faction checkbox
+tier checkbox
+type checkbox
+name regex
+damage range
+defense range
+range range
+compare field selector highlights fields
+each field show all, equal, not equal, expression?
+right pane displays results
+right pane headers show grouping results 
+
+mod panel
