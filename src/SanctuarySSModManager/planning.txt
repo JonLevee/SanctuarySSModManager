@@ -64,6 +64,23 @@ View Units panel
 left column filters
 (each filter has sort order option and level indicator with up, down, and none)
 (each filter has group by option and level)
+<idea>
+add filters
+<filter>
+  list field
+  list ops
+    ==
+    !=
+    >
+    >=
+    <
+    <=
+    regex
+  text value for regex
+  list for non regex
+</filter>
+add,remove,update
+</idea>
 faction checkbox
 tier checkbox
 type checkbox
@@ -75,6 +92,9 @@ compare field selector highlights fields
 each field show all, equal, not equal, expression?
 right pane displays results
 right pane headers show grouping results 
+option to compare to other mod
+  automatically creates top level grouping
+  checkbox to filter out same
 
 mod panel
 <grid>
@@ -100,8 +120,25 @@ mod panel
 
 <grid [view_control]>
 <row>
-  <col
+  <col rowspan*>
+  </col>
+</row>
+<row>
+each grouping level has its own row
+  <col 2>
+grouping level 1 ..
+  </col>
+</row>
+<row>
+</row>
 </grid>
 
 <grid [modManager control]>
+  <row>
+    buttons
+      create new local mod
+      package mod
+      remove local mod
+      
+  </row>
 <grid>
