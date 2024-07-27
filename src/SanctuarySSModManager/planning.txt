@@ -96,7 +96,7 @@ option to compare to other mod
   automatically creates top level grouping
   checkbox to filter out same
 
-mod panel
+
 <grid>
   <row>rtf header</row>
   <row>
@@ -106,15 +106,14 @@ mod panel
     </col>
   </row>
   <row>
-    <col 2>
-      <button view/>
-    </col>
-    <col 3>
-      <button mod manager/>
+    <col 2> button per col
+      view
+      mod manager
+      mod creator
     </col>
   </row>
   <row span*>
-    <col span*>[view or mm control]</col>
+    <col span*>[view or mm or creator control]</col>
   </row>
 </grid>
 
@@ -136,9 +135,21 @@ grouping level 1 ..
 <grid [modManager control]>
   <row>
     buttons
+      get mod
+      
       create new local mod
       package mod
       remove local mod
       
+  </row>
+<grid>
+
+
+<grid [mod creator control]>
+  <row>
+    buttons
+      create new local
+      package mod
+      upload mod
   </row>
 <grid>
