@@ -77,3 +77,31 @@ right pane displays results
 right pane headers show grouping results 
 
 mod panel
+<grid>
+  <row>rtf header</row>
+  <row>
+    <col 2 span*>
+      current mod label
+      <listbox current_mod/>
+    </col>
+  </row>
+  <row>
+    <col 2>
+      <button view/>
+    </col>
+    <col 3>
+      <button mod manager/>
+    </col>
+  </row>
+  <row span*>
+    <col span*>[view or mm control]</col>
+  </row>
+</grid>
+
+<grid [view_control]>
+<row>
+  <col
+</grid>
+
+<grid [modManager control]>
+<grid>
