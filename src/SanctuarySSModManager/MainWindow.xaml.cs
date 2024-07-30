@@ -20,6 +20,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Resources;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using static System.Net.Mime.MediaTypeNames;
 
 using Path = System.IO.Path;
@@ -32,8 +33,9 @@ namespace SanctuarySSModManager
     public partial class MainWindow : Window
     {
         SSSUserSettings userSettings;
+        DispatcherTimer timer;
 
-        public MainWindow(SSSUserSettings userSettings)
+        public async MainWindow(SSSUserSettings userSettings)
         {
             // https://stackoverflow.com/questions/48545971/how-can-i-pass-data-to-from-a-webbrowser-control
             var fontFam = new FontFamily(new Uri("pack://application:,,,/"), "./resources/#Oswald_Bold");
@@ -51,7 +53,6 @@ namespace SanctuarySSModManager
             InitializeComponent();
             Style = (Style)FindResource(typeof(Window));
 
-            ApplicationDirectoryRoot.Text = userSettings.ShatteredSunDirectoryRoot;
 
             var model = DIContainer.Get<ShatteredSunModel>();
             model.Load();
@@ -65,27 +66,15 @@ namespace SanctuarySSModManager
             //JsonSerializer
 
             //var root = "D:\\SteamLibrary\\steamapps\\common\\Sanctuary Shattered Sun Demo\\prototype\\RuntimeContent\\Lua\\common\\units\\unitsTemplates\\uel1001\\uel10"
-
+            timer = new DispatcherTimer();
+            timer.Tick += Timer_Tick;
+            timer.Interval
+            timer.Start();
         }
 
-
-
-        private void SnapshotButton_Click(object sender, RoutedEventArgs e)
+        private void Timer_Tick(object? sender, EventArgs e)
         {
-            var timer = Stopwatch.StartNew();
-            var sourcePath = userSettings.FullModRootFolder;
-            var targetPath = Path.Combine(userSettings.AppDataFolder, SnapshotName.Text, userSettings.ModRootFolder);
-            var files = Directory.GetFiles(sourcePath, "*", SearchOption.AllDirectories);
-            foreach (var sourceFile in files)
-            {
-                var targetFile = sourceFile.Replace(sourcePath, targetPath);
-                var targetDir = Path.GetDirectoryName(targetFile);
-                if (null == targetDir)
-                    throw new NullReferenceException();
-                targetFile.EnsureFileDirectoryExists();
-                File.Copy(sourceFile, targetFile);
-            }
-            timer.Stop();
+            throw new NotImplementedException();
         }
 
         private void OnClosing(object sender, System.ComponentModel.CancelEventArgs e)

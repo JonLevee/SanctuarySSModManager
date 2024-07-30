@@ -12,16 +12,36 @@
 
     </Window.Resources>
 
-    <StackPanel Orientation="Vertical">
-        <StackPanel Orientation="Horizontal">
-            <Button x:Name="ViewButton" Content="View"></Button>
+    <Grid ShowGridLines="True">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="140"/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="100" Content="Sanctuary Shattered Sun Mod Manager" HorizontalAlignment="Center"/>
+        <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="100" HorizontalAlignment="Center" Orientation="Horizontal">
+            <StackPanel Name="LoadingPanel">
+                <Label Content="Loading ..."/>
+            </StackPanel>
+            <StackPanel Name="SelectedModPanel">
+                <Label Content="Selected mod"/>
+                <ListView Name="SelectedMod"/>
+            </StackPanel>
         </StackPanel>
-
-        <Label Content="Shattered Sun Root Folder" HorizontalAlignment="Left" Margin="34,20,0,0" VerticalAlignment="Top" Width="149" Grid.ColumnSpan="2" FontFamily="./resources/#Oswald"/>
-        <TextBox x:Name="ApplicationDirectoryRoot" HorizontalAlignment="Left" Margin="113,24,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="514" Grid.ColumnSpan="2" Grid.Column="1"/>
-        <Button x:Name="SnapshotButton" Content="Snapshot" HorizontalAlignment="Left" Height="24" Margin="50,68,0,0" VerticalAlignment="Top" Width="120" Click="SnapshotButton_Click" Grid.ColumnSpan="2"/>
-        <TextBox x:Name="SnapshotName" HorizontalAlignment="Left" Margin="113,71,0,0" TextWrapping="Wrap" Text="Vanilla" VerticalAlignment="Top" Width="164" Grid.ColumnSpan="2" Grid.Column="1"/>
-        <Label Content="Game Build" HorizontalAlignment="Left" Margin="127,67,0,0" VerticalAlignment="Top" Width="72" Grid.Column="2"/>
-        <TextBox x:Name="GameBuild" HorizontalAlignment="Left" Margin="204,72,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="95" IsReadOnly="True" Grid.Column="2"/>
-    </StackPanel>
+        <Label Grid.Row="2" Grid.Column="0" Width="10"/>
+        <Button Grid.Row="2" Grid.Column="1" Name="ViewButton" Width="100" Content="View"/>
+        <Button Grid.Row="2" Grid.Column="2" Name="ModManagerButton" Width="100" Content="Mod Manager" />
+        <Button Grid.Row="2" Grid.Column="3" Name="ModCreatorButton" Width="100" Content="Mod Creator" />
+        <Button Grid.Row="2" Grid.Column="4" Name="OptionsButton" Width="100" Content="Options" />
+        
+    </Grid>
 </Window>
