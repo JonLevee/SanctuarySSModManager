@@ -10,12 +10,17 @@ namespace SanctuarySSLib.ViewModel
     [SingletonService]
     public class ShatteredSunViewModel
     {
-        public FactionsViewModel Factions { get; }
-        public UnitsViewModel Units { get; }
-        public ShatteredSunViewModel(ShatteredSunModel ssModel)
+        public FactionsViewModel Factions { get; private set; }
+        public UnitsViewModel Units { get; private set; }
+        public ShatteredSunViewModel()
+        {
+        }
+
+        public async Task Load(ShatteredSunModel ssModel)
         {
             Factions = new FactionsViewModel(ssModel.Factions);
             Units = new UnitsViewModel(ssModel.Units);
+            await Task.CompletedTask;
         }
     }
 }

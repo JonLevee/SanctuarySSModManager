@@ -34,7 +34,7 @@ namespace SanctuarySSLib.Models
                     : UnitEnabledEnum.MissingAvail);
         }
 
-        public async void Load()
+        public async Task Load()
         {
             Factions = loader.Load<FactionsModel>();
             AvailableUnits = loader.Load<AvailableUnitsModel>();
@@ -42,7 +42,7 @@ namespace SanctuarySSLib.Models
             Units.ForEach(kv => kv.Value.Enabled = AvailableUnits.ContainsKey(kv.Key)
                     ? AvailableUnits[kv.Key] ? UnitEnabledEnum.Enabled : UnitEnabledEnum.Disabled
                     : UnitEnabledEnum.MissingAvail);
-            await Task.Run(() => Thread.Sleep(2000));
+            await Task.CompletedTask;
         }
     }
 }

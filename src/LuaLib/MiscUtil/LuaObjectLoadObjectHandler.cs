@@ -3,6 +3,8 @@ using SanctuarySSLib.Attributes;
 using SanctuarySSModManager.Extensions;
 using System.Collections;
 using System.Diagnostics;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace SanctuarySSLib.MiscUtil
 {
@@ -24,11 +26,58 @@ namespace SanctuarySSLib.MiscUtil
 
         public void LoadObject(object targetObject, LuaTable table)
         {
+            var serializeOptions = new JsonSerializerOptions
+            {
+                WriteIndented = true,
+                Converters =
+                {
+                    new LuaTableConverter()
+                }
+            };
+            var json = JsonSerializer.Serialize(table, serializeOptions);
+            blah
             var targetType = targetObject.GetType();
             var success = tryLoadObjectHandlers.Any(h => h(targetObject, targetType, table));
             if (!success)
             {
                 throw new InvalidOperationException($"No TryLoadObjectHandler could handle targetType {targetType}");
+            }
+        }
+
+        private class LuaTableConverter : JsonConverter<LuaTable>
+        {
+            public override LuaTable? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override void Write(Utf8JsonWriter writer, LuaTable value, JsonSerializerOptions options)
+            {
+                var list = new List<object>();
+                var dictionary = new Dictionary<string, object>();
+                long index = 1;
+
+                foreach (var key in value.Keys)
+                {
+                    if (key is long && Equals(key,index))
+                    {
+                        list.Add(value[key]);
+                        ++index;
+                    }
+                    else if (key is string)
+                    {
+                        dictionary.Add((string)key, value[key]);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException();
+                    }
+                }
+                object objectToSerialize = list.Count != 0 && dictionary.Count != 0
+                    ? throw new InvalidOperationException()
+                    : list.Count != 0 ? list : dictionary;
+                var text = JsonSerializer.Serialize(objectToSerialize, options);
+                writer.WriteRawValue(text);
             }
         }
 

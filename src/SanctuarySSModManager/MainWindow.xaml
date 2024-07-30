@@ -32,7 +32,7 @@
             <StackPanel Name="LoadingPanel">
                 <Label Content="Loading ..."/>
             </StackPanel>
-            <StackPanel Name="SelectedModPanel">
+            <StackPanel Name="SelectedModPanel" Visibility="Collapsed">
                 <Label Content="Selected mod"/>
                 <ListView Name="SelectedMod"/>
             </StackPanel>
