@@ -12,36 +12,30 @@
 
     </Window.Resources>
 
-    <Grid ShowGridLines="True">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="140"/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+    <StackPanel Orientation="Vertical">
         <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="100" Content="Sanctuary Shattered Sun Mod Manager" HorizontalAlignment="Center"/>
-        <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="100" HorizontalAlignment="Center" Orientation="Horizontal">
-            <StackPanel Name="LoadingPanel">
-                <Label Content="Loading ..."/>
-            </StackPanel>
-            <StackPanel Name="SelectedModPanel" Visibility="Collapsed">
+
+        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+            <Label Content="Loading ..." Name="LoadingPanel" />
+            <StackPanel Name="SelectedModPanel" Orientation="Horizontal">
                 <Label Content="Selected mod"/>
-                <ListView Name="SelectedMod"/>
+                <ListView Name="SelectedMod">None</ListView>
             </StackPanel>
         </StackPanel>
-        <Label Grid.Row="2" Grid.Column="0" Width="10"/>
-        <Button Grid.Row="2" Grid.Column="1" Name="ViewButton" Width="100" Content="View"/>
-        <Button Grid.Row="2" Grid.Column="2" Name="ModManagerButton" Width="100" Content="Mod Manager" />
-        <Button Grid.Row="2" Grid.Column="3" Name="ModCreatorButton" Width="100" Content="Mod Creator" />
-        <Button Grid.Row="2" Grid.Column="4" Name="OptionsButton" Width="100" Content="Options" />
-        
-    </Grid>
+        <TabControl>
+            <TabItem Name="UnitsViewTab" Header="Units View">
+
+            </TabItem>
+            <TabItem Name="ModManagerTab" Header="Mod Manager">
+
+            </TabItem>
+            <TabItem Name="ModCreatorTab" Header="Mod Creator">
+
+            </TabItem>
+            <TabItem Name="OptionsTab" Header="Options">
+
+            </TabItem>
+        </TabControl>
+    </StackPanel>
+
 </Window>

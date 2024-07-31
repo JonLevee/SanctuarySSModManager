@@ -25,6 +25,7 @@
             <Setter Property="FontFamily" Value="{StaticResource Oswald}" />
             <Setter Property="FontWeight" Value="ExtraLight" />
         </Style>
+        <BitmapImage x:Key="uae1001" UriSource="{StaticResource uae1001}"/>
     </Application.Resources>
 
 </Application>

@@ -63,6 +63,16 @@ namespace SanctuarySSModManager {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] gameicon {
+            get {
+                object obj = ResourceManager.GetObject("gameicon", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] Oswald {
             get {
                 object obj = ResourceManager.GetObject("Oswald", resourceCulture);
@@ -142,6 +152,16 @@ namespace SanctuarySSModManager {
         internal static string TitleBar {
             get {
                 return ResourceManager.GetString("TitleBar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] uea1001 {
+            get {
+                object obj = ResourceManager.GetObject("uea1001", resourceCulture);
+                return ((byte[])(obj));
             }
         }
     }

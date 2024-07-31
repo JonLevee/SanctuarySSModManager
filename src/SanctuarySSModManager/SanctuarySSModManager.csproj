@@ -53,6 +53,8 @@
 		<Resource Include="Resources\Fonts\Roboto\Roboto-Regular.ttf" />
 		<Resource Include="Resources\Fonts\Roboto\Roboto-Thin.ttf" />
 		<Resource Include="Resources\Fonts\Roboto\Roboto-ThinItalic.ttf" />
+		<Resource Include="Resources\Images\gameicon.png" />
+		<Resource Include="Resources\Images\uea1001.png" />
 		<Resource Include="Resources\TitleBar.rtf" />
 	</ItemGroup>
 

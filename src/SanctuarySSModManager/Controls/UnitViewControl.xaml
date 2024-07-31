@@ -6,10 +6,12 @@
              xmlns:local="clr-namespace:SanctuarySSModManager.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-    </Grid>
+    <StackPanel Orientation="Horizontal">
+        <StackPanel Orientation="Vertical">
+            <Label Content="Filters"/>
+        </StackPanel>
+        <Grid Width="auto">
+
+        </Grid>
+    </StackPanel>
 </UserControl>
