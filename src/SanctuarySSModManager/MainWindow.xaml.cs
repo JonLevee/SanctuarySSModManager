@@ -74,6 +74,7 @@ namespace SanctuarySSModManager
             var model = DIContainer.Get<ShatteredSunModel>();
             await model.Load();
             File.WriteAllText("root.json", model.GetJson());
+            UnitViewControl.Load(model);
             //var model = DIContainer.Get<ShatteredSunModel>();
             //await model.Load();
             //var viewModel = DIContainer.Get<ShatteredSunViewModel>();

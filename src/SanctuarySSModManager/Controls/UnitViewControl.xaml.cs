@@ -1,5 +1,9 @@
-﻿using System;
+﻿using SanctuarySSLib.Models;
+using SanctuarySSModManager.Extensions;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +27,26 @@ namespace SanctuarySSModManager.Controls
         public UnitViewControl()
         {
             InitializeComponent();
+        }
+
+        public void Load(ShatteredSunModel model)
+        {
+            Grid.RowDefinitions.Clear();
+            Grid.ColumnDefinitions.Clear();
+            var units = model.Units;
+            //var tags = units
+            //    .SelectMany(kv=>kv.Value.Get("tags").AsArray())
+            //    .Select(v=>v.GetValue<string>())
+            //    .Distinct()
+            //    .Order()
+            //    .ToList();
+            //File.WriteAllLines("tags.txt", tags);
+            foreach (var unit in units)
+            {
+                Debug.Assert(unit.Value != null);
+                var unitView = new UnitDisplay();
+                unitView.Load(unit.Value.AsObject());
+            }
         }
     }
 }

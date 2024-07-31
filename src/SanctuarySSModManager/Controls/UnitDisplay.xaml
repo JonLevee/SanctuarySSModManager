@@ -9,12 +9,12 @@
     <StackPanel Orientation="Vertical">
         <StackPanel Orientation="Horizontal">
             <Border BorderThickness="2">
-                <Image x:Name="UnitImage" Width="100" Height="100" Source="{StaticResource uae1001}"/>
+                <Image x:Name="UnitImage" Width="100" Height="100"/>
             </Border>
             <StackPanel Orientation="Vertical">
-                <Label Name="DisplayName" Content="Display Name" Tag="general/displayName" />
-                <Label Name="Name" Content="Unit Name" Tag="general/name"/>
-                <Label Name="Id" Content="Unit Id" Tag="general/tpId"/>
+                <Label Name="DisplayName" Content="Display Name"/>
+                <Label Name="UnitName" Content="Unit Name"/>
+                <Label Name="TpId" Content="Unit Id"/>
             </StackPanel>
         </StackPanel>
         <Grid>
@@ -35,7 +35,7 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
-            <Label Grid.Row="0" Grid.Column="0" Name="Health" Content="Health" Tag="defence/health/max"/>
+            <Label Grid.Row="0" Grid.Column="0" Name="Health" Content="Health"/>
             <Label Grid.Row="0" Grid.Column="1" Name="Mass" Content="Mass"/>
             <Label Grid.Row="0" Grid.Column="2" Name="Energy" Content="Energy"/>
             <Label Grid.Row="0" Grid.Column="3" Name="BuildTime" Content="Build time"/>

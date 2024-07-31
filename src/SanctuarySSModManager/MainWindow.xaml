@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SanctuarySSModManager"
+        xmlns:controls="clr-namespace:SanctuarySSModManager.Controls"
         xmlns:toolkit="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" Closing="OnClosing"    
@@ -24,7 +25,9 @@
         </StackPanel>
         <TabControl>
             <TabItem Name="UnitsViewTab" Header="Units View">
-
+                <controls:UnitViewControl x:Name="UnitViewControl">
+                    
+                </controls:UnitViewControl>
             </TabItem>
             <TabItem Name="ModManagerTab" Header="Mod Manager">
 

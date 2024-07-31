@@ -10,7 +10,7 @@
         <StackPanel Orientation="Vertical">
             <Label Content="Filters"/>
         </StackPanel>
-        <Grid Width="auto">
+        <Grid Name="Grid" Width="auto">
 
         </Grid>
     </StackPanel>
