@@ -10,7 +10,6 @@ namespace SanctuarySSLib.MiscUtil
         string GetRoot(string appName);
     }
 
-    [DefaultService<ISteamInfo>]
     public class SteamInfo : ISteamInfo
     {
         private readonly List<string> steamFolders = new List<string>();

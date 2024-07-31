@@ -23,7 +23,7 @@ namespace UnitTests
             //var manager = DIContainer.Services.GetService<modm>();
             var m = DIContainer.Get<ShatteredSunModel>();
             m.Load();
-            var Units = m.Units.Values.GroupBy(u => u.Enabled).ToDictionary(g => g.Key, g => g.ToList());
+            var Units = m.Units.GroupBy(kv => m.IsUnitEnabled(kv.Key)).ToDictionary(g => g.Key, g => g.ToList());
             //var vm = DIContainer.Services.GetService<ShatteredSunViewModel>();
 
 

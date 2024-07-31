@@ -5,44 +5,45 @@ using SanctuarySSLib.LuaUtil;
 using SanctuarySSLib.MiscUtil;
 using SanctuarySSModManager;
 using SanctuarySSModManager.Extensions;
+using System.Text.Json.Nodes;
 
 namespace SanctuarySSLib.Models
 {
     [SingletonService]
     public class ShatteredSunModel
     {
-        private readonly LuaObjectLoader loader;
+        private readonly LuaTableToJsonLoader loader;
 
-        public FactionsModel Factions { get; private set; }
-        public AvailableUnitsModel AvailableUnits { get; private set; }
-        public UnitsModel Units { get; private set; }
+#pragma warning disable CS8603, CS8602 // Possible null reference return. Dereference of a possibly null reference.
+        public JsonArray Factions => loader.Root["FactionsData"].AsArray();
+        public JsonObject AvailableUnits => loader.Root["AvailableUnits"].AsObject();
+        public JsonObject Units => loader.Root["UnitTemplate"].AsObject();
 
-        public ShatteredSunModel(LuaObjectLoader loader)
+        public bool IsUnitEnabled(string unitId) => ((bool?)AvailableUnits[unitId]) ?? false;
+
+        public string GetJson() => loader.ToString();
+
+        public ShatteredSunModel(LuaTableToJsonLoader loader)
         {
-            Factions = new FactionsModel();
-            AvailableUnits = new AvailableUnitsModel();
             this.loader = loader;
-        }
-
-        public void Reload()
-        {
-            loader.Reload(Factions);
-            loader.Reload(AvailableUnits);
-            loader.Reload(Units);
-            Units.ForEach(kv => kv.Value.Enabled = AvailableUnits.ContainsKey(kv.Key)
-                    ? AvailableUnits[kv.Key] ? UnitEnabledEnum.Enabled : UnitEnabledEnum.Disabled
-                    : UnitEnabledEnum.MissingAvail);
         }
 
         public async Task Load()
         {
-            Factions = loader.Load<FactionsModel>();
-            AvailableUnits = loader.Load<AvailableUnitsModel>();
-            Units = loader.Load<UnitsModel>();
-            Units.ForEach(kv => kv.Value.Enabled = AvailableUnits.ContainsKey(kv.Key)
-                    ? AvailableUnits[kv.Key] ? UnitEnabledEnum.Enabled : UnitEnabledEnum.Disabled
-                    : UnitEnabledEnum.MissingAvail);
+            loader.Load("common/systems/factions.lua", "FactionsData");
+            loader.Load("common/units/availableUnits.lua", "AvailableUnits");
+            var gameMetadata = DIContainer.Get<IGameMetadata>();
+            var rootPath = gameMetadata.GetFullPath("common/units/unitsTemplates");
+            foreach (var file in Directory.GetFiles(rootPath, "*.santp", SearchOption.AllDirectories))
+            {
+                var relativePath = file.Substring(gameMetadata.LuaPath.Length + 1);
+                loader.Load(relativePath, "UnitTemplate", node => node["general"]["tpId"].ToString());
+            }
+            // 
+            var root = loader.Root;
+            File.WriteAllText("root.json", loader.ToString());
             await Task.CompletedTask;
         }
     }
+#pragma warning restore CS8603, CS8602
 }

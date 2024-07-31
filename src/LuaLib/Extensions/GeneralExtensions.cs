@@ -61,30 +61,6 @@ namespace SanctuarySSModManager.Extensions
             return text;
         }
 
-        public static ModelObject ToModelObject(this object value)
-        {
-            var instance = new ModelObject();
-            switch (value)
-            {
-                case LuaTable table:
-                    foreach (KeyValuePair<object, object> kv in table)
-                    {
-                        instance.Add(kv.Key, kv.Value.ToModelObject());
-                    }
-                    break;
-                case string:
-                case long:
-                case bool:
-                case double:
-                    instance.Value = value;
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
-
-            return instance;
-        }
-
         public static ICollection<T> ToCollection<T>(this ICollection values)
         {
             var collection = new List<T>();
@@ -93,12 +69,6 @@ namespace SanctuarySSModManager.Extensions
                 collection.Add((T)item);
             }
             return collection;
-        }
-
-        public static bool TryGetCustomAttribute<T>(this Type type, out T attr) where T : Attribute
-        {
-            attr = type.GetCustomAttribute<T>();
-            return attr != null;
         }
 
         public static bool MirrorFrom(this IDictionary target, IDictionary source)

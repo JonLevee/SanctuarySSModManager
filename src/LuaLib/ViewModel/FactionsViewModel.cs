@@ -8,9 +8,8 @@ namespace SanctuarySSLib.ViewModel
 {
     public class FactionsViewModel : List<FactionModel>
     {
-        public FactionsViewModel(FactionsModel model)
+        public FactionsViewModel()
         {
-            AddRange(model);
         }
     }
 }

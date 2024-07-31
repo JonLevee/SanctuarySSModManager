@@ -4,9 +4,8 @@ namespace SanctuarySSLib.ViewModel
 {
     public class UnitsViewModel : List<UnitModel>
     {
-        public UnitsViewModel(UnitsModel model)
+        public UnitsViewModel()
         {
-            AddRange(model.Values);
         }
     }
 }

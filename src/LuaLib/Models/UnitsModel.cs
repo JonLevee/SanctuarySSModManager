@@ -26,10 +26,22 @@ namespace SanctuarySSLib.Models
         public UnitDefenceModel Defence { get; set; }
         public UnitGeneralModel General { get; set; }
         public string DebugString => $"[{General.TpId}] {General.Name} ({General.DisplayName})";
+
+        public UnitModel()
+        {
+            Enabled = UnitEnabledEnum.Disabled;
+            Defence = new UnitDefenceModel();
+            General = new UnitGeneralModel();
+        }
     }
     public class UnitDefenceModel
     {
         public UnitHealthModel Health { get; set; }
+        public UnitDefenceModel()
+        {
+            Health = new UnitHealthModel();
+        }
+
     }
     public class UnitHealthModel
     {
@@ -41,5 +53,12 @@ namespace SanctuarySSLib.Models
         public string DisplayName { get; set; }
         public string Name { get; set; }
         public string TpId { get; set; }
+
+        public UnitGeneralModel()
+        {
+            DisplayName = string.Empty;
+            Name = string.Empty;
+            TpId = string.Empty;
+        }
     }
 }

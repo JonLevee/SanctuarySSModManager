@@ -15,7 +15,6 @@ namespace SanctuarySSLib.LuaUtil
         bool Refresh();
     }
 
-    [DefaultService<IGameMetadata>]
     public class GameMetadata : IGameMetadata
     {
         private readonly ISteamInfo steamInfo;
@@ -40,6 +39,10 @@ namespace SanctuarySSLib.LuaUtil
         {
             var path = Path.Combine(LuaPath, relativePath);
             path = path.Replace('/', '\\');
+            if (Path.HasExtension(path))
+                Constraint.FileExists(path);
+            else
+                Constraint.DirectoryExists(path);
             return path;
         }
 

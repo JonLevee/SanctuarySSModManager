@@ -1,5 +1,7 @@
 ﻿using DiffMatchPatch;
 using Microsoft.Extensions.DependencyInjection;
+using SanctuarySSLib.LuaUtil;
+using SanctuarySSLib.MiscUtil;
 using SanctuarySSLib.Models;
 using SanctuarySSLib.ViewModel;
 using SanctuarySSModManager.Extensions;
@@ -38,17 +40,6 @@ namespace SanctuarySSModManager
         public MainWindow(SSSUserSettings userSettings)
         {
             // https://stackoverflow.com/questions/48545971/how-can-i-pass-data-to-from-a-webbrowser-control
-            var fontFam = new FontFamily(new Uri("pack://application:,,,/"), "./resources/#Oswald_Bold");
-            var fontFamilies = Fonts.GetFontFamilies(new Uri("pack://application:,,,/"), "./resources/").ToList();
-            var resourcenames = Assembly.GetExecutingAssembly().GetManifestResourceNames();
-            foreach (var name in resourcenames)
-            {
-                var info = Assembly.GetExecutingAssembly().GetManifestResourceInfo(name);
-            }
-            var resourceUris = Assembly.GetEntryAssembly()
-                   .GetCustomAttributes(typeof(AssemblyAssociatedContentFileAttribute), true)
-                   .Cast<AssemblyAssociatedContentFileAttribute>()
-                   .Select(attr => new Uri(attr.RelativeContentFilePath));
             this.userSettings = userSettings;
             InitializeComponent();
             Style = (Style)FindResource(typeof(Window));
@@ -72,18 +63,25 @@ namespace SanctuarySSModManager
         private async void Timer_Tick(object? sender, EventArgs e)
         {
             timer.Stop();
-            LoadModels();
+            await LoadModels();
         }
 
-        private async void LoadModels()
+        private async Task LoadModels()
         {
+            LoadingPanel.Visibility = Visibility.Visible;
+            SelectedModPanel.Visibility = Visibility.Collapsed;
+            UpdateLayout();
             var model = DIContainer.Get<ShatteredSunModel>();
             await model.Load();
-            var viewModel = DIContainer.Get<ShatteredSunViewModel>();
-            await viewModel.Load(model);
+            File.WriteAllText("root.json", model.GetJson());
+            //var model = DIContainer.Get<ShatteredSunModel>();
+            //await model.Load();
+            //var viewModel = DIContainer.Get<ShatteredSunViewModel>();
+            //await viewModel.Load(model);
             //await Task.Run(() => Thread.Sleep(2000));
             LoadingPanel.Visibility = Visibility.Collapsed;
             SelectedModPanel.Visibility = Visibility.Visible;
+            await Task.CompletedTask;
         }
 
         private void OnClosing(object sender, System.ComponentModel.CancelEventArgs e)

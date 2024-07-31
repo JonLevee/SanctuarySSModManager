@@ -14,12 +14,12 @@ namespace SanctuarySSLib.ViewModel
         public UnitsViewModel Units { get; private set; }
         public ShatteredSunViewModel()
         {
+            Factions = new FactionsViewModel();
+            Units = new UnitsViewModel();
         }
 
         public async Task Load(ShatteredSunModel ssModel)
         {
-            Factions = new FactionsViewModel(ssModel.Factions);
-            Units = new UnitsViewModel(ssModel.Units);
             await Task.CompletedTask;
         }
     }

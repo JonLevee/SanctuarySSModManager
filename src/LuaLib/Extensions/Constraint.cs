@@ -17,5 +17,16 @@ namespace SanctuarySSModManager.Extensions
             return source.Where(x => x != null);
         }
 
+        public static void FileExists(this string path)
+        {
+            if (!File.Exists(path))
+                throw new FileNotFoundException($"file: '{path}'");
+        }
+
+        public static void DirectoryExists(this string path)
+        {
+            if (!Directory.Exists(path))
+                throw new DirectoryNotFoundException($"directory: '{path}'");
+        }
     }
 }
