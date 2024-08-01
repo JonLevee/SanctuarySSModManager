@@ -45,7 +45,7 @@ namespace SanctuarySSModManager
             Style = (Style)FindResource(typeof(Window));
 
 
-
+            SizeChanged += MainWindow_SizeChanged;
             //var patch = new diff_match_patch();
 
             //var unitFilePath = @"D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua";
@@ -58,6 +58,16 @@ namespace SanctuarySSModManager
             timer.Tick += Timer_Tick;
             timer.Interval = new TimeSpan(0, 0, 1);
             timer.Start();
+        }
+
+        private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var topLeft = TranslatePoint(new Point(0, 0), Tab);
+            var bottomRight = TranslatePoint(new Point(e.NewSize.Width, e.NewSize.Height), Tab);
+            var width = bottomRight.X - topLeft.X;
+            var height = bottomRight.Y - topLeft.Y;
+            Tab.Width = width;
+            Tab.Height = height;
         }
 
         private async void Timer_Tick(object? sender, EventArgs e)

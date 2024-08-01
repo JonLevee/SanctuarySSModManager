@@ -6,12 +6,19 @@
              xmlns:local="clr-namespace:SanctuarySSModManager.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <StackPanel Orientation="Horizontal">
-        <StackPanel Orientation="Vertical">
+    <DockPanel LastChildFill="True">
+        <StackPanel Orientation="Vertical" DockPanel.Dock="Left">
             <Label Content="Filters"/>
         </StackPanel>
-        <Grid Name="Grid" Width="auto">
+        <ScrollViewer 
+            HorizontalScrollBarVisibility="Visible" 
+            VerticalScrollBarVisibility="Visible" 
+            DockPanel.Dock="Right"
+            ScrollViewer.CanContentScroll="True" >
+            <Grid Name="Grid" >
 
-        </Grid>
-    </StackPanel>
+            </Grid>
+
+        </ScrollViewer>
+    </DockPanel>
 </UserControl>

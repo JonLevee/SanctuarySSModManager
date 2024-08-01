@@ -42,7 +42,10 @@ namespace SanctuarySSModManager.Controls
             //    .Order()
             //    .ToList();
             //File.WriteAllLines("tags.txt", tags);
-            foreach (var unit in units.Take(2))
+            var timer = Stopwatch.StartNew();
+            foreach (var unit in units
+                //.Take(2)
+                )
             {
                 Debug.Assert(unit.Value != null);
                 var unitView = DIContainer.Get<UnitDisplay>(unit.Value.AsObject());
@@ -50,6 +53,7 @@ namespace SanctuarySSModManager.Controls
                 Grid.RowDefinitions.Add(new RowDefinition { });
                 Grid.Set(unitView, 1);
             }
+            timer.Stop();
         }
     }
 }

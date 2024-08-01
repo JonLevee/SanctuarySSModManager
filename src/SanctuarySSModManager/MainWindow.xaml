@@ -12,33 +12,34 @@
     <Window.Resources>
 
     </Window.Resources>
+    <DockPanel LastChildFill="True">
 
-    <StackPanel Orientation="Vertical">
-        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="100" Content="Sanctuary Shattered Sun Mod Manager" HorizontalAlignment="Center"/>
+        <StackPanel Orientation="Vertical" DockPanel.Dock="Top">
+            <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="100" Content="Sanctuary Shattered Sun Mod Manager" HorizontalAlignment="Center"/>
 
-        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-            <Label Content="Loading ..." Name="LoadingPanel" />
-            <StackPanel Name="SelectedModPanel" Orientation="Horizontal">
-                <Label Content="Selected mod"/>
-                <ListView Name="SelectedMod">None</ListView>
+            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                <Label Content="Loading ..." Name="LoadingPanel" />
+                <StackPanel Name="SelectedModPanel" Orientation="Horizontal">
+                    <Label Content="Selected mod"/>
+                    <ListView Name="SelectedMod">None</ListView>
+                </StackPanel>
             </StackPanel>
+            <TabControl Name="Tab">
+                <TabItem Name="UnitsViewTab" Header="Units View">
+                    <controls:UnitViewControl x:Name="UnitViewControl">
+
+                    </controls:UnitViewControl>
+                </TabItem>
+                <TabItem Name="ModManagerTab" Header="Mod Manager">
+
+                </TabItem>
+                <TabItem Name="ModCreatorTab" Header="Mod Creator">
+
+                </TabItem>
+                <TabItem Name="OptionsTab" Header="Options">
+
+                </TabItem>
+            </TabControl>
         </StackPanel>
-        <TabControl>
-            <TabItem Name="UnitsViewTab" Header="Units View">
-                <controls:UnitViewControl x:Name="UnitViewControl">
-                    
-                </controls:UnitViewControl>
-            </TabItem>
-            <TabItem Name="ModManagerTab" Header="Mod Manager">
-
-            </TabItem>
-            <TabItem Name="ModCreatorTab" Header="Mod Creator">
-
-            </TabItem>
-            <TabItem Name="OptionsTab" Header="Options">
-
-            </TabItem>
-        </TabControl>
-    </StackPanel>
-
+    </DockPanel>
 </Window>

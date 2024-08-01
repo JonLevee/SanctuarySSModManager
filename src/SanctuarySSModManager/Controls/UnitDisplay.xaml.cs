@@ -3,8 +3,10 @@ using SanctuarySSModManager.Extensions;
 using System.Diagnostics;
 using System.IO;
 using System.Text.Json.Nodes;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace SanctuarySSModManager.Controls
 {
@@ -56,6 +58,11 @@ namespace SanctuarySSModManager.Controls
                 metadata.GetControl(this).Content = data.Get(metadata.ValuePath);
             }
 
+            // first row has text height
+            // 2nd row has separator height
+            var textHeight = Grid.RowDefinitions[0].Height;
+            var sepHeight = Grid.RowDefinitions[1].Height;
+            Grid.RowDefinitions.RemoveAt(1);
             var lastMetadata = GridMetadata.Empty;
             foreach (var metadata in groupMetadata)
             {
@@ -64,24 +71,21 @@ namespace SanctuarySSModManager.Controls
                 Grid.RowDefinitions.Add(new RowDefinition());
                 if (lastMetadata.Group != metadata.Group)
                 {
+                    Grid.RowDefinitions[Grid.RowDefinitions.Count - 1].Height = sepHeight;
                     Grid.Set(new Separator(), 0, colSpan: Grid.ColumnDefinitions.Count);
                     Grid.RowDefinitions.Add(new RowDefinition());
+                    Grid.RowDefinitions[Grid.RowDefinitions.Count - 1].Height = textHeight;
                     Grid.Set(new Label { Content = metadata.Group }, 0);
                 }
                 Grid.Set(new Label { Content = metadata.Name }, 1, colSpan: 2);
                 Grid.Set(new Label { Content = data.Get(metadata.ValuePath) }, 3);
                 lastMetadata = metadata;
             }
+            Grid.RowDefinitions.Add(new RowDefinition());
             var tpId = (string)TpId.Content;
-            var imagesToTry = new[]
-            {
-                tpId,
-                tpId.Replace('c', 'e'),
-            }
-            .Select(image => image + ".png")
-            .Select(image => Path.Combine(gameMetadata.GameRoot, @"engine\Sanctuary_Data\Resources\UI\Gameplay\IconsUnits", image))
-            .ToList();
-            var imagePath = imagesToTry.FirstOrDefault(File.Exists);
+            var imagePath = Path.Combine(gameMetadata.GameRoot, @"engine\Sanctuary_Data\Resources\UI\Gameplay\IconsUnits", tpId + ".png");
+            if (!File.Exists(imagePath))
+                imagePath = Path.Combine(gameMetadata.GameRoot, @"engine\Sanctuary_Data\Resources\UI\Gameplay\Icons\LogoIcon.png");
             Debug.Assert(imagePath != null);
             UnitImage.Source = new BitmapImage(new Uri(imagePath, UriKind.Absolute));
         }
