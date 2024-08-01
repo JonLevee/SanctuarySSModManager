@@ -8,6 +8,7 @@ namespace SanctuarySSLib.LuaUtil
     public interface IGameMetadata
     {
         string GameAppName { get; }
+        string GameRoot { get; set; }
         string SelectedLuaFolder { get; set; }
         IEnumerable<string> LuaFolders { get; }
         string LuaPath { get; }
@@ -30,6 +31,7 @@ namespace SanctuarySSLib.LuaUtil
         }
 
         public string GameAppName => "Sanctuary Shattered Sun Demo";
+        public string GameRoot { get; set; }
         public string SelectedLuaFolder { get; set; }
         public string LuaPath => luaFolders[SelectedLuaFolder];
 
@@ -49,13 +51,13 @@ namespace SanctuarySSLib.LuaUtil
         public bool Refresh()
         {
             Dictionary<string, string> currentFolders = new Dictionary<string, string>();
-            var gameRoot = steamInfo.GetRoot(GameAppName);
-            foreach (var folder in Directory.GetDirectories(gameRoot, "lua", SearchOption.AllDirectories))
+            GameRoot = steamInfo.GetRoot(GameAppName);
+            foreach (var folder in Directory.GetDirectories(GameRoot, "lua", SearchOption.AllDirectories))
             {
                 var subDirs = Directory.GetDirectories(folder).Select(d => d.Substring(folder.Length + 1)).ToArray();
                 if (expectedLuaSubdirectories.All(subDirs.Contains))
                 {
-                    var name = folder.Substring(gameRoot.Length + 1).Split('\\')[0];
+                    var name = folder.Substring(GameRoot.Length + 1).Split('\\')[0];
                     currentFolders[name] = folder;
                 }
             }

@@ -33,6 +33,7 @@ namespace SanctuarySSModManager.Controls
         {
             Grid.RowDefinitions.Clear();
             Grid.ColumnDefinitions.Clear();
+            Grid.ColumnDefinitions.Add(new ColumnDefinition());
             var units = model.Units;
             //var tags = units
             //    .SelectMany(kv=>kv.Value.Get("tags").AsArray())
@@ -41,11 +42,13 @@ namespace SanctuarySSModManager.Controls
             //    .Order()
             //    .ToList();
             //File.WriteAllLines("tags.txt", tags);
-            foreach (var unit in units)
+            foreach (var unit in units.Take(2))
             {
                 Debug.Assert(unit.Value != null);
-                var unitView = new UnitDisplay();
-                unitView.Load(unit.Value.AsObject());
+                var unitView = DIContainer.Get<UnitDisplay>(unit.Value.AsObject());
+                unitView.Load();
+                Grid.RowDefinitions.Add(new RowDefinition { });
+                Grid.Set(unitView, 1);
             }
         }
     }

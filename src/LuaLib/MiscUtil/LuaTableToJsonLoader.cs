@@ -24,9 +24,11 @@ namespace SanctuarySSLib.MiscUtil
         };
 
         public JsonObject Root { get; set; }
+        private readonly Dictionary<string, Dictionary<string, string>> tableLocations;
         public LuaTableToJsonLoader(IGameMetadata gameMetadata)
         {
             Root = new JsonObject();
+            tableLocations = new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase);
             this.gameMetadata = gameMetadata;
         }
         public void Load(string relativePath, string tableName, Func<JsonNode, string>? getSubKey = null)
@@ -51,8 +53,25 @@ namespace SanctuarySSLib.MiscUtil
                     Root[tableName] = new JsonObject();
                 }
                 var subKey = getSubKey(node);
-                Root[tableName]?.AsObject().Add(subKey, node);
+                var jsonTable = Root[tableName]?.AsObject();
+                AddTableLocation(tableName, subKey, relativePath);
+                jsonTable.Add(subKey, node);
             }
+        }
+
+        private void AddTableLocation(string topLevelName, string tableName, string relativePath)
+        {
+            if (!tableLocations.TryGetValue(topLevelName, out Dictionary<string, string>? topLevel))
+            {
+                topLevel = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                tableLocations.Add(topLevelName, topLevel);
+            }
+            Debug.Assert(topLevel != null);
+            if (topLevel.TryGetValue(tableName, out string? lastPath))
+            {
+                Debugger.Break();
+            }
+            topLevel.Add(tableName, relativePath);
         }
 
         public override string ToString()
@@ -86,6 +105,5 @@ namespace SanctuarySSLib.MiscUtil
                 writer.WriteRawValue(text);
             }
         }
-
     }
 }

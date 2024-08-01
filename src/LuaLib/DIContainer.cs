@@ -95,5 +95,11 @@ namespace SanctuarySSModManager
             Debug.Assert(instance != null);
             return instance;
         }
+        public static T Get<T>(params object[] parameters) where T : class
+        {
+            var instance = ActivatorUtilities.CreateInstance<T>(serviceProvider, parameters);
+            Debug.Assert(instance != null);
+            return instance;
+        }
     }
 }

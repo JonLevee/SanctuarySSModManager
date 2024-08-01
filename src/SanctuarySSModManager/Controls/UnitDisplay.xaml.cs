@@ -1,20 +1,10 @@
-﻿using SanctuarySSModManager.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
+﻿using SanctuarySSLib.LuaUtil;
+using SanctuarySSModManager.Extensions;
+using System.Diagnostics;
+using System.IO;
 using System.Text.Json.Nodes;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace SanctuarySSModManager.Controls
 {
@@ -23,38 +13,105 @@ namespace SanctuarySSModManager.Controls
     /// </summary>
     public partial class UnitDisplay : UserControl
     {
-        public UnitDisplay()
+        private readonly IGameMetadata gameMetadata;
+        private readonly JsonObject data;
+        // engine\LJ\lua\common\systems\templateUpdater.lua: unitToProjectile
+        private static readonly ContentMetadata[] contentMetadata = [
+            new ContentMetadata(instance=>instance.DisplayName, "general/displayName"),
+            new ContentMetadata(instance=>instance.UnitName, "general/name"),
+            new ContentMetadata(instance=>instance.TpId, "general/tpId"),
+            new ContentMetadata(instance=>instance.Health, "defence/health/max"),
+            new ContentMetadata(instance=>instance.Mass, "economy/cost/alloys"),
+            new ContentMetadata(instance=>instance.Energy, "economy/cost/energy"),
+            new ContentMetadata(instance=>instance.BuildTime, "economy/buildTime"),
+            ];
+        private static readonly GridMetadata[] groupMetadata = [
+            new GridMetadata("Economy", "Harvest time", "economy/harvestTime"),
+            new GridMetadata("Economy", "Alloys", "economy/harvest/alloys"),
+            new GridMetadata("Economy", "Energy", "economy/harvest/energy"),
+            new GridMetadata("Intel", "Vision radius", "intel/visionRadius"),
+            new GridMetadata("Movement", "Acceleration", "movement/acceleration"),
+            new GridMetadata("Movement", "Rotation speed", "movement/rotationSpeed"),
+            new GridMetadata("Movement", "Speed", "movement/speed"),
+            new GridMetadata("Weapons", "Damage", "weapons/damage"),
+            new GridMetadata("Weapons", "Damage radius", "weapons/damageRadius"),
+            new GridMetadata("Weapons", "Damage type", "weapons/damageType"),
+            new GridMetadata("Weapons", "Range ring type", "weapons/rangeRingType"),
+            new GridMetadata("Weapons", "Range min", "weapons/rangeMin"),
+            new GridMetadata("Weapons", "Range max", "weapons/rangeMax"),
+            new GridMetadata("Weapons", "Reload time", "weapons/reloadTime"),
+            ];
+
+        public UnitDisplay(IGameMetadata gameMetadata, JsonObject data)
         {
             InitializeComponent();
+            this.gameMetadata = gameMetadata;
+            this.data = data;
         }
 
-        public void Load(JsonObject data)
+        public void Load()
         {
-            DisplayName.Content = data.Get("general", "displayName").GetValue<string>();
-            UnitName.Content = data.Get("general", "name").GetValue<string>();
-            TpId.Content = data.Get("general", "tpId").GetValue<string>();
-
-            Health.Content = data.Get("general", "defence", "health", "max").GetValue<string>();
-            Mass.Content = data.Get("general", "economy", "cost", "alloys").GetValue<string>();
-            Energy.Content = data.Get("general", "economy", "cost", "energy").GetValue<string>();
-            BuildTime.Content = data.Get("general", "economy", "buildTime").GetValue<string>();
-
-            var tags = new[]
+            foreach (var metadata in contentMetadata)
             {
-                "ALLOYS_EXTRACTION",
-                "ALLOYS_PRODUCTION",
-                "ALLOYS_STORAGE",
-                "CONSTRUCTION",
-                "ENERGY_PRODUCTION",
-                "ENERGY_STORAGE",
-                "ENGINEER",
-                "ENGINEERING_STATION",
-                "FACTORY",
-                "HARVEST",
-                "SHIELD",
-                "STRUCTURE",
-            };
+                metadata.GetControl(this).Content = data.Get(metadata.ValuePath);
+            }
 
+            var lastMetadata = GridMetadata.Empty;
+            foreach (var metadata in groupMetadata)
+            {
+                if (!data.TryGet(metadata.ValuePath, out object? value))
+                    continue;
+                Grid.RowDefinitions.Add(new RowDefinition());
+                if (lastMetadata.Group != metadata.Group)
+                {
+                    Grid.Set(new Separator(), 0, colSpan: Grid.ColumnDefinitions.Count);
+                    Grid.RowDefinitions.Add(new RowDefinition());
+                    Grid.Set(new Label { Content = metadata.Group }, 0);
+                }
+                Grid.Set(new Label { Content = metadata.Name }, 1, colSpan: 2);
+                Grid.Set(new Label { Content = data.Get(metadata.ValuePath) }, 3);
+                lastMetadata = metadata;
+            }
+            var tpId = (string)TpId.Content;
+            var imagesToTry = new[]
+            {
+                tpId,
+                tpId.Replace('c', 'e'),
+            }
+            .Select(image => image + ".png")
+            .Select(image => Path.Combine(gameMetadata.GameRoot, @"engine\Sanctuary_Data\Resources\UI\Gameplay\IconsUnits", image))
+            .ToList();
+            var imagePath = imagesToTry.FirstOrDefault(File.Exists);
+            Debug.Assert(imagePath != null);
+            UnitImage.Source = new BitmapImage(new Uri(imagePath, UriKind.Absolute));
+        }
+
+
+        private class GridMetadata
+        {
+            public static readonly GridMetadata Empty = new GridMetadata(string.Empty, string.Empty, string.Empty);
+            public string Group { get; }
+            public string Name { get; }
+            public string ValuePath { get; }
+
+            public GridMetadata(string group, string name, string valuePath)
+            {
+                Group = group;
+                Name = name;
+                ValuePath = valuePath;
+            }
+        }
+        private class ContentMetadata
+        {
+            public Func<UnitDisplay, ContentControl> GetControl { get; }
+            public string ValuePath { get; }
+
+            public ContentMetadata(Func<UnitDisplay, ContentControl> getControl, string valuePath)
+            {
+                GetControl = getControl;
+                ValuePath = valuePath;
+            }
         }
     }
+
 }
