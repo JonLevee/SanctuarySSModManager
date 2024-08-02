@@ -21,6 +21,7 @@ namespace SanctuarySSModManager.Controls
         private static readonly ContentMetadata[] contentMetadata = [
             new ContentMetadata(instance=>instance.DisplayName, "general/displayName"),
             new ContentMetadata(instance=>instance.UnitName, "general/name"),
+            new ContentMetadata(instance=>instance.Faction, "general/tpId"),
             new ContentMetadata(instance=>instance.TpId, "general/tpId"),
             new ContentMetadata(instance=>instance.Health, "defence/health/max"),
             new ContentMetadata(instance=>instance.Mass, "economy/cost/alloys"),
@@ -34,6 +35,8 @@ namespace SanctuarySSModManager.Controls
             new GridMetadata("Intel", "Vision radius", "intel/visionRadius"),
             new GridMetadata("Movement", "Acceleration", "movement/acceleration"),
             new GridMetadata("Movement", "Rotation speed", "movement/rotationSpeed"),
+            new GridMetadata("Movement", "Air hover", "movement/airHover"),
+            new GridMetadata("Movement", "Min speed", "movement/minSpeed"),
             new GridMetadata("Movement", "Speed", "movement/speed"),
             new GridMetadata("Weapons", "Damage", "weapons/damage"),
             new GridMetadata("Weapons", "Damage radius", "weapons/damageRadius"),
@@ -43,7 +46,9 @@ namespace SanctuarySSModManager.Controls
             new GridMetadata("Weapons", "Range max", "weapons/rangeMax"),
             new GridMetadata("Weapons", "Reload time", "weapons/reloadTime"),
             ];
+        
 
+        // orders
         public UnitDisplay(IGameMetadata gameMetadata, JsonObject data)
         {
             InitializeComponent();
@@ -57,6 +62,8 @@ namespace SanctuarySSModManager.Controls
             {
                 metadata.GetControl(this).Content = data.Get(metadata.ValuePath);
             }
+            var tpId = (string)TpId.Content;
+            Faction.Content = GetFaction(tpId);
 
             // first row has text height
             // 2nd row has separator height
@@ -82,7 +89,6 @@ namespace SanctuarySSModManager.Controls
                 lastMetadata = metadata;
             }
             Grid.RowDefinitions.Add(new RowDefinition());
-            var tpId = (string)TpId.Content;
             var imagePath = Path.Combine(gameMetadata.GameRoot, @"engine\Sanctuary_Data\Resources\UI\Gameplay\IconsUnits", tpId + ".png");
             if (!File.Exists(imagePath))
                 imagePath = Path.Combine(gameMetadata.GameRoot, @"engine\Sanctuary_Data\Resources\UI\Gameplay\Icons\LogoIcon.png");
@@ -90,6 +96,19 @@ namespace SanctuarySSModManager.Controls
             UnitImage.Source = new BitmapImage(new Uri(imagePath, UriKind.Absolute));
         }
 
+        private string GetFaction(string tpId)
+        {
+            switch(tpId[1])
+            {
+                case 'c':
+                    return "Chosen";
+                case 'e':
+                    return "EDA";
+                case 'g':
+                    return "Guard";
+            }
+            throw new InvalidOperationException($"Unknown faction letter: {tpId[1]}");
+        }
 
         private class GridMetadata
         {

@@ -51,7 +51,7 @@ namespace SanctuarySSModManager.Extensions
                         throw new InvalidOperationException($"Don't know how to handle {node.GetValueKind()}");
                     break;
                 case JsonValueKind.True:
-                case System.Text.Json.JsonValueKind.False:
+                case JsonValueKind.False:
                     value = (T)Convert.ChangeType(node.GetValue<bool>(), typeof(T));
                     break;
                 case JsonValueKind.Null:

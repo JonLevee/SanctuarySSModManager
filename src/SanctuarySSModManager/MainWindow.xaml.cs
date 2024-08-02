@@ -45,7 +45,7 @@ namespace SanctuarySSModManager
             Style = (Style)FindResource(typeof(Window));
 
 
-            SizeChanged += MainWindow_SizeChanged;
+            OuterDock.SizeChanged += MainWindow_SizeChanged;
             //var patch = new diff_match_patch();
 
             //var unitFilePath = @"D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua";
@@ -62,10 +62,9 @@ namespace SanctuarySSModManager
 
         private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            var topLeft = TranslatePoint(new Point(0, 0), Tab);
-            var bottomRight = TranslatePoint(new Point(e.NewSize.Width, e.NewSize.Height), Tab);
-            var width = bottomRight.X - topLeft.X;
-            var height = bottomRight.Y - topLeft.Y;
+            var topLeft = Tab.TranslatePoint(new Point(0, 0), OuterDock);
+            var width = e.NewSize.Width - topLeft.X;
+            var height = e.NewSize.Height - topLeft.Y;
             Tab.Width = width;
             Tab.Height = height;
         }

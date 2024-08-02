@@ -12,7 +12,7 @@
     <Window.Resources>
 
     </Window.Resources>
-    <DockPanel LastChildFill="True">
+    <DockPanel LastChildFill="True" x:Name="OuterDock">
 
         <StackPanel Orientation="Vertical" DockPanel.Dock="Top">
             <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="100" Content="Sanctuary Shattered Sun Mod Manager" HorizontalAlignment="Center"/>

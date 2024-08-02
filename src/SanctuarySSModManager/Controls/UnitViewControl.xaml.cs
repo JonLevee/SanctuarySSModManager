@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -34,15 +35,17 @@ namespace SanctuarySSModManager.Controls
             Grid.RowDefinitions.Clear();
             Grid.ColumnDefinitions.Clear();
             Grid.ColumnDefinitions.Add(new ColumnDefinition());
+            Grid.ColumnDefinitions.Add(new ColumnDefinition());
             var units = model.Units;
             //var tags = units
-            //    .SelectMany(kv=>kv.Value.Get("tags").AsArray())
-            //    .Select(v=>v.GetValue<string>())
+            //    .SelectMany(kv => (JsonArray)kv.Value["tags"])
+            //    .Select(v => v.GetValue<string>())
             //    .Distinct()
             //    .Order()
             //    .ToList();
             //File.WriteAllLines("tags.txt", tags);
             var timer = Stopwatch.StartNew();
+            bool newColumn = true;
             foreach (var unit in units
                 //.Take(2)
                 )
@@ -50,8 +53,16 @@ namespace SanctuarySSModManager.Controls
                 Debug.Assert(unit.Value != null);
                 var unitView = DIContainer.Get<UnitDisplay>(unit.Value.AsObject());
                 unitView.Load();
-                Grid.RowDefinitions.Add(new RowDefinition { });
-                Grid.Set(unitView, 1);
+                if (newColumn)
+                {
+                    Grid.RowDefinitions.Add(new RowDefinition { });
+                    Grid.Set(unitView, 0);
+                }
+                else
+                {
+                    Grid.Set(unitView, 1);
+                }
+                newColumn = !newColumn;
             }
             timer.Stop();
         }

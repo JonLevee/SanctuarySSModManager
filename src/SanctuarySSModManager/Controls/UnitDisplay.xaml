@@ -19,6 +19,7 @@
                 <StackPanel Orientation="Vertical">
                     <Label Name="DisplayName" Content="Display Name"/>
                     <Label Name="UnitName" Content="Unit Name" />
+                    <Label Name="Faction" Content="Faction" />
                     <Label Name="TpId" Content="Unit Id"/>
                 </StackPanel>
             </StackPanel>
