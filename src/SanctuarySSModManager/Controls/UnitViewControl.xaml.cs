@@ -25,19 +25,18 @@ namespace SanctuarySSModManager.Controls
     /// </summary>
     public partial class UnitViewControl : UserControl
     {
+        private readonly List<UnitDisplay> allUnits;
         public UnitViewControl()
         {
             InitializeComponent();
+            allUnits = new List<UnitDisplay>();
         }
 
         public void Load(ShatteredSunModel model)
         {
-            Grid.RowDefinitions.Clear();
-            Grid.ColumnDefinitions.Clear();
-            Grid.ColumnDefinitions.Add(new ColumnDefinition());
-            Grid.ColumnDefinitions.Add(new ColumnDefinition());
-            var units = model.Units;
-            //var tags = units
+            allUnits.Clear();
+            //var tags = model
+            //    .Units
             //    .SelectMany(kv => (JsonArray)kv.Value["tags"])
             //    .Select(v => v.GetValue<string>())
             //    .Distinct()
@@ -45,14 +44,26 @@ namespace SanctuarySSModManager.Controls
             //    .ToList();
             //File.WriteAllLines("tags.txt", tags);
             var timer = Stopwatch.StartNew();
-            bool newColumn = true;
-            foreach (var unit in units
-                //.Take(2)
-                )
+            foreach (var unit in model.Units)
             {
                 Debug.Assert(unit.Value != null);
                 var unitView = DIContainer.Get<UnitDisplay>(unit.Value.AsObject());
                 unitView.Load();
+                allUnits.Add(unitView);
+            }
+            timer.Stop();
+        }
+
+        public void UpdateUnits()
+        {
+            var timer = Stopwatch.StartNew();
+            Grid.RowDefinitions.Clear();
+            Grid.ColumnDefinitions.Clear();
+            Grid.ColumnDefinitions.Add(new ColumnDefinition());
+            Grid.ColumnDefinitions.Add(new ColumnDefinition());
+            bool newColumn = true;
+            foreach(var unitView in allUnits)
+            {
                 if (newColumn)
                 {
                     Grid.RowDefinitions.Add(new RowDefinition { });

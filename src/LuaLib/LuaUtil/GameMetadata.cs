@@ -8,7 +8,7 @@ namespace SanctuarySSLib.LuaUtil
     public interface IGameMetadata
     {
         string GameAppName { get; }
-        string GameRoot { get; set; }
+        string GameRoot { get; }
         string SelectedLuaFolder { get; set; }
         IEnumerable<string> LuaFolders { get; }
         string LuaPath { get; }
@@ -31,7 +31,7 @@ namespace SanctuarySSLib.LuaUtil
         }
 
         public string GameAppName => "Sanctuary Shattered Sun Demo";
-        public string GameRoot { get; set; }
+        public string GameRoot { get; private set; }
         public string SelectedLuaFolder { get; set; }
         public string LuaPath => luaFolders[SelectedLuaFolder];
 

@@ -7,7 +7,7 @@ namespace SanctuarySSModManager.Extensions
 {
     public static class JsonAccess
     {
-        public static T Get<T>(this JsonNode node, string key)
+        public static T Get<T>(this JsonNode node, string key) where T : class
         {
             if (TryGet(node, key, out T value))
                 return value;
@@ -19,7 +19,7 @@ namespace SanctuarySSModManager.Extensions
             return Get<object>(node, key);
         }
 
-        public static bool TryGet<T>(this JsonNode node, string key, out T? value)
+        public static bool TryGet<T>(this JsonNode node, string key, out T? value) where T : class
         {
             value = default;
             var keys = key.Split('/');
@@ -38,6 +38,10 @@ namespace SanctuarySSModManager.Extensions
             }
             switch (node.GetValueKind())
             {
+                case JsonValueKind.Object:
+                    var dictionary = node.AsObject().ToDictionary(kv=>kv.Key, kv => kv.Value);
+                    value = dictionary as T;
+                    break;
                 case JsonValueKind.String:
                     value = (T)Convert.ChangeType(node.GetValue<string>(), typeof(T));
                     break;

@@ -155,6 +155,35 @@ grouping level 1 ..
   </row>
 <grid>
 
+group values: faction, tech
+group by {value}	Add|Delete
+and then by {value}	Add|Delete
+
+sort by 
+
+filter
+	faction == {faction}
+			in {faction,faction}
+	and then by 
+		tech	== {value}
+				in {value,value}
+				not in {value,value}
+				> {value}
+				>= {value}
+				< {value}
+				<= {value}
+				<> {value}
+				regex {value}
+	and then by 
+		tag		== {value}
+				in {value,value}
+				not in {value,value}
+				> {value}
+				>= {value}
+				< {value}
+				<= {value}
+				<> {value}
+				regex {value}
 
 AIR
 AIRFIELD

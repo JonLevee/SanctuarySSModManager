@@ -1,11 +1,14 @@
 ﻿using SanctuarySSLib.LuaUtil;
 using SanctuarySSModManager.Extensions;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text.Json.Nodes;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace SanctuarySSModManager.Controls
@@ -38,6 +41,7 @@ namespace SanctuarySSModManager.Controls
             new GridMetadata("Movement", "Air hover", "movement/airHover"),
             new GridMetadata("Movement", "Min speed", "movement/minSpeed"),
             new GridMetadata("Movement", "Speed", "movement/speed"),
+            new GridMetadata("Movement", "Type", "movement/type"),
             new GridMetadata("Weapons", "Damage", "weapons/damage"),
             new GridMetadata("Weapons", "Damage radius", "weapons/damageRadius"),
             new GridMetadata("Weapons", "Damage type", "weapons/damageType"),
@@ -45,6 +49,7 @@ namespace SanctuarySSModManager.Controls
             new GridMetadata("Weapons", "Range min", "weapons/rangeMin"),
             new GridMetadata("Weapons", "Range max", "weapons/rangeMax"),
             new GridMetadata("Weapons", "Reload time", "weapons/reloadTime"),
+            new GridMetadata("Orders", "", "general/orders"),
             ];
         
 
@@ -68,6 +73,7 @@ namespace SanctuarySSModManager.Controls
             // first row has text height
             // 2nd row has separator height
             var textHeight = Grid.RowDefinitions[0].Height;
+            var textDoubleHeight = new GridLength(textHeight.Value * 2.5);
             var sepHeight = Grid.RowDefinitions[1].Height;
             Grid.RowDefinitions.RemoveAt(1);
             var lastMetadata = GridMetadata.Empty;
@@ -84,8 +90,42 @@ namespace SanctuarySSModManager.Controls
                     Grid.RowDefinitions[Grid.RowDefinitions.Count - 1].Height = textHeight;
                     Grid.Set(new Label { Content = metadata.Group }, 0);
                 }
-                Grid.Set(new Label { Content = metadata.Name }, 1, colSpan: 2);
-                Grid.Set(new Label { Content = data.Get(metadata.ValuePath) }, 3);
+                if (string.IsNullOrWhiteSpace(metadata.Name))
+                {
+                    if (value is IDictionary<string, JsonNode> dictionary)
+                    {
+                        var items = dictionary
+                            .Keys
+                            .Where(k => (bool)dictionary[k])
+                            .Order()
+                            .ToArray();
+                        if (items.Any())
+                        {
+                            var margin = new Thickness(0, 0, 0, 0);
+                            var wrapPanel = new WrapPanel
+                            {
+                                Margin = margin,
+                                Height = textDoubleHeight.Value
+                            };
+                            
+                            foreach (var item in items.Take(items.Length-2))
+                            {
+                                wrapPanel.Children.Add(new Label { Content = item + ",", Margin = margin });
+                            }
+                            wrapPanel.Children.Add(new Label { Content = items.Last(), Margin = margin });
+                            Grid.Set(wrapPanel,  1, colSpan: 3);
+                        }
+                        //Grid.Set(new Label { Content = string.Join(",", items), Height = textDoubleHeight.Value }, 1, colSpan: 3);
+                        Grid.RowDefinitions[Grid.RowDefinitions.Count - 1].Height = textDoubleHeight;
+                    }
+                    else
+                        throw new InvalidOperationException();
+                }
+                else
+                {
+                    Grid.Set(new Label { Content = metadata.Name }, 1, colSpan: 2);
+                    Grid.Set(new Label { Content = data.Get(metadata.ValuePath) }, 3);
+                }
                 lastMetadata = metadata;
             }
             Grid.RowDefinitions.Add(new RowDefinition());

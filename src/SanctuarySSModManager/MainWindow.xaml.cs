@@ -4,6 +4,7 @@ using SanctuarySSLib.LuaUtil;
 using SanctuarySSLib.MiscUtil;
 using SanctuarySSLib.Models;
 using SanctuarySSLib.ViewModel;
+using SanctuarySSModManager.Controls;
 using SanctuarySSModManager.Extensions;
 using System.Collections;
 using System.Configuration;
@@ -84,6 +85,7 @@ namespace SanctuarySSModManager
             await model.Load();
             File.WriteAllText("root.json", model.GetJson());
             UnitViewControl.Load(model);
+            UnitViewControl.UpdateUnits();
             //var model = DIContainer.Get<ShatteredSunModel>();
             //await model.Load();
             //var viewModel = DIContainer.Get<ShatteredSunViewModel>();

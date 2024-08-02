@@ -1,10 +1,11 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
 
 namespace SanctuarySSModManager.Extensions
 {
     public static class UIExtensions
     {
-        public static void Set(this Grid grid, Control control, int iColumn, int? iRow = null, int? colSpan = null)
+        public static void Set(this Grid grid, UIElement control, int iColumn, int? iRow = null, int? colSpan = null)
         {
 
             grid.Children.Add(control);
