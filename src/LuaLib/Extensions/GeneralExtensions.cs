@@ -91,5 +91,10 @@ namespace SanctuarySSModManager.Extensions
             }
             return keysToAdd.Any() || keysToRemove.Any() || intersectedValuesDifferent.Any();
         }
+
+        public static T GetValueOrDefault<T>(this object value, T defaultValue)
+        {
+            return value == null ? defaultValue : (T)Convert.ChangeType(value, typeof(T));
+        }
     }
 }

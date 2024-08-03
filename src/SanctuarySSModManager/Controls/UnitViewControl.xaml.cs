@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -57,6 +58,16 @@ namespace SanctuarySSModManager.Controls
         public void UpdateUnits()
         {
             var timer = Stopwatch.StartNew();
+            switch(Group1.SelectedValue.GetValueOrDefault("Faction"))
+            {
+                case "Faction":
+                    var groupByFaction = allUnits.GroupBy(unit => unit.Faction.Text);
+                    break;
+                case "Tech":
+                    var groupByTech = allUnits.GroupBy(unit => unit.Tier.Text);
+                    break;
+
+            }
             Grid.RowDefinitions.Clear();
             Grid.ColumnDefinitions.Clear();
             Grid.ColumnDefinitions.Add(new ColumnDefinition());
@@ -76,6 +87,16 @@ namespace SanctuarySSModManager.Controls
                 newColumn = !newColumn;
             }
             timer.Stop();
+        }
+
+        private void Group1_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            UpdateUnits();
+        }
+
+        private void Group2_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            UpdateUnits();
         }
     }
 }

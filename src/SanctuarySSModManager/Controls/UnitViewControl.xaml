@@ -7,18 +7,41 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <DockPanel LastChildFill="True">
-        <StackPanel Orientation="Vertical" DockPanel.Dock="Left">
-            <Label Content="Filters"/>
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+            <StackPanel Orientation="Vertical">
+                <Label Content="Filters"/>
+            </StackPanel>
+            <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
         </StackPanel>
-        <ScrollViewer 
-            HorizontalScrollBarVisibility="Visible" 
-            VerticalScrollBarVisibility="Visible" 
-            DockPanel.Dock="Right"
-            ScrollViewer.CanContentScroll="True" >
-            <Grid Name="Grid" >
+        <StackPanel Orientation="Vertical" DockPanel.Dock="Right">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Label Content="Grouping1"/>
+                <ListBox x:Name="Group1" SelectionMode="Single" SelectionChanged="Group1_SelectionChanged">
+                    <ListBoxItem >None</ListBoxItem>
+                    <ListBoxItem>Faction</ListBoxItem>
+                    <ListBoxItem>Tech</ListBoxItem>
+                </ListBox>
+                <Label Content="Grouping2"/>
+                <ListBox x:Name="Group2" SelectionMode="Single" SelectionChanged="Group2_SelectionChanged">
+                    <ListBoxItem>None</ListBoxItem>
+                    <ListBoxItem>Faction</ListBoxItem>
+                    <ListBoxItem>Tech</ListBoxItem>
+                </ListBox>
+            </StackPanel>
+            <Separator/>
+            <Grid x:Name="GroupGrid" Visibility="Collapsed"></Grid>
+            <Separator x:Name="GroupSeparator" Visibility="Collapsed"/>
+            <ScrollViewer 
+                HorizontalScrollBarVisibility="Visible" 
+                VerticalScrollBarVisibility="Visible" 
+                DockPanel.Dock="Right"
+                ScrollViewer.CanContentScroll="True" 
+                >
+                <Grid Name="Grid" >
 
-            </Grid>
+                </Grid>
 
-        </ScrollViewer>
+            </ScrollViewer>
+        </StackPanel>
     </DockPanel>
 </UserControl>

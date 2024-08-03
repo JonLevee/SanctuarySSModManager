@@ -4,10 +4,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using Xceed.Wpf.Toolkit.Panels;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -24,8 +26,9 @@ namespace SanctuarySSModManager.Controls
         private static readonly ContentMetadata[] contentMetadata = [
             new ContentMetadata(instance=>instance.DisplayName, "general/displayName"),
             new ContentMetadata(instance=>instance.UnitName, "general/name"),
-            new ContentMetadata(instance=>instance.Faction, "general/tpId"),
+            new ContentMetadata(instance=>instance.Faction, "general/tpId", GetFaction),
             new ContentMetadata(instance=>instance.TpId, "general/tpId"),
+            new ContentMetadata(instance=>instance.Tier, "tags", GetTier),
             new ContentMetadata(instance=>instance.Health, "defence/health/max"),
             new ContentMetadata(instance=>instance.Mass, "economy/cost/alloys"),
             new ContentMetadata(instance=>instance.Energy, "economy/cost/energy"),
@@ -65,15 +68,14 @@ namespace SanctuarySSModManager.Controls
         {
             foreach (var metadata in contentMetadata)
             {
-                metadata.GetControl(this).Content = data.Get(metadata.ValuePath);
+                metadata.SetValue(this, data);
             }
-            var tpId = (string)TpId.Content;
-            Faction.Content = GetFaction(tpId);
+            var tpId = TpId.Text;
+            //Faction.Text = GetFaction(tpId);
 
             // first row has text height
             // 2nd row has separator height
             var textHeight = Grid.RowDefinitions[0].Height;
-            var textDoubleHeight = new GridLength(textHeight.Value * 2.5);
             var sepHeight = Grid.RowDefinitions[1].Height;
             Grid.RowDefinitions.RemoveAt(1);
             var lastMetadata = GridMetadata.Empty;
@@ -88,7 +90,8 @@ namespace SanctuarySSModManager.Controls
                     Grid.Set(new Separator(), 0, colSpan: Grid.ColumnDefinitions.Count);
                     Grid.RowDefinitions.Add(new RowDefinition());
                     Grid.RowDefinitions[Grid.RowDefinitions.Count - 1].Height = textHeight;
-                    Grid.Set(new Label { Content = metadata.Group }, 0);
+                    Grid.Set(new TextBlock { Text = metadata.Group }, 0);
+                    lastMetadata = metadata;
                 }
                 if (string.IsNullOrWhiteSpace(metadata.Name))
                 {
@@ -99,24 +102,9 @@ namespace SanctuarySSModManager.Controls
                             .Where(k => (bool)dictionary[k])
                             .Order()
                             .ToArray();
-                        if (items.Any())
-                        {
-                            var margin = new Thickness(0, 0, 0, 0);
-                            var wrapPanel = new WrapPanel
-                            {
-                                Margin = margin,
-                                Height = textDoubleHeight.Value
-                            };
-                            
-                            foreach (var item in items.Take(items.Length-2))
-                            {
-                                wrapPanel.Children.Add(new Label { Content = item + ",", Margin = margin });
-                            }
-                            wrapPanel.Children.Add(new Label { Content = items.Last(), Margin = margin });
-                            Grid.Set(wrapPanel,  1, colSpan: 3);
-                        }
-                        //Grid.Set(new Label { Content = string.Join(",", items), Height = textDoubleHeight.Value }, 1, colSpan: 3);
-                        Grid.RowDefinitions[Grid.RowDefinitions.Count - 1].Height = textDoubleHeight;
+                        var text = string.Join(", ", items);
+                        Grid.Set(new TextBlock {  Text = text }, 1, colSpan: 3);
+                        Grid.RowDefinitions[Grid.RowDefinitions.Count - 1].Height = new GridLength(textHeight.Value, GridUnitType.Auto);
                     }
                     else
                         throw new InvalidOperationException();
@@ -126,7 +114,6 @@ namespace SanctuarySSModManager.Controls
                     Grid.Set(new Label { Content = metadata.Name }, 1, colSpan: 2);
                     Grid.Set(new Label { Content = data.Get(metadata.ValuePath) }, 3);
                 }
-                lastMetadata = metadata;
             }
             Grid.RowDefinitions.Add(new RowDefinition());
             var imagePath = Path.Combine(gameMetadata.GameRoot, @"engine\Sanctuary_Data\Resources\UI\Gameplay\IconsUnits", tpId + ".png");
@@ -136,8 +123,22 @@ namespace SanctuarySSModManager.Controls
             UnitImage.Source = new BitmapImage(new Uri(imagePath, UriKind.Absolute));
         }
 
-        private string GetFaction(string tpId)
+        private static readonly string[] techTiers = ["TECH1", "TECH2", "TECH3", "TECH4"];
+
+        private static string GetTier(object node)
         {
+            var array = (List<JsonValue>) node;
+            foreach (var item in array)
+            {
+                var text = item.ToString();
+                if (techTiers.Contains(text))
+                    return text;
+            }
+            throw new InvalidOperationException();
+        }
+        private static string GetFaction(object node)
+        {
+            var tpId = node.ToString();
             switch(tpId[1])
             {
                 case 'c':
@@ -153,6 +154,7 @@ namespace SanctuarySSModManager.Controls
         private class GridMetadata
         {
             public static readonly GridMetadata Empty = new GridMetadata(string.Empty, string.Empty, string.Empty);
+
             public string Group { get; }
             public string Name { get; }
             public string ValuePath { get; }
@@ -163,16 +165,41 @@ namespace SanctuarySSModManager.Controls
                 Name = name;
                 ValuePath = valuePath;
             }
+
+
         }
         private class ContentMetadata
         {
-            public Func<UnitDisplay, ContentControl> GetControl { get; }
-            public string ValuePath { get; }
+            private readonly Func<UnitDisplay, TextBlock> getTextBlock;
+            private readonly string valuePath;
+            private readonly Func<object, string>? getText;
 
-            public ContentMetadata(Func<UnitDisplay, ContentControl> getControl, string valuePath)
+            //public ContentMetadata(Func<UnitDisplay, ContentControl> getContentControl, string valuePath)
+            //{
+            //    setValue = (unitDisplay,data)=> getContentControl(unitDisplay).Content = data.Get(valuePath);
+            //    this.valuePath = valuePath;
+            //}
+
+            public ContentMetadata(Func<UnitDisplay, TextBlock> getTextBlock, string valuePath, Func<object, string>? getText = null)
             {
-                GetControl = getControl;
-                ValuePath = valuePath;
+                this.getText = getText ?? GetText;
+                this.getTextBlock = getTextBlock;
+                this.valuePath = valuePath;
+            }
+
+            private string GetText(object node)
+            {
+                var text = node.ToString();
+                return text;
+            }
+
+            public void SetValue(UnitDisplay unitDisplay, JsonObject data) 
+            {
+                var textBlock = getTextBlock(unitDisplay);
+                var name = textBlock.Name;
+                var value = data.Get(valuePath);
+                var text = getText(value);
+                textBlock.Text = text;
             }
         }
     }

@@ -38,6 +38,10 @@ namespace SanctuarySSModManager.Extensions
             }
             switch (node.GetValueKind())
             {
+                case JsonValueKind.Array:
+                    var array = node.AsArray().Select(item => item.AsValue()).ToList();
+                    value = array as T;
+                    break;
                 case JsonValueKind.Object:
                     var dictionary = node.AsObject().ToDictionary(kv=>kv.Key, kv => kv.Value);
                     value = dictionary as T;
