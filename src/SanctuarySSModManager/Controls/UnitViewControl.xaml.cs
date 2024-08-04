@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
@@ -54,37 +55,35 @@ namespace SanctuarySSModManager.Controls
             timer.Stop();
         }
 
+        public void UpdateUnits(IGrouping<object?, UnitDisplay> units, int level, int colOffset, params string[] groupNames)
+        {
+            var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+            var member = typeof(UnitDisplay)
+                .GetMember(
+                groupNames[level],
+                MemberTypes.Field | MemberTypes.Property,
+                flags
+                )
+                .Single();
+
+            Func<UnitDisplay, object> getValue = member.MemberType == MemberTypes.Field
+                ? typeof(UnitDisplay).GetField(groupNames[level],flags).GetValue
+                : typeof(UnitDisplay).GetProperty(groupNames[level],flags).GetValue;
+            var grouping = units.GroupBy(getValue);
+            var count = grouping.Count();
+            int iCol = 0;
+            foreach (var group in grouping)
+            {
+                UpdateUnits(group, level + 1, colOffset, groupNames);
+                ++iCol;
+            }
+        }
         public void UpdateUnits()
         {
             var timer = Stopwatch.StartNew();
-            switch (Group1.SelectedValue.GetValueOrDefault("Faction"))
-            {
-                case "Faction":
-                    var groupByFaction = allUnits.GroupBy(unit => unit.Faction.Text);
-                    break;
-                case "Tech":
-                    var groupByTech = allUnits.GroupBy(unit => unit.Tier.Text);
-                    break;
-
-            }
             Grid.RowDefinitions.Clear();
             Grid.ColumnDefinitions.Clear();
-            Grid.ColumnDefinitions.Add(new ColumnDefinition());
-            Grid.ColumnDefinitions.Add(new ColumnDefinition());
-            bool newColumn = true;
-            foreach (var unitView in allUnits)
-            {
-                if (newColumn)
-                {
-                    Grid.RowDefinitions.Add(new RowDefinition { });
-                    Grid.Set(unitView, 0);
-                }
-                else
-                {
-                    Grid.Set(unitView, 1);
-                }
-                newColumn = !newColumn;
-            }
+            UpdateUnits(allUnits.GroupBy(_=>(object)1).First(), 0, 0, "Faction", "Tech");
             timer.Stop();
         }
 

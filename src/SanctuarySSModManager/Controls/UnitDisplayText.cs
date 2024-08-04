@@ -43,98 +43,48 @@ namespace SanctuarySSModManager.Controls
             }
             if (node == null)
                 return false;
-            SetValue(node);
-            if (!AddToGrid)
-                return true;
+            SetGroup(grid, previousGroup);
+            SetDisplayName(grid);
+            SetValue(grid, node);
+
+            return true;
+        }
+
+        protected virtual void SetGroup(Grid grid, UnitDisplayText previousGroup)
+        {
+            if (!AddToGrid || previousGroup.GroupName == GroupName)
+                return;
             var control = new TextBlock { Text = GroupName };
             grid.Children.Add(control);
             Grid.SetRow(control, grid.RowDefinitions.Count - 1);
             Grid.SetColumn(control, 0);
+        }
 
-            control = new TextBlock { Text = DisplayName };
+        protected virtual void SetDisplayName(Grid grid)
+        {
+            if (!AddToGrid)
+                return;
+            var control = new TextBlock { Text = DisplayName };
             grid.Children.Add(control);
             Grid.SetRow(control, grid.RowDefinitions.Count - 1);
             Grid.SetColumn(control, 1);
             Grid.SetColumnSpan(control, 2);
+        }
 
-            control = this;
+        protected virtual void SetValue(Grid grid, JsonNode node)
+        {
+            SetValue(node);
+            if (!AddToGrid)
+                return;
+            var control = this;
             grid.Children.Add(control);
             Grid.SetRow(control, grid.RowDefinitions.Count - 1);
             Grid.SetColumn(control, 3);
-
-            return true;
         }
 
         protected virtual void SetValue(JsonNode node)
         {
             Text = node.GetValue<string>();
-        }
-    }
-
-    public class UnitDisplayNumber : UnitDisplayText
-    {
-        public double Double { get; private set; }
-        public override object Value => Double;
-        public UnitDisplayNumber() : base()
-        {
-        }
-        public UnitDisplayNumber(string groupName, string displayName, string luaPath) : base(groupName, displayName, luaPath)
-        {
-
-        }
-        protected override void SetValue(JsonNode node)
-        {
-            Double = node.GetValue<double>();
-            Text = Double.ToString();
-        }
-    }
-    public class UnitDisplayBoolean : UnitDisplayText
-    {
-        public bool Bool { get; private set; }
-        public override object Value => Bool;
-        public UnitDisplayBoolean() : base()
-        {
-        }
-        public UnitDisplayBoolean(string groupName, string displayName, string luaPath) : base(groupName, displayName, luaPath)
-        {
-
-        }
-        protected override void SetValue(JsonNode node)
-        {
-            Bool = node.GetValue<bool>();
-            Text = Bool.ToString();
-        }
-    }
-    public class UnitDisplayOrders : UnitDisplayText
-    {
-        public UnitDisplayOrders() : base()
-        {
-        }
-        public UnitDisplayOrders(string groupName, string displayName, string luaPath) : base(groupName, displayName, luaPath)
-        {
-
-        }
-        protected override void SetValue(JsonNode node)
-        {
-            var orders = string.Join(", ", node.AsObject().Where(kv => kv.Value != null && kv.Value.GetValue<bool>()).Select(kv => kv.Key).Order());
-            Text = orders;
-        }
-    }
-    public class UnitDisplayTier : UnitDisplayText
-    {
-        public UnitDisplayTier() : base()
-        {
-        }
-        public UnitDisplayTier(string groupName, string displayName, string luaPath) : base(groupName, displayName, luaPath)
-        {
-
-        }
-        protected override void SetValue(JsonNode node)
-        {
-            var tags = node.AsArray().Select(item => item.GetValue<string>()).ToList();
-            var tiers = new string[] { "TECH1", "TECH2", "TECH3", "TECH4" };
-            var techTier = tiers.Intersect(tags).Single();
-            Text = techTier;
         }
     }
 }

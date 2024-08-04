@@ -16,6 +16,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace SanctuarySSModManager.Controls
 {
+    [DebuggerDisplay("{TpId.Text} {Faction.Text} {Tier.Text}")]
     /// <summary>
     /// Interaction logic for UnitDisplay.xaml
     /// </summary>

@@ -12,27 +12,45 @@
             <Setter Property="Padding" Value="1"/>
             <Setter Property="TextWrapping" Value="Wrap"/>
         </Style>
+        <Style TargetType="local:UnitDisplayNumber">
+            <Setter Property="FontSize" Value="10px"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+        <Style TargetType="local:UnitDisplayBoolean">
+            <Setter Property="FontSize" Value="10px"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+        <Style TargetType="local:UnitDisplayOrders">
+            <Setter Property="FontSize" Value="10px"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
     </UserControl.Resources>
     <Border BorderBrush="Black" BorderThickness="2" Margin="5">
         <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Horizontal">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <Image Grid.Row="0" Grid.Column="0" x:Name="UnitImage" Width="80" Height="80" Margin="2" Grid.RowSpan="3"/>
+                    <Image                 Grid.Row="0" Grid.Column="0" x:Name="UnitImage" Width="80" Height="80" Margin="2" Grid.RowSpan="4"/>
                     <local:UnitDisplayText Grid.Row="0" Grid.Column="1" x:Name="DisplayName" Text="Display Name" LuaPath="general/displayName" />
                     <local:UnitDisplayText Grid.Row="1" Grid.Column="1" x:Name="UnitName" Text="Unit Name" LuaPath="general/name" />
-                    <local:UnitDisplayText Grid.Row="0" Grid.Column="0" x:Name="TpId" Text="Unit Id" LuaPath="general/tpId" />
-                    <local:UnitDisplayText Grid.Row="0" Grid.Column="2" x:Name="Faction" Text="Faction" LuaPath="general/tpId" />
-                    <local:UnitDisplayTier Grid.Row="1" Grid.Column="2" x:Name="Tier" Text="Tech" LuaPath="tags" />
+                    <local:UnitDisplayText Grid.Row="2" Grid.Column="1" x:Name="TpId" Text="Unit Id" LuaPath="general/tpId" />
+                    <TextBlock Grid.Row="0" Grid.Column="2" Width="30px" />
+                    <local:UnitDisplayFaction Grid.Row="0" Grid.Column="3" x:Name="Faction" Text="Faction" LuaPath="general/tpId" />
+                    <local:UnitDisplayTier Grid.Row="1" Grid.Column="3" x:Name="Tier" Text="Tech" LuaPath="tags" />
                 </Grid>
             </StackPanel>
             <Grid x:Name="Grid" Margin="2">

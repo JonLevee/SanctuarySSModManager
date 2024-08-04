@@ -68,6 +68,8 @@ namespace SanctuarySSModManager
             var height = e.NewSize.Height - topLeft.Y;
             Tab.Width = width;
             Tab.Height = height;
+            //UnitViewControl.Grid.Width= width;
+            //UnitViewControl.Grid.Height = height;
         }
 
         private async void Timer_Tick(object? sender, EventArgs e)
