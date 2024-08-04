@@ -49,7 +49,6 @@ namespace SanctuarySSModManager.Controls
             {
                 Debug.Assert(unit.Value != null);
                 var unitView = DIContainer.Get<UnitDisplay>(unit.Value.AsObject());
-                unitView.Load();
                 allUnits.Add(unitView);
             }
             timer.Stop();
@@ -58,7 +57,7 @@ namespace SanctuarySSModManager.Controls
         public void UpdateUnits()
         {
             var timer = Stopwatch.StartNew();
-            switch(Group1.SelectedValue.GetValueOrDefault("Faction"))
+            switch (Group1.SelectedValue.GetValueOrDefault("Faction"))
             {
                 case "Faction":
                     var groupByFaction = allUnits.GroupBy(unit => unit.Faction.Text);
@@ -73,7 +72,7 @@ namespace SanctuarySSModManager.Controls
             Grid.ColumnDefinitions.Add(new ColumnDefinition());
             Grid.ColumnDefinitions.Add(new ColumnDefinition());
             bool newColumn = true;
-            foreach(var unitView in allUnits)
+            foreach (var unitView in allUnits)
             {
                 if (newColumn)
                 {

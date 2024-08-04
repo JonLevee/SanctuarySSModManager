@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Windows;
@@ -22,100 +23,63 @@ namespace SanctuarySSModManager.Controls
     {
         private readonly IGameMetadata gameMetadata;
         private readonly JsonObject data;
-        // engine\LJ\lua\common\systems\templateUpdater.lua: unitToProjectile
-        private static readonly ContentMetadata[] contentMetadata = [
-            new ContentMetadata(instance=>instance.DisplayName, "general/displayName"),
-            new ContentMetadata(instance=>instance.UnitName, "general/name"),
-            new ContentMetadata(instance=>instance.Faction, "general/tpId", GetFaction),
-            new ContentMetadata(instance=>instance.TpId, "general/tpId"),
-            new ContentMetadata(instance=>instance.Tier, "tags", GetTier),
-            new ContentMetadata(instance=>instance.Health, "defence/health/max"),
-            new ContentMetadata(instance=>instance.Mass, "economy/cost/alloys"),
-            new ContentMetadata(instance=>instance.Energy, "economy/cost/energy"),
-            new ContentMetadata(instance=>instance.BuildTime, "economy/buildTime"),
-            ];
-        private static readonly GridMetadata[] groupMetadata = [
-            new GridMetadata("Economy", "Harvest time", "economy/harvestTime"),
-            new GridMetadata("Economy", "Alloys", "economy/harvest/alloys"),
-            new GridMetadata("Economy", "Energy", "economy/harvest/energy"),
-            new GridMetadata("Intel", "Vision radius", "intel/visionRadius"),
-            new GridMetadata("Movement", "Acceleration", "movement/acceleration"),
-            new GridMetadata("Movement", "Rotation speed", "movement/rotationSpeed"),
-            new GridMetadata("Movement", "Air hover", "movement/airHover"),
-            new GridMetadata("Movement", "Min speed", "movement/minSpeed"),
-            new GridMetadata("Movement", "Speed", "movement/speed"),
-            new GridMetadata("Movement", "Type", "movement/type"),
-            new GridMetadata("Weapons", "Damage", "weapons/damage"),
-            new GridMetadata("Weapons", "Damage radius", "weapons/damageRadius"),
-            new GridMetadata("Weapons", "Damage type", "weapons/damageType"),
-            new GridMetadata("Weapons", "Range ring type", "weapons/rangeRingType"),
-            new GridMetadata("Weapons", "Range min", "weapons/rangeMin"),
-            new GridMetadata("Weapons", "Range max", "weapons/rangeMax"),
-            new GridMetadata("Weapons", "Reload time", "weapons/reloadTime"),
-            new GridMetadata("Orders", "", "general/orders"),
-            ];
-        
 
-        // orders
+        public UnitDisplayNumber HarvestTime => new("Economy", "Harvest time", "economy/harvestTime");
+        public UnitDisplayNumber EconomyAlloys => new("Economy", "Alloys", "economy/harvest/alloys");
+        public UnitDisplayNumber EconomyEnergy => new("Economy", "Energy", "economy/harvest/energy");
+        public UnitDisplayNumber VisionRadius => new("Intel", "Vision radius", "intel/visionRadius");
+        public UnitDisplayNumber Acceleration => new("Movement", "Acceleration", "movement/acceleration");
+        public UnitDisplayNumber RotationSpeed => new("Movement", "Rotation speed", "movement/rotationSpeed");
+        public UnitDisplayBoolean AirHover => new("Movement", "Air hover", "movement/airHover");
+        public UnitDisplayNumber MinSpeed => new("Movement", "Min speed", "movement/minSpeed");
+        public UnitDisplayNumber Speed => new("Movement", "Speed", "movement/speed");
+        public UnitDisplayText MovementType => new("Movement", "Type", "movement/type");
+        public UnitDisplayNumber Damage => new("Weapons", "Damage", "weapons/damage");
+        public UnitDisplayNumber DamageRadius => new("Weapons", "Damage radius", "weapons/damageRadius");
+        public UnitDisplayText DamageType => new("Weapons", "Damage type", "weapons/damageType");
+        public UnitDisplayText RangeRingType => new("Weapons", "Range ring type", "weapons/rangeRingType");
+        public UnitDisplayNumber RangeMin => new("Weapons", "Range min", "weapons/rangeMin");
+        public UnitDisplayNumber RangeMax => new("Weapons", "Range max", "weapons/rangeMax");
+        public UnitDisplayNumber ReloadTime => new("Weapons", "Reload time", "weapons/reloadTime");
+        public UnitDisplayOrders Orders => new("Orders", "", "general/orders");
+
+        // engine\LJ\lua\common\systems\templateUpdater.lua: unitToProjectile
         public UnitDisplay(IGameMetadata gameMetadata, JsonObject data)
         {
             InitializeComponent();
+
             this.gameMetadata = gameMetadata;
             this.data = data;
+            Load();
         }
 
-        public void Load()
+        private void Load()
         {
-            foreach (var metadata in contentMetadata)
+            var instances =
+                GetType()
+                .GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
+                .Where(p => p.FieldType.IsAssignableTo(typeof(UnitDisplayText)))
+                .Select(p => p.GetValue(this))
+                .Cast<UnitDisplayText>()
+                .Concat(
+                    GetType()
+                    .GetProperties()
+                    .Where(p => p.PropertyType.IsAssignableTo(typeof(UnitDisplayText)))
+                    .Select(p => p.GetValue(this))
+                    .Cast<UnitDisplayText>()
+                ).ToList();
+            var previousGroup = UnitDisplayText.Empty;
+            foreach (var instance in instances)
             {
-                metadata.SetValue(this, data);
+                Debug.Assert(instance != null);
+                if (instance.Initialize(Grid, data, previousGroup))
+                {
+                    if (instance.AddToGrid)
+                        Grid.RowDefinitions.Add(new RowDefinition());
+                };
+                previousGroup = instance;
             }
             var tpId = TpId.Text;
-            //Faction.Text = GetFaction(tpId);
-
-            // first row has text height
-            // 2nd row has separator height
-            var textHeight = Grid.RowDefinitions[0].Height;
-            var sepHeight = Grid.RowDefinitions[1].Height;
-            Grid.RowDefinitions.RemoveAt(1);
-            var lastMetadata = GridMetadata.Empty;
-            foreach (var metadata in groupMetadata)
-            {
-                if (!data.TryGet(metadata.ValuePath, out object? value))
-                    continue;
-                Grid.RowDefinitions.Add(new RowDefinition());
-                if (lastMetadata.Group != metadata.Group)
-                {
-                    Grid.RowDefinitions[Grid.RowDefinitions.Count - 1].Height = sepHeight;
-                    Grid.Set(new Separator(), 0, colSpan: Grid.ColumnDefinitions.Count);
-                    Grid.RowDefinitions.Add(new RowDefinition());
-                    Grid.RowDefinitions[Grid.RowDefinitions.Count - 1].Height = textHeight;
-                    Grid.Set(new TextBlock { Text = metadata.Group }, 0);
-                    lastMetadata = metadata;
-                }
-                if (string.IsNullOrWhiteSpace(metadata.Name))
-                {
-                    if (value is IDictionary<string, JsonNode> dictionary)
-                    {
-                        var items = dictionary
-                            .Keys
-                            .Where(k => (bool)dictionary[k])
-                            .Order()
-                            .ToArray();
-                        var text = string.Join(", ", items);
-                        Grid.Set(new TextBlock {  Text = text }, 1, colSpan: 3);
-                        Grid.RowDefinitions[Grid.RowDefinitions.Count - 1].Height = new GridLength(textHeight.Value, GridUnitType.Auto);
-                    }
-                    else
-                        throw new InvalidOperationException();
-                }
-                else
-                {
-                    Grid.Set(new Label { Content = metadata.Name }, 1, colSpan: 2);
-                    Grid.Set(new Label { Content = data.Get(metadata.ValuePath) }, 3);
-                }
-            }
-            Grid.RowDefinitions.Add(new RowDefinition());
             var imagePath = Path.Combine(gameMetadata.GameRoot, @"engine\Sanctuary_Data\Resources\UI\Gameplay\IconsUnits", tpId + ".png");
             if (!File.Exists(imagePath))
                 imagePath = Path.Combine(gameMetadata.GameRoot, @"engine\Sanctuary_Data\Resources\UI\Gameplay\Icons\LogoIcon.png");
@@ -127,7 +91,7 @@ namespace SanctuarySSModManager.Controls
 
         private static string GetTier(object node)
         {
-            var array = (List<JsonValue>) node;
+            var array = (List<JsonValue>)node;
             foreach (var item in array)
             {
                 var text = item.ToString();
@@ -136,72 +100,5 @@ namespace SanctuarySSModManager.Controls
             }
             throw new InvalidOperationException();
         }
-        private static string GetFaction(object node)
-        {
-            var tpId = node.ToString();
-            switch(tpId[1])
-            {
-                case 'c':
-                    return "Chosen";
-                case 'e':
-                    return "EDA";
-                case 'g':
-                    return "Guard";
-            }
-            throw new InvalidOperationException($"Unknown faction letter: {tpId[1]}");
-        }
-
-        private class GridMetadata
-        {
-            public static readonly GridMetadata Empty = new GridMetadata(string.Empty, string.Empty, string.Empty);
-
-            public string Group { get; }
-            public string Name { get; }
-            public string ValuePath { get; }
-
-            public GridMetadata(string group, string name, string valuePath)
-            {
-                Group = group;
-                Name = name;
-                ValuePath = valuePath;
-            }
-
-
-        }
-        private class ContentMetadata
-        {
-            private readonly Func<UnitDisplay, TextBlock> getTextBlock;
-            private readonly string valuePath;
-            private readonly Func<object, string>? getText;
-
-            //public ContentMetadata(Func<UnitDisplay, ContentControl> getContentControl, string valuePath)
-            //{
-            //    setValue = (unitDisplay,data)=> getContentControl(unitDisplay).Content = data.Get(valuePath);
-            //    this.valuePath = valuePath;
-            //}
-
-            public ContentMetadata(Func<UnitDisplay, TextBlock> getTextBlock, string valuePath, Func<object, string>? getText = null)
-            {
-                this.getText = getText ?? GetText;
-                this.getTextBlock = getTextBlock;
-                this.valuePath = valuePath;
-            }
-
-            private string GetText(object node)
-            {
-                var text = node.ToString();
-                return text;
-            }
-
-            public void SetValue(UnitDisplay unitDisplay, JsonObject data) 
-            {
-                var textBlock = getTextBlock(unitDisplay);
-                var name = textBlock.Name;
-                var value = data.Get(valuePath);
-                var text = getText(value);
-                textBlock.Text = text;
-            }
-        }
     }
-
 }

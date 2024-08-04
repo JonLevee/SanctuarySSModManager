@@ -7,11 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" Width="260">
     <UserControl.Resources>
-        <Style TargetType="Label">
-            <Setter Property="FontSize" Value="10px"/>
-            <Setter Property="Padding" Value="1"/>
-        </Style>
-        <Style TargetType="TextBlock">
+        <Style TargetType="local:UnitDisplayText">
             <Setter Property="FontSize" Value="10px"/>
             <Setter Property="Padding" Value="1"/>
             <Setter Property="TextWrapping" Value="Wrap"/>
@@ -32,11 +28,11 @@
                         <RowDefinition/>
                     </Grid.RowDefinitions>
                     <Image Grid.Row="0" Grid.Column="0" x:Name="UnitImage" Width="80" Height="80" Margin="2" Grid.RowSpan="3"/>
-                    <TextBlock Grid.Row="0" Grid.Column="1" x:Name="DisplayName" Text="Display Name"/>
-                    <TextBlock Grid.Row="1" Grid.Column="1" x:Name="UnitName" Text="Unit Name" />
-                    <TextBlock Grid.Row="0" Grid.Column="0" x:Name="TpId" Text="Unit Id"/>
-                    <TextBlock Grid.Row="0" Grid.Column="2" x:Name="Faction" Text="Faction" />
-                    <TextBlock Grid.Row="1" Grid.Column="2" x:Name="Tier" Text="Tech" />
+                    <local:UnitDisplayText Grid.Row="0" Grid.Column="1" x:Name="DisplayName" Text="Display Name" LuaPath="general/displayName" />
+                    <local:UnitDisplayText Grid.Row="1" Grid.Column="1" x:Name="UnitName" Text="Unit Name" LuaPath="general/name" />
+                    <local:UnitDisplayText Grid.Row="0" Grid.Column="0" x:Name="TpId" Text="Unit Id" LuaPath="general/tpId" />
+                    <local:UnitDisplayText Grid.Row="0" Grid.Column="2" x:Name="Faction" Text="Faction" LuaPath="general/tpId" />
+                    <local:UnitDisplayTier Grid.Row="1" Grid.Column="2" x:Name="Tier" Text="Tech" LuaPath="tags" />
                 </Grid>
             </StackPanel>
             <Grid x:Name="Grid" Margin="2">
@@ -51,10 +47,10 @@
                     <RowDefinition Height="13px"/>
                     <RowDefinition Height="5px"/>
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" Grid.Column="0" Name="Health" Text="Health"/>
-                <TextBlock Grid.Row="0" Grid.Column="1" Name="Mass" Text="Mass"/>
-                <TextBlock Grid.Row="0" Grid.Column="2" Name="Energy" Text="Energy"/>
-                <TextBlock Grid.Row="0" Grid.Column="3" Name="BuildTime" Text="Build time"/>
+                <local:UnitDisplayNumber Grid.Row="0" Grid.Column="0" x:Name="Health" Text="Health" LuaPath="defence/health/max" />
+                <local:UnitDisplayNumber Grid.Row="0" Grid.Column="1" x:Name="Mass" Text="Mass" LuaPath="economy/cost/alloys" />
+                <local:UnitDisplayNumber Grid.Row="0" Grid.Column="2" x:Name="Energy" Text="Energy" LuaPath="economy/cost/energy" />
+                <local:UnitDisplayNumber Grid.Row="0" Grid.Column="3" x:Name="BuildTime" Text="Build time" LuaPath="economy/buildTime" />
             </Grid>
         </StackPanel>
     </Border>

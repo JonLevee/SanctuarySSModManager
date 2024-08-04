@@ -52,13 +52,23 @@ namespace SanctuarySSModManager.Extensions
             }
         }
 
-        public static string CamelCase(this string text)
+        public static string ToPascalCase(this string text)
         {
-            if (!string.IsNullOrEmpty(text) && char.IsUpper(text[0]))
+            if (text.Length == 0)
+                return text;
+            var sb = new StringBuilder(text);
+            sb[0] = char.ToUpper(sb[0]);
+            for (var i = 0; i < sb.Length; ++i)
             {
-                text = char.ToLower(text[0]) + text[1..];
+                if (char.IsWhiteSpace(sb[i]))
+                {
+                    while (i < sb.Length && char.IsWhiteSpace(sb[i]))
+                        sb.Remove(i, 1);
+                    if (i < sb.Length)
+                        sb[i] = char.ToUpper(sb[i]);
+                }
             }
-            return text;
+            return sb.ToString();
         }
 
         public static ICollection<T> ToCollection<T>(this ICollection values)
