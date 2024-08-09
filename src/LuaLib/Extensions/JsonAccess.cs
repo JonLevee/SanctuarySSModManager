@@ -19,7 +19,7 @@ namespace SanctuarySSModManager.Extensions
             return Get<object>(node, key);
         }
 
-        public static bool TryGet<T>(this JsonNode node, string key, out T? value) where T : class
+        public static bool TryGet<T>(this JsonNode node, string key, out T? value)
         {
             value = default;
             var keys = key.Split('/');
@@ -40,11 +40,11 @@ namespace SanctuarySSModManager.Extensions
             {
                 case JsonValueKind.Array:
                     var array = node.AsArray().Select(item => item.AsValue()).ToList();
-                    value = array as T;
+                    value = (T)((object)array);
                     break;
                 case JsonValueKind.Object:
-                    var dictionary = node.AsObject().ToDictionary(kv=>kv.Key, kv => kv.Value);
-                    value = dictionary as T;
+                    var dictionary = node.AsObject().ToDictionary(kv => kv.Key, kv => kv.Value);
+                    value = (T)((object)dictionary);
                     break;
                 case JsonValueKind.String:
                     value = (T)Convert.ChangeType(node.GetValue<string>(), typeof(T));
