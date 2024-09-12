@@ -92,6 +92,16 @@ namespace SanctuarySSModManager
             }
 
             services.AddSingleton<RegistryPersister>();
+            services.AddSingleton(s =>
+            {
+                var userSettings = s.GetService<RegistryPersister>().LoadFromRegistry<SSSUserSettings>("UserSettings");
+                if (string.IsNullOrEmpty(userSettings.ShatteredSunDirectoryRoot))
+                {
+                    var steamInfo = s.GetService<ISteamInfo>();
+                    userSettings.ShatteredSunDirectoryRoot = steamInfo.GetRoot("Sanctuary Shattered Sun Demo");
+                }
+                return userSettings;
+            });
         }
 
         public static T Get<T>() where T : class

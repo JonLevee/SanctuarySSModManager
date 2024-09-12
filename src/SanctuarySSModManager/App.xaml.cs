@@ -18,8 +18,7 @@ namespace SanctuarySSModManager
         private void ConfigureServices(ServiceCollection services)
         {
             services
-                .AddSingleton<MainWindow>()
-                .AddSingleton(s=>s.GetService<RegistryPersister>().LoadFromRegistry<SSSUserSettings>("UserSettings"));
+                .AddSingleton<MainWindow>();
         }
         private void OnStartup(object sender, StartupEventArgs e)
         {

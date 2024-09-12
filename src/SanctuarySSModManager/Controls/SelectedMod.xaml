@@ -14,11 +14,11 @@
             <ListView Name="CurrentlySelectedMod">None</ListView>
             <Label Content="Folder"/>
             <ListBox 
-                        Name="FolderModeListBox" 
-                        Width="70px" 
-                        SelectionMode="Single" 
-                        SelectedItem="{Binding FolderMode, Mode=TwoWay}"
-                        ItemsSource="{localMisc:EnumToCollection EnumType={x:Type enums:FolderModeEnum}}">
+                Name="FolderModeListBox" 
+                Width="70px" 
+                SelectionMode="Single" 
+                SelectedItem="{Binding FolderMode, Mode=TwoWay}"
+                ItemsSource="{Binding  FolderModes}">
             </ListBox>
         </StackPanel>
     </StackPanel>

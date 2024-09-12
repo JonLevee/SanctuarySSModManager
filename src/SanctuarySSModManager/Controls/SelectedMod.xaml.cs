@@ -34,6 +34,9 @@ namespace SanctuarySSModManager.Controls
             }
         }
 
+        private List<FolderModeEnum> folderModes;
+        public List<FolderModeEnum> FolderModes => folderModes ??= Enum.GetValues<FolderModeEnum>().ToList();
+
 
         public SelectedMod()
         {
