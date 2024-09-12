@@ -83,11 +83,6 @@ namespace SanctuarySSModManager
             LoadingPanel.Visibility = Visibility.Visible;
             SelectedModPanel.Visibility = Visibility.Collapsed;
             UpdateLayout();
-            var model = DIContainer.Get<ShatteredSunModel>();
-            await model.Load();
-            File.WriteAllText("root.json", model.GetJson());
-            UnitViewControl.Load(model);
-            UnitViewControl.UpdateUnits();
             //var model = DIContainer.Get<ShatteredSunModel>();
             //await model.Load();
             //var viewModel = DIContainer.Get<ShatteredSunViewModel>();

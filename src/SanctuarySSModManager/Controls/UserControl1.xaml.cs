@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace SanctuarySSModManager.Controls
 {
     /// <summary>
-    /// Interaction logic for UnitFilter.xaml
+    /// Interaction logic for UserControl1.xaml
     /// </summary>
-    public partial class UnitFilter : UserControl
+    public partial class UserControl1 : UserControl
     {
-        public UnitFilter()
+        public UserControl1()
         {
             InitializeComponent();
         }

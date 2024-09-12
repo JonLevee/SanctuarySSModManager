@@ -25,11 +25,6 @@
                 </StackPanel>
             </StackPanel>
             <TabControl Name="Tab">
-                <TabItem Name="UnitsViewTab" Header="Units View">
-                    <controls:UnitViewControl x:Name="UnitViewControl">
-
-                    </controls:UnitViewControl>
-                </TabItem>
                 <TabItem Name="ModManagerTab" Header="Mod Manager">
 
                 </TabItem>
