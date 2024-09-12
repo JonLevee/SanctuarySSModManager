@@ -6,6 +6,9 @@
         xmlns:local="clr-namespace:SanctuarySSModManager"
         xmlns:controls="clr-namespace:SanctuarySSModManager.Controls"
         xmlns:toolkit="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:localMisc="clr-namespace:SanctuarySSModManager.MiscUtil"
+        xmlns:enums="clr-namespace:SanctuarySSLib.Enums;assembly=SanctuarySSLib"
+        
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" Closing="OnClosing"    
         >
@@ -16,14 +19,9 @@
 
         <StackPanel Orientation="Vertical" DockPanel.Dock="Top">
             <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="100" Content="Sanctuary Shattered Sun Mod Manager" HorizontalAlignment="Center"/>
-
-            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                <Label Content="Loading ..." Name="LoadingPanel" />
-                <StackPanel Name="SelectedModPanel" Orientation="Horizontal">
-                    <Label Content="Selected mod"/>
-                    <ListView Name="SelectedMod">None</ListView>
-                </StackPanel>
-            </StackPanel>
+            <controls:SelectedMod>
+                
+            </controls:SelectedMod>
             <TabControl Name="Tab">
                 <TabItem Name="ModManagerTab" Header="Mod Manager">
 

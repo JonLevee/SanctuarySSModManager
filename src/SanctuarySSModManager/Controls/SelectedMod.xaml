@@ -1,0 +1,25 @@
+﻿<UserControl x:Class="SanctuarySSModManager.Controls.SelectedMod"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SanctuarySSModManager.Controls"
+            xmlns:localMisc="clr-namespace:SanctuarySSModManager.MiscUtil"
+            xmlns:enums="clr-namespace:SanctuarySSLib.Enums;assembly=SanctuarySSLib"
+             mc:Ignorable="d" d:DesignWidth="800" Height="49">
+    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+        <Label Content="Loading ..." Name="LoadingPanel" />
+        <StackPanel Name="SelectedModPanel" Orientation="Horizontal">
+            <Label Content="Selected mod"/>
+            <ListView Name="CurrentlySelectedMod">None</ListView>
+            <Label Content="Folder"/>
+            <ListBox 
+                        Name="FolderModeListBox" 
+                        Width="70px" 
+                        SelectionMode="Single" 
+                        SelectedItem="{Binding FolderMode, Mode=TwoWay}"
+                        ItemsSource="{localMisc:EnumToCollection EnumType={x:Type enums:FolderModeEnum}}">
+            </ListBox>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

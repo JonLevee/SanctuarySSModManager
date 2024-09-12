@@ -2,13 +2,16 @@
 using LuaParserUtil.Loader;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Win32;
 using NLog;
 using SanctuarySSLib.Attributes;
 using SanctuarySSLib.LuaUtil;
 using SanctuarySSLib.MiscUtil;
 using SanctuarySSLib.Models;
+using SanctuarySSLib.RegistryClasses;
 using SanctuarySSModManager.Extensions;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using System.Reflection;
 using System.Xml.Linq;
 
@@ -87,6 +90,8 @@ namespace SanctuarySSModManager
                 var descriptor = new ServiceDescriptor(type, implementationType, attr.Scope);
                 services.Add(descriptor);
             }
+
+            services.AddSingleton<RegistryPersister>();
         }
 
         public static T Get<T>() where T : class

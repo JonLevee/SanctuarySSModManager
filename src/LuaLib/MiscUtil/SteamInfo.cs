@@ -14,7 +14,7 @@ namespace SanctuarySSLib.MiscUtil
     {
         private readonly List<string> steamFolders = new List<string>();
         private readonly Dictionary<string, string> folderPaths = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-        public string GetRoot(string appName = "Sanctuary Shattered Sun Demo")
+        public string GetRoot(string appName)
         {
             if (!steamFolders.Any())
             {

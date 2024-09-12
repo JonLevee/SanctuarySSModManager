@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using SanctuarySSLib.RegistryClasses;
 using System.Configuration;
 using System.Data;
 using System.Windows;
@@ -17,20 +18,21 @@ namespace SanctuarySSModManager
         private void ConfigureServices(ServiceCollection services)
         {
             services
-                .AddSingleton<MainWindow>();
+                .AddSingleton<MainWindow>()
+                .AddSingleton(s=>s.GetService<RegistryPersister>().LoadFromRegistry<SSSUserSettings>("UserSettings"));
         }
         private void OnStartup(object sender, StartupEventArgs e)
         {
-            var settings = DIContainer.Get<SSSUserSettings>();
-            settings.Load();
             var mainWindow = DIContainer.Get<MainWindow>();
             mainWindow?.Show();
         }
 
         private void OnExit(object sender, ExitEventArgs e)
         {
+            var registryPersister = DIContainer.Get<RegistryPersister>();
             var settings = DIContainer.Get<SSSUserSettings>();
-            settings.Save();
+
+            registryPersister.SaveToRegistry(settings, "UserSettings");
         }
     }
 

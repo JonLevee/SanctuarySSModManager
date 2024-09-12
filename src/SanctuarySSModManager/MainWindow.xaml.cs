@@ -35,13 +35,13 @@ namespace SanctuarySSModManager
     /// </summary>
     public partial class MainWindow : Window
     {
-        SSSUserSettings userSettings;
         DispatcherTimer timer;
+
+        public SSSUserSettings UserSettings { get; }
 
         public MainWindow(SSSUserSettings userSettings)
         {
             // https://stackoverflow.com/questions/48545971/how-can-i-pass-data-to-from-a-webbrowser-control
-            this.userSettings = userSettings;
             InitializeComponent();
             Style = (Style)FindResource(typeof(Window));
 
@@ -58,7 +58,9 @@ namespace SanctuarySSModManager
             timer = new DispatcherTimer();
             timer.Tick += Timer_Tick;
             timer.Interval = new TimeSpan(0, 0, 1);
-            timer.Start();
+            //timer.Start();
+            UserSettings = userSettings;
+            InitializeMod();
         }
 
         private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -72,25 +74,21 @@ namespace SanctuarySSModManager
             //UnitViewControl.Grid.Height = height;
         }
 
-        private async void Timer_Tick(object? sender, EventArgs e)
+        private void Timer_Tick(object? sender, EventArgs e)
         {
             timer.Stop();
-            await LoadModels();
+            InitializeMod();
         }
 
-        private async Task LoadModels()
+        private void InitializeMod()
         {
-            LoadingPanel.Visibility = Visibility.Visible;
-            SelectedModPanel.Visibility = Visibility.Collapsed;
-            UpdateLayout();
-            //var model = DIContainer.Get<ShatteredSunModel>();
-            //await model.Load();
-            //var viewModel = DIContainer.Get<ShatteredSunViewModel>();
-            //await viewModel.Load(model);
-            //await Task.Run(() => Thread.Sleep(2000));
-            LoadingPanel.Visibility = Visibility.Collapsed;
-            SelectedModPanel.Visibility = Visibility.Visible;
-            await Task.CompletedTask;
+            var userSettings = DIContainer.Get<SSSUserSettings>();
+            if (string.IsNullOrEmpty(userSettings.ShatteredSunDirectoryRoot))
+            {
+                var steamInfo = DIContainer.Get<ISteamInfo>();
+                userSettings.ShatteredSunDirectoryRoot = steamInfo.GetRoot("Sanctuary Shattered Sun Demo");
+            }
+            //FolderMode.SelectedValue = userSettings.FolderMode;
         }
 
         private void OnClosing(object sender, System.ComponentModel.CancelEventArgs e)
