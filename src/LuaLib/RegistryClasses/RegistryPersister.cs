@@ -20,27 +20,25 @@ namespace SanctuarySSLib.RegistryClasses
             typeof(DateTime),
             ];
         private static readonly Assembly thisAssembly = Assembly.GetExecutingAssembly();
-        private readonly RegistryKey registryKey;
+        private readonly string appName;
 
-        public RegistryPersister() 
+
+        public RegistryPersister(string appName) 
         {
-            var appName = Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyProductAttribute>()?.Product;
             Contract.Assert(appName != null);
-            registryKey = Registry.CurrentUser.CreateSubKey("Software").CreateSubKey(appName);
+            this.appName = appName;
         }
-        public T LoadFromRegistry<T>(string name) where T : class, new()
+        public T LoadFromRegistry<T>(RegistryKey registryKey, string name) where T : class, new()
         {
-            var key = registryKey.CreateSubKey(name);
             var item = new T();
-            LoadProperties(key, item);
+            LoadProperties(GetAppKey(registryKey, name), item);
             return item;
         }
 
-        public void SaveToRegistry<T>(T instance, string name)
+        public void SaveToRegistry<T>(RegistryKey registryKey, T instance, string name)
         {
             Contract.Assert(instance != null);
-            var key = registryKey.CreateSubKey(name);
-            SaveProperties(key, instance);
+            SaveProperties(GetAppKey(registryKey, name), instance);
         }
 
         private static void LoadProperties(RegistryKey key, object? instance)
@@ -108,6 +106,10 @@ namespace SanctuarySSLib.RegistryClasses
                     SaveProperties(key.CreateSubKey(p.Name), p.GetValue(instance, null));
                 }
             }
+        }
+        private RegistryKey GetAppKey(RegistryKey key, string name)
+        {
+            return key.CreateSubKey("Software").CreateSubKey(appName).CreateSubKey(name);
         }
     }
 }

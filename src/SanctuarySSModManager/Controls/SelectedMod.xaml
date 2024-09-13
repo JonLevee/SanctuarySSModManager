@@ -8,17 +8,15 @@
             xmlns:enums="clr-namespace:SanctuarySSLib.Enums;assembly=SanctuarySSLib"
              mc:Ignorable="d" d:DesignWidth="800" Height="49">
     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-        <Label Content="Loading ..." Name="LoadingPanel" />
         <StackPanel Name="SelectedModPanel" Orientation="Horizontal">
-            <Label Content="Selected mod"/>
+            <Label Content="Selected Mod"/>
             <ListView Name="CurrentlySelectedMod">None</ListView>
-            <Label Content="Folder"/>
+            <Label Content="Lua Folder"/>
             <ListBox 
-                        Name="FolderModeListBox" 
                         Width="70px" 
                         SelectionMode="Single" 
-                        SelectedItem="{Binding FolderMode, Mode=TwoWay}"
-                        ItemsSource="{localMisc:EnumToCollection EnumType={x:Type enums:FolderModeEnum}}">
+                        SelectedItem="{Binding LuaFolder, Mode=TwoWay}"
+                        ItemsSource="{Binding LuaFolders}">
             </ListBox>
         </StackPanel>
     </StackPanel>

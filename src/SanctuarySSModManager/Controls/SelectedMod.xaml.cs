@@ -20,25 +20,11 @@ namespace SanctuarySSModManager.Controls
     /// <summary>
     /// Interaction logic for UserControl1.xaml
     /// </summary>
-    public partial class SelectedMod : UserControl, INotifyPropertyChanged
+    public partial class SelectedMod : UserControl
     {
-        public SSSUserSettings UserSettings { get; }
-        public event PropertyChangedEventHandler? PropertyChanged;
-        public FolderModeEnum FolderMode
-        {
-            get => UserSettings.FolderMode;
-            set
-            {
-                UserSettings.FolderMode = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("FolderMode"));
-            }
-        }
-
-
         public SelectedMod()
         {
-            UserSettings = DIContainer.Get<SSSUserSettings>();
-            this.DataContext = this;
+            DataContext = DIContainer.Get<SSSCombinedSettings>();
             InitializeComponent();
         }
     }

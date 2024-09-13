@@ -35,8 +35,6 @@ namespace SanctuarySSModManager
     /// </summary>
     public partial class MainWindow : Window
     {
-        DispatcherTimer timer;
-
         public SSSUserSettings UserSettings { get; }
 
         public MainWindow(SSSUserSettings userSettings)
@@ -55,12 +53,7 @@ namespace SanctuarySSModManager
             //JsonSerializer
 
             //var root = "D:\\SteamLibrary\\steamapps\\common\\Sanctuary Shattered Sun Demo\\prototype\\RuntimeContent\\Lua\\common\\units\\unitsTemplates\\uel1001\\uel10"
-            timer = new DispatcherTimer();
-            timer.Tick += Timer_Tick;
-            timer.Interval = new TimeSpan(0, 0, 1);
-            //timer.Start();
             UserSettings = userSettings;
-            InitializeMod();
         }
 
         private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -72,23 +65,6 @@ namespace SanctuarySSModManager
             Tab.Height = height;
             //UnitViewControl.Grid.Width= width;
             //UnitViewControl.Grid.Height = height;
-        }
-
-        private void Timer_Tick(object? sender, EventArgs e)
-        {
-            timer.Stop();
-            InitializeMod();
-        }
-
-        private void InitializeMod()
-        {
-            var userSettings = DIContainer.Get<SSSUserSettings>();
-            if (string.IsNullOrEmpty(userSettings.ShatteredSunDirectoryRoot))
-            {
-                var steamInfo = DIContainer.Get<ISteamInfo>();
-                userSettings.ShatteredSunDirectoryRoot = steamInfo.GetRoot("Sanctuary Shattered Sun Demo");
-            }
-            //FolderMode.SelectedValue = userSettings.FolderMode;
         }
 
         private void OnClosing(object sender, System.ComponentModel.CancelEventArgs e)

@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Win32;
 using SanctuarySSLib.RegistryClasses;
 using System.Configuration;
 using System.Data;
+using System.Reflection;
 using System.Windows;
 
 namespace SanctuarySSModManager
@@ -19,7 +21,9 @@ namespace SanctuarySSModManager
         {
             services
                 .AddSingleton<MainWindow>()
-                .AddSingleton(s=>s.GetService<RegistryPersister>().LoadFromRegistry<SSSUserSettings>("UserSettings"));
+                .AddSingleton(s => s.GetService<RegistryPersister>().LoadFromRegistry<SSSUserSettings>(Registry.CurrentUser, "UserSettings"))
+                .AddSingleton(s => s.GetService<RegistryPersister>().LoadFromRegistry<SSSModManagerSettings>(Registry.LocalMachine, "ModManagerSettings"));
+
         }
         private void OnStartup(object sender, StartupEventArgs e)
         {
@@ -30,9 +34,11 @@ namespace SanctuarySSModManager
         private void OnExit(object sender, ExitEventArgs e)
         {
             var registryPersister = DIContainer.Get<RegistryPersister>();
-            var settings = DIContainer.Get<SSSUserSettings>();
+            var userSettings = DIContainer.Get<SSSUserSettings>();
+            var modManagerSettings = DIContainer.Get<SSSModManagerSettings>();
 
-            registryPersister.SaveToRegistry(settings, "UserSettings");
+            registryPersister.SaveToRegistry(Registry.CurrentUser, userSettings, "UserSettings");
+            registryPersister.SaveToRegistry(Registry.LocalMachine, modManagerSettings, "ModManagerSettings");
         }
     }
 

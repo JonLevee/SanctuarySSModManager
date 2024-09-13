@@ -91,7 +91,12 @@ namespace SanctuarySSModManager
                 services.Add(descriptor);
             }
 
-            services.AddSingleton<RegistryPersister>();
+            services.AddSingleton(s =>
+            {
+                var appName = Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyProductAttribute>()?.Product;
+                Contract.Assert(appName != null);
+                return new RegistryPersister(appName);
+            });
         }
 
         public static T Get<T>() where T : class
