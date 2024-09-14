@@ -35,6 +35,7 @@ namespace SanctuarySSModManager
     {
         private readonly SSSModManagerSettings modManagerSettings;
         private readonly SSSUserSettings userSettings;
+        private readonly AppInfo appInfo;
         private readonly Dictionary<string, string> luaRoots = new Dictionary<string, string>
         {
             { "engine", @"engine\LJ\lua" },
@@ -53,18 +54,18 @@ namespace SanctuarySSModManager
                 Notify();
             }
         }
-        public string ShatteredSunInstallRoot { get; }
+        public string ShatteredSunInstallRoot => appInfo.ShatteredSunInstallRoot;
             
         public string FullModRootFolder => Path.Combine(ShatteredSunInstallRoot, luaRoots[modManagerSettings.LuaFolder]);
 
         public SSSCombinedSettings(
             SSSModManagerSettings modManagerSettings, 
             SSSUserSettings userSettings,
-            ISteamInfo steamInfo)
+            AppInfo appInfo)
         {
             this.modManagerSettings = modManagerSettings;
             this.userSettings = userSettings;
-            ShatteredSunInstallRoot = steamInfo.GetRoot("Sanctuary Shattered Sun Demo");
+            this.appInfo = appInfo;
             if (string.IsNullOrEmpty(modManagerSettings.LuaFolder))
             {
                 modManagerSettings.LuaFolder = LuaFolders.First();

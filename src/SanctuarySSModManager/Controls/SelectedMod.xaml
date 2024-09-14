@@ -9,6 +9,10 @@
              mc:Ignorable="d" d:DesignWidth="800" Height="49">
     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
         <StackPanel Name="SelectedModPanel" Orientation="Horizontal">
+            <local:ToolTipContainer1 Orientation="Horizontal" Tip="EnableMods">
+                <Label Content="Enable Mods"/>
+                <CheckBox />
+            </local:ToolTipContainer1>
             <Label Content="Selected Mod"/>
             <ListView Name="CurrentlySelectedMod">None</ListView>
             <Label Content="Lua Folder"/>

@@ -1,19 +1,10 @@
-﻿using LuaParserUtil;
-using LuaParserUtil.Loader;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Win32;
+﻿using Microsoft.Extensions.DependencyInjection;
 using NLog;
 using SanctuarySSLib.Attributes;
-using SanctuarySSLib.LuaUtil;
 using SanctuarySSLib.MiscUtil;
-using SanctuarySSLib.Models;
-using SanctuarySSLib.RegistryClasses;
-using SanctuarySSModManager.Extensions;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Reflection;
-using System.Xml.Linq;
 
 namespace SanctuarySSModManager
 {
@@ -86,17 +77,12 @@ namespace SanctuarySSModManager
                     implementationTypes.Count == 1 ? implementationTypes[0] :
                     implementationTypes.SingleOrDefault(t => type.Name[0] == 'I' && type.Name.Substring(1) == t.Name);
                 if (implementationType == null)
-                    throw new InvalidOperationException($"Could not find any registered implementations for interface {type.Name}");
+                    continue;
                 var descriptor = new ServiceDescriptor(type, implementationType, attr.Scope);
                 services.Add(descriptor);
             }
 
-            services.AddSingleton(s =>
-            {
-                var appName = Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyProductAttribute>()?.Product;
-                Contract.Assert(appName != null);
-                return new RegistryPersister(appName);
-            });
+            services.AddSingleton(AppInfo.CreateInstance);
         }
 
         public static T Get<T>() where T : class

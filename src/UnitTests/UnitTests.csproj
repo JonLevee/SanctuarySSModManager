@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LuaLib\SanctuarySSLib.csproj" />
+    <ProjectReference Include="..\SanctuarySSLib\SanctuarySSLib.csproj" />
   </ItemGroup>
 
   <ItemGroup>

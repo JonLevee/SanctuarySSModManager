@@ -1,16 +1,10 @@
 ﻿using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace SanctuarySSLib.RegistryClasses
+namespace SanctuarySSLib.MiscUtil
 {
-    public class RegistryPersister
+    public class RegistryPersister : IObjectPersister
     {
         private static readonly Type[] supportedTypes = [
             typeof(string),
@@ -20,22 +14,23 @@ namespace SanctuarySSLib.RegistryClasses
             typeof(DateTime),
             ];
         private static readonly Assembly thisAssembly = Assembly.GetExecutingAssembly();
-        private readonly string appName;
+        private readonly AppInfo appInfo;
+        private readonly RegistryKey registryKey;
 
-
-        public RegistryPersister(string appName) 
+        public RegistryPersister(AppInfo appInfo)
         {
-            Contract.Assert(appName != null);
-            this.appName = appName;
+            Contract.Assert(appInfo != null);
+            this.appInfo = appInfo;
+            this.registryKey = Registry.CurrentUser;
         }
-        public T LoadFromRegistry<T>(RegistryKey registryKey, string name) where T : class, new()
+        public T Load<T>(string name) where T : class, new()
         {
             var item = new T();
             LoadProperties(GetAppKey(registryKey, name), item);
             return item;
         }
 
-        public void SaveToRegistry<T>(RegistryKey registryKey, T instance, string name)
+        public void Save<T>(T instance, string name)
         {
             Contract.Assert(instance != null);
             SaveProperties(GetAppKey(registryKey, name), instance);
@@ -87,7 +82,7 @@ namespace SanctuarySSLib.RegistryClasses
             var properties = instance
                 .GetType()
                 .GetProperties()
-                .Where(p=>p.CanRead && p.CanWrite)
+                .Where(p => p.CanRead && p.CanWrite)
                 .ToList();
             foreach (var p in properties)
             {
@@ -109,7 +104,7 @@ namespace SanctuarySSLib.RegistryClasses
         }
         private RegistryKey GetAppKey(RegistryKey key, string name)
         {
-            return key.CreateSubKey("Software").CreateSubKey(appName).CreateSubKey(name);
+            return key.CreateSubKey("Software").CreateSubKey(appInfo.AppName).CreateSubKey(name);
         }
     }
 }
