@@ -9,7 +9,7 @@ namespace SanctuarySSLib.MiscUtil
 {
     public class ModifySSSApp
     {
-        private record FileChange(string fileName, Action modify, Action revert);
+        private record FileChange(string fileName, Action? modify, Action? revert);
         private readonly SSSModManagerSettings modManagerSettings;
         private readonly SSSUserSettings userSettings;
         private readonly AppInfo appInfo;

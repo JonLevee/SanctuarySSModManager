@@ -55,7 +55,7 @@ namespace SanctuarySSLib.MiscUtil
                 var subKey = getSubKey(node);
                 var jsonTable = Root[tableName]?.AsObject();
                 AddTableLocation(tableName, subKey, relativePath);
-                jsonTable.Add(subKey, node);
+                jsonTable?.Add(subKey, node);
             }
         }
 

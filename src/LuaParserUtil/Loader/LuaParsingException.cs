@@ -7,7 +7,7 @@ namespace LuaParserUtil.Loader
         public LuaParsingException(
             string message,
             [CallerMemberName]
-            string caller = null) : base($"{caller}: {message}")
+            string? caller = null) : base($"{caller}: {message}")
         {
 
         }

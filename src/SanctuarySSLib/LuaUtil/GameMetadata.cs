@@ -27,6 +27,7 @@ namespace SanctuarySSLib.LuaUtil
         {
             this.steamInfo = steamInfo;
             SelectedLuaFolder = string.Empty;
+            GameRoot = string.Empty;
             Refresh();
         }
 

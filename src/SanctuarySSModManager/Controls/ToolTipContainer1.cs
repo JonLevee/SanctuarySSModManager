@@ -12,13 +12,13 @@ namespace SanctuarySSModManager.Controls
         private Dictionary<string,string> ToolTips { get; }
 
         private string? _tip;
-        public string Tip 
+        public string? Tip 
         {
             get => _tip;
             set
             {
                 _tip = value;
-                ToolTip= ToolTips[_tip];
+                ToolTip= string.IsNullOrWhiteSpace(_tip) ? null : ToolTips[_tip];
             } 
         }
         public ToolTipContainer1()

@@ -6,6 +6,7 @@ using SanctuarySSLib.Models;
 using SanctuarySSLib.ViewModel;
 using SanctuarySSModManager.Controls;
 using SanctuarySSModManager.Extensions;
+using SanctuarySSModManager.MiscUtil;
 using System.Collections;
 using System.Configuration;
 using System.Diagnostics;
@@ -35,25 +36,17 @@ namespace SanctuarySSModManager
     /// </summary>
     public partial class MainWindow : Window
     {
-        public SSSUserSettings UserSettings { get; }
 
-        public MainWindow(SSSUserSettings userSettings)
+        public Tooltips Tooltips { get; }
+
+        public MainWindow()
         {
             // https://stackoverflow.com/questions/48545971/how-can-i-pass-data-to-from-a-webbrowser-control
             InitializeComponent();
             Style = (Style)FindResource(typeof(Window));
-
-
+            Tooltips = DIContainer.Get<Tooltips>();
+            DataContext = DIContainer.Get<SSSCombinedSettings>();
             OuterDock.SizeChanged += MainWindow_SizeChanged;
-            //var patch = new diff_match_patch();
-
-            //var unitFilePath = @"D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype\RuntimeContent\Lua";
-            //LuaDataLoader lua = new LuaDataLoader();
-            //var result = lua.GetData(unitFilePath);
-            //JsonSerializer
-
-            //var root = "D:\\SteamLibrary\\steamapps\\common\\Sanctuary Shattered Sun Demo\\prototype\\RuntimeContent\\Lua\\common\\units\\unitsTemplates\\uel1001\\uel10"
-            UserSettings = userSettings;
         }
 
         private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -65,11 +58,6 @@ namespace SanctuarySSModManager
             Tab.Height = height;
             //UnitViewControl.Grid.Width= width;
             //UnitViewControl.Grid.Height = height;
-        }
-
-        private void OnClosing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-
         }
     }
 }

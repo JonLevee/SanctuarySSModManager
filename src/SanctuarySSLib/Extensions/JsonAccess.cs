@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -7,20 +8,13 @@ namespace SanctuarySSModManager.Extensions
 {
     public static class JsonAccess
     {
-        public static T Get<T>(this JsonNode node, string key) where T : class
+        public static bool TryGet<T>(this JsonNode? node, string key, out T? value)
         {
-            if (TryGet(node, key, out T value))
-                return value;
-            return default(T);
-        }
-
-        public static object Get(this JsonNode node, string key)
-        {
-            return Get<object>(node, key);
-        }
-
-        public static bool TryGet<T>(this JsonNode node, string key, out T? value)
-        {
+            if (node == null) 
+            {
+                value = default;
+                return false;
+            }
             value = default;
             var keys = key.Split('/');
             foreach (var k in keys)
@@ -39,7 +33,7 @@ namespace SanctuarySSModManager.Extensions
             switch (node.GetValueKind())
             {
                 case JsonValueKind.Array:
-                    var array = node.AsArray().Select(item => item.AsValue()).ToList();
+                    var array = node.AsArray().Select(item => item?.AsValue()).ToList();
                     value = (T)((object)array);
                     break;
                 case JsonValueKind.Object:

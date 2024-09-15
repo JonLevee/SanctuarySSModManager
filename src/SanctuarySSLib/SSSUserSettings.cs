@@ -13,7 +13,7 @@ namespace SanctuarySSModManager
 
     public class SSSModManagerSettings
     {
-        public string LuaFolder { get; set; }
+        public string LuaFolder { get; set; } = string.Empty;
         public bool ModManagerEnabled { get; set; }
     }
 
@@ -65,7 +65,7 @@ namespace SanctuarySSModManager
             this.userSettings = userSettings;
             this.appInfo = appInfo;
             this.modifySSSApp = modifySSSApp;
-            if (string.IsNullOrEmpty(modManagerSettings.LuaFolder))
+            if (string.IsNullOrWhiteSpace(modManagerSettings.LuaFolder))
             {
                 modManagerSettings.LuaFolder = LuaFolders.First();
             }

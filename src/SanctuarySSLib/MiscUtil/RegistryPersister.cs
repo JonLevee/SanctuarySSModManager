@@ -90,10 +90,9 @@ namespace SanctuarySSLib.MiscUtil
                 if (supportedTypes.Contains(p.PropertyType) || p.PropertyType.IsEnum)
                 {
                     var value = p.GetValue(instance, null);
-                    if (value != null)
+                    if (value != null && value.ToString() is string textValue)
                     {
-                        Contract.Assert(value != null);
-                        key.SetValue(p.Name, value.ToString(), RegistryValueKind.String);
+                        key.SetValue(p.Name, textValue, RegistryValueKind.String);
                     }
                     continue;
                 }

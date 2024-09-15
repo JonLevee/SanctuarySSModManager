@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Markup;
 
 namespace SanctuarySSModManager.MiscUtil
 {
-    internal static class Tooltips
+    public class Tooltips
     {
-        public static string EnableMods => string.Empty;
+        public string EnableMods => "enable mods tooltip";
+
     }
 }
