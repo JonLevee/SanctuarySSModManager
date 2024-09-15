@@ -11,7 +11,7 @@
         <StackPanel Name="SelectedModPanel" Orientation="Horizontal">
             <local:ToolTipContainer1 Orientation="Horizontal" Tip="EnableMods">
                 <Label Content="Enable Mods"/>
-                <CheckBox />
+                <CheckBox IsChecked="{Binding ModManagerEnabled}" />
             </local:ToolTipContainer1>
             <Label Content="Selected Mod"/>
             <ListView Name="CurrentlySelectedMod">None</ListView>

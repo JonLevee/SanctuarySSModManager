@@ -1,21 +1,6 @@
-﻿
-using Microsoft.Extensions.DependencyInjection;
-using SanctuarySSLib.Attributes;
-using SanctuarySSLib.Enums;
-using SanctuarySSLib.LuaUtil;
-using SanctuarySSLib.MiscUtil;
-using SanctuarySSModManager.Extensions;
-using System;
-using System.Collections.Generic;
+﻿using SanctuarySSLib.MiscUtil;
 using System.ComponentModel;
-using System.IO;
-using System.IO.Packaging;
-using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace SanctuarySSModManager
 {
@@ -29,6 +14,7 @@ namespace SanctuarySSModManager
     public class SSSModManagerSettings
     {
         public string LuaFolder { get; set; }
+        public bool ModManagerEnabled { get; set; }
     }
 
     public class SSSCombinedSettings : INotifyPropertyChanged
@@ -36,6 +22,7 @@ namespace SanctuarySSModManager
         private readonly SSSModManagerSettings modManagerSettings;
         private readonly SSSUserSettings userSettings;
         private readonly AppInfo appInfo;
+        private readonly ModifySSSApp modifySSSApp;
         private readonly Dictionary<string, string> luaRoots = new Dictionary<string, string>
         {
             { "engine", @"engine\LJ\lua" },
@@ -54,6 +41,16 @@ namespace SanctuarySSModManager
                 Notify();
             }
         }
+        public bool ModManagerEnabled
+        {
+            get => modManagerSettings.ModManagerEnabled;
+            set
+            {
+                modifySSSApp.ModManagerEnablement(value);
+                Notify();
+            }
+        }
+
         public string ShatteredSunInstallRoot => appInfo.ShatteredSunInstallRoot;
             
         public string FullModRootFolder => Path.Combine(ShatteredSunInstallRoot, luaRoots[modManagerSettings.LuaFolder]);
@@ -61,11 +58,13 @@ namespace SanctuarySSModManager
         public SSSCombinedSettings(
             SSSModManagerSettings modManagerSettings, 
             SSSUserSettings userSettings,
-            AppInfo appInfo)
+            AppInfo appInfo,
+            ModifySSSApp modifySSSApp)
         {
             this.modManagerSettings = modManagerSettings;
             this.userSettings = userSettings;
             this.appInfo = appInfo;
+            this.modifySSSApp = modifySSSApp;
             if (string.IsNullOrEmpty(modManagerSettings.LuaFolder))
             {
                 modManagerSettings.LuaFolder = LuaFolders.First();

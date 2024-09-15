@@ -6,6 +6,10 @@ namespace SanctuarySSLib.MiscUtil
     public class FilePersister : IObjectPersister
     {
         private readonly AppInfo appInfo;
+        private readonly JsonSerializerOptions serializerOptions = new JsonSerializerOptions
+        {
+            WriteIndented = true
+        };
 
         public FilePersister(AppInfo appInfo) 
         {
@@ -18,7 +22,7 @@ namespace SanctuarySSLib.MiscUtil
             {
                 return new T();
             }
-            var instance = JsonSerializer.Deserialize<T>(File.ReadAllText(file));
+            var instance = JsonSerializer.Deserialize<T>(File.ReadAllText(file), serializerOptions);
             Contract.Assert(instance != null);
             return instance;
         }
@@ -26,7 +30,7 @@ namespace SanctuarySSLib.MiscUtil
         public void Save<T>(T instance, string name)
         {
             var file = Path.Combine(appInfo.ShatteredSunInstallRoot, name + ".json");
-            File.WriteAllText(file, JsonSerializer.Serialize(instance));
+            File.WriteAllText(file, JsonSerializer.Serialize(instance, serializerOptions));
         }
     }
 }

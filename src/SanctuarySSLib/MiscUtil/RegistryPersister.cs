@@ -7,6 +7,7 @@ namespace SanctuarySSLib.MiscUtil
     public class RegistryPersister : IObjectPersister
     {
         private static readonly Type[] supportedTypes = [
+            typeof(bool),
             typeof(string),
             typeof(int),
             typeof(long),
