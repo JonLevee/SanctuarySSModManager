@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using SanctuarySSLib.MiscUtil;
 using SanctuarySSLib.Models;
 using SanctuarySSModManager;
+using SanctuarySSModManager.MiscUtil;
 
 namespace UnitTests
 {
@@ -20,6 +22,7 @@ namespace UnitTests
         [Test]
         public void ModManager()
         {
+            var x = new UserInteraction();
             //var manager = DIContainer.Services.GetService<modm>();
             var m = DIContainer.Get<ShatteredSunModel>();
             m.Load();

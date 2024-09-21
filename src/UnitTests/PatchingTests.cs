@@ -33,7 +33,7 @@ It was popularised in the 1960s with the release of Letraset sheets containing L
         {
             var modPatcher = new ModPatcher();
             var patches = patcher.patch_make(contents1.ToString(), contents2.ToString());
-            Assert.IsEmpty(patches);
+            Assert.That(!patches.Any());
         }
 
         [Test]

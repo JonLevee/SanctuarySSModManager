@@ -14,7 +14,7 @@ namespace SanctuarySSLib.MiscUtil
         {
             var appName = Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyProductAttribute>()?.Product;
             Contract.Assert(appName != null);
-            var steamInfo = serviceProvider.GetService<SteamInfo>();
+            var steamInfo = serviceProvider.GetService<ISteamInfo>();
             Contract.Assert(steamInfo != null);
             var shatteredSunSteamName = "Sanctuary Shattered Sun Demo";
             var shatteredSunInstallRoot = steamInfo.GetRoot(shatteredSunSteamName);

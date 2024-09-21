@@ -82,6 +82,8 @@ namespace SanctuarySSModManager
                 services.Add(descriptor);
             }
 
+            services.AddSingleton<SteamInfo>();
+            services.AddSingleton<ISteamInfo>(s=>s.GetService<SteamInfo>());
             services.AddSingleton(AppInfo.CreateInstance);
         }
 
