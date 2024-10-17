@@ -12,19 +12,19 @@ namespace UnitTests
         public void Setup()
         {
             DIContainer.Initialize(ConfigureServices);
-            var steamInfo = DIContainer.Get<SteamInfo>();
         }
         private void ConfigureServices(ServiceCollection services)
         {
-            
+
             services
-                .AddSingleton<SSSUserSettings>()
-                .AddSingleton<SSSModManagerSettings>()
                 .AddSingleton<UserInteractionTestTool>()
-                .AddSingleton<IUserInteraction>(s=>s.GetService<UserInteractionTestTool>())
-                .AddSingleton<ISteamInfo>(s=>s.GetService<SteamInfoTest>())
-                ;
+                .AddSingleton<IUserInteraction>(s => s.GetService<UserInteractionTestTool>())
+                .AddSingleton<SteamInfoTest>()
+                .AddSingleton<ISteamInfo>(s => s.GetService<SteamInfoTest>());
+            ;
         }
 
     }
+
+
 }

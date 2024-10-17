@@ -6,6 +6,7 @@ namespace SanctuarySSLib.MiscUtil
 {
     public class AppInfo
     {
+        public static readonly string DefaultShatteredSunSteamName = "Sanctuary Shattered Sun Demo";
         public string AppName { get; }
         public string ShatteredSunInstallRoot { get; }
         public string ShatteredSunSteamName { get; }
@@ -16,11 +17,10 @@ namespace SanctuarySSLib.MiscUtil
             Contract.Assert(appName != null);
             var steamInfo = serviceProvider.GetService<ISteamInfo>();
             Contract.Assert(steamInfo != null);
-            var shatteredSunSteamName = "Sanctuary Shattered Sun Demo";
-            var shatteredSunInstallRoot = steamInfo.GetRoot(shatteredSunSteamName);
-            return new AppInfo(appName, shatteredSunInstallRoot, shatteredSunSteamName);
+            var shatteredSunInstallRoot = steamInfo.GetRoot(DefaultShatteredSunSteamName);
+            return new AppInfo(appName, shatteredSunInstallRoot, DefaultShatteredSunSteamName);
         }
-        private AppInfo(string appName, string shatteredSunInstallRoot, string shatteredSunSteamName) 
+        private AppInfo(string appName, string shatteredSunInstallRoot, string shatteredSunSteamName)
         {
             AppName = appName;
             ShatteredSunInstallRoot = shatteredSunInstallRoot;
