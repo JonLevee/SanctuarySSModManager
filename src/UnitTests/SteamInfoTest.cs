@@ -7,20 +7,6 @@ namespace UnitTests
 {
     public class SteamInfoTest : ISteamInfo
     {
-        private readonly string testRoot;
-        private readonly string workingRoot;
-        private readonly string backupRoot;
-        private readonly string[] extensionsToCopy;
-        public SteamInfoTest(SteamInfo steamInfo)
-        {
-            extensionsToCopy = ["*.lua", "*.santp"];
-            var location = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            testRoot = Path.Combine(location, "SanctuaryTestData");
-            backupRoot = Path.Combine(testRoot, "Backup");
-            workingRoot = Path.Combine(testRoot, "Working");
-            EnsureBackupInitialized(steamInfo);
-            EnsureWorkingInitialized(steamInfo);
-        }
         private enum Action
         {
             None,
@@ -34,7 +20,21 @@ namespace UnitTests
             public string backup;
             public string working;
         }
-        private void EnsureWorkingInitialized(SteamInfo steamInfo)
+        private readonly string testRoot;
+        private readonly string workingRoot;
+        private readonly string backupRoot;
+        private readonly string[] extensionsToCopy;
+        public SteamInfoTest(SteamInfo steamInfo)
+        {
+            extensionsToCopy = ["*.lua", "*.santp"];
+            var location = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            testRoot = Path.Combine(location, "SanctuaryTestData");
+            backupRoot = Path.Combine(testRoot, "Backup");
+            workingRoot = Path.Combine(testRoot, "Working");
+            EnsureBackupInitialized(steamInfo);
+
+        }
+        public void Reset()
         {
             Directory.CreateDirectory(workingRoot);
             var mergedDirectories = Directory
@@ -68,14 +68,28 @@ namespace UnitTests
                     extensionsToCopy.SelectMany(ext => Directory.GetFiles(workingRoot, ext, SearchOption.AllDirectories)),
                     key => key.Substring(backupRoot.Length),
                     key => key.Substring(workingRoot.Length),
-                    backup => new ActionInfo { action = Action.Create, working = workingRoot + backup.Substring(backupRoot.Length) },
+                    backup => new ActionInfo { action = Action.Copy, working = workingRoot + backup.Substring(backupRoot.Length), backup = backup },
                     working => new ActionInfo { action = Action.Delete, working = working },
                     (backup, working) => new ActionInfo
                     {
-                        action = Action.None
+                        action = File.GetLastWriteTime (backup) == File.GetLastWriteTime(working) ? Action.None : Action.Copy,
+                        working = working,
+                        backup = backup,
                     }
                 )
                 .ToList();
+            foreach (var item in mergedFiles)
+            {
+                switch (item.action)
+                {
+                    case Action.Copy:
+                        File.Copy(item.backup, item.working);
+                        break;
+                    case Action.Delete:
+                        File.Delete(item.working);
+                        break;
+                }
+            }
         }
 
         private void EnsureBackupInitialized(SteamInfo steamInfo)
@@ -108,7 +122,8 @@ namespace UnitTests
 
         public string GetRoot(string appName)
         {
-            throw new NotImplementedException();
+            Assert.That(appName, Is.EqualTo(AppInfo.DefaultShatteredSunSteamName));
+            return workingRoot;
         }
     }
 }
