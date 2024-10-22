@@ -72,5 +72,4 @@ namespace SanctuarySSLib.LuaUtil
             return updated;
         }
     }
-
 }
