@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using SanctuarySSLib.LuaUtil;
 using SanctuarySSLib.MiscUtil;
 using SanctuarySSLib.Models;
 using SanctuarySSModManager;
@@ -22,28 +23,12 @@ namespace UnitTests
         [Test]
         public void ModManager()
         {
-            var x = new UserInteraction();
-            //var manager = DIContainer.Services.GetService<modm>();
-            var m = DIContainer.Get<ShatteredSunModel>();
-            m.Load();
-            var Units = m.Units.GroupBy(kv => m.IsUnitEnabled(kv.Key)).ToDictionary(g => g.Key, g => g.ToList());
-            //var vm = DIContainer.Services.GetService<ShatteredSunViewModel>();
-
-
-            //        var rootPath = luaRelativePath == null
-            //? Path.Combine(modManagerMetaData.FullModRootFolder, luaRelativePath)
-            //: modManagerMetaData.FullModRootFolder;
-            //var rootPath = @"D:\SteamLibrary\steamapps\common\Sanctuary Shattered Sun Demo\prototype";
-            //var luaFilePaths = Directory.GetFiles(rootPath, "*.lua", SearchOption.AllDirectories);
-            //foreach (var luaFilePath in luaFilePaths)
-            //{
-            //    var luaFile = new LuaFile(luaFilePath);
-            //    var parser = new LuaDescentParser(luaFile.StringData);
-            //    var result = parser.Parse().ToList();
-            //}
+            var parser = new LuaDataParser();
+            var steamInfo = DIContainer.Get<ISteamInfo>();
+            var folder = steamInfo.GetRoot("Sanctuary Shattered Sun Demo");
+            var file = Path.Combine(folder, @"prototype\RuntimeContent\Lua\common\units\unitsTemplates\uca1001\uca1001.santp");
+            var file2 = Path.Combine(folder, @"prototype\RuntimeContent\Lua\common\globalTables.lua");
+            var data = parser.Parse(file2, "UnitTemplate");
         }
-
     }
-
-
 }

@@ -12,6 +12,7 @@ namespace UnitTests
         public void Setup()
         {
             DIContainer.Initialize(ConfigureServices);
+            DIContainer.Get<SteamInfoTest>().Reset();
         }
         private void ConfigureServices(ServiceCollection services)
         {
