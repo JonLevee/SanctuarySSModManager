@@ -15,6 +15,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\LuaParserUtil\LuaParserUtil.csproj" />
+		<ProjectReference Include="..\SanctuaryCPPLib\SanctuaryCPPLib.vcxproj" />
 	</ItemGroup>
 
 	<ItemGroup>

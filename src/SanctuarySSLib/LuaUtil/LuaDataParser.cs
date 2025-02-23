@@ -1,10 +1,14 @@
 ﻿
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
 namespace SanctuarySSLib.LuaUtil
 {
     public class LuaDataParser
     {
+        //[DllImport("SanctuaryCPPLib.dll", CallingConvention = CallingConvention.Cdecl)]
+        //public static extern int AddNumbers(int a, int b);
+
         private static readonly RegexOptions regexOptions = RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.Singleline;
         private static readonly Regex nameRegex = new Regex(@"^\s*(?<name>[\w_\.]+)\s*=(?<data>\s*{.+?^})", regexOptions);
         public LuaDataParserObject Parse(string file, string name)

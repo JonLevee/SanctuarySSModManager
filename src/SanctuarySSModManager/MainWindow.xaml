@@ -21,37 +21,34 @@
             <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="100" Content="Sanctuary Shattered Sun Mod Manager" HorizontalAlignment="Center"/>
             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                 <StackPanel Name="SelectedModPanel" Orientation="Horizontal">
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="Enable Mods"/>
-                        <CheckBox IsChecked="{Binding ModManagerEnabled}" />
-                    </StackPanel>
-                    <Label Content="Selected Mod" IsEnabled="{Binding ModManagerEnabled}"/>
-                    <ListView 
-                        Name="CurrentlySelectedMod"
-                        IsEnabled="{Binding ModManagerEnabled}">
-                        None
-                    </ListView>
-                    <Label Content="Lua Folder" IsEnabled="{Binding ModManagerEnabled}"/>
-                    <ListBox 
-                        Width="70px" 
-                        SelectionMode="Single" 
-                        IsEnabled="{Binding ModManagerEnabled}"
-                        SelectedItem="{Binding LuaFolder, Mode=TwoWay}"
-                        ItemsSource="{Binding LuaFolders}">
-                    </ListBox>
                 </StackPanel>
             </StackPanel>
-            <TabControl Name="Tab" IsEnabled="{Binding ModManagerEnabled}">
-                <TabItem Name="ModManagerTab" Header="Mod Manager">
+            <controls:TabControlWithMenuLayout x:Name="Tab" IsEnabled="{Binding ModManagerEnabled}">
+                <TabItem Name="ModManagerTab" Header="Mod Manager" />
+                <TabItem Name="ModCreatorTab" Header="Mod Creator" />
+                <TabItem Name="OptionsTab" Header="Options" />
+            </controls:TabControlWithMenuLayout>
+            <WrapPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Enable Mods"/>
+                    <CheckBox IsChecked="{Binding ModManagerEnabled}" />
+                </StackPanel>
+                <Label Content="Selected Mod" IsEnabled="{Binding ModManagerEnabled}"/>
+                <ListView 
+                Name="CurrentlySelectedMod"
+                IsEnabled="{Binding ModManagerEnabled}">
+                    None
+                </ListView>
+                <Label Content="Lua Folder" IsEnabled="{Binding ModManagerEnabled}"/>
+                <ListBox 
+                Width="70px" 
+                SelectionMode="Single" 
+                IsEnabled="{Binding ModManagerEnabled}"
+                SelectedItem="{Binding LuaFolder, Mode=TwoWay}"
+                ItemsSource="{Binding LuaFolders}">
+                </ListBox>
 
-                </TabItem>
-                <TabItem Name="ModCreatorTab" Header="Mod Creator">
-
-                </TabItem>
-                <TabItem Name="OptionsTab" Header="Options">
-
-                </TabItem>
-            </TabControl>
+            </WrapPanel>
         </StackPanel>
     </DockPanel>
 </Window>
