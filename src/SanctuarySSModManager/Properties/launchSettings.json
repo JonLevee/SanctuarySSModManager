@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "SanctuarySSModManager": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

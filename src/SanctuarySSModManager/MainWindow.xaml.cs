@@ -26,6 +26,8 @@ using System.Windows.Resources;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using static System.Net.Mime.MediaTypeNames;
+using System;
+using System.Runtime.InteropServices;
 
 using Path = System.IO.Path;
 
@@ -36,6 +38,8 @@ namespace SanctuarySSModManager
     /// </summary>
     public partial class MainWindow : Window
     {
+        [DllImport("SanctuaryCPPLib.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int AddNumbers(int a, int b);
 
         public Tooltips Tooltips { get; }
 
@@ -47,6 +51,8 @@ namespace SanctuarySSModManager
             Tooltips = DIContainer.Get<Tooltips>();
             DataContext = DIContainer.Get<SSSCombinedSettings>();
             OuterDock.SizeChanged += MainWindow_SizeChanged;
+
+            int result = AddNumbers(5, 7);
         }
 
         private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)

@@ -17,6 +17,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\SanctuaryCPPLib\SanctuaryCPPLib.vcxproj">
+		  <Private>True</Private>
+		  <CopyLocalSatelliteAssemblies>True</CopyLocalSatelliteAssemblies>
+		  <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
+		</ProjectReference>
 		<ProjectReference Include="..\SanctuarySSLib\SanctuarySSLib.csproj" />
 	</ItemGroup>
 
